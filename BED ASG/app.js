@@ -72,7 +72,7 @@ app.delete(
   menuItemController.deleteMenuItem
 );
 
-// Extra individual feature: patrons can like menu items.
+// Ignatius - Extra individual feature: patrons can like menu items.
 app.post(
   "/menu-items/:id/likes",
   verifyToken,
