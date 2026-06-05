@@ -1,0 +1,390 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #F6F6F6;
+    background-image: radial-gradient(#EA580C 0.5px, transparent 0.5px);
+    background-size: 20px 20px;
+}
+
+/* TEXT */
+h1, h3, h4 {
+    color: #8B4513;
+}
+
+/* ===== FIXED HEADER (FROM TEMPLATE) ===== */
+header {
+    width: 100%;
+    height: 80px;
+    padding: 1rem 1.5rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.25);
+    background-color: white;
+}
+
+/* ===== LOGO ===== */
+.logo {
+    src: url(https://fonts.gstatic.com/s/playfairdisplay/v40/nuFkD-vYSZviVYUb_rj3ij__anPXDTnohkk72xU.woff2) format('woff2');
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'playfair display';
+    font-style: italic;
+}
+
+.logo h1 {
+    margin: 0;
+    color: #474747;;
+}
+
+.logo img {
+    width: 40px;
+    height: auto;
+}
+
+/* ===== NAVIGATION ===== */
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+#hamburger {
+    height: 100%;
+    padding: 8px;
+    border: none;
+    display: none;
+}
+
+#nav-links {
+    padding: 0;
+    display: flex;
+    gap: 0.2rem;
+    list-style: none;
+}
+
+#nav-links li {
+    padding: 0.2rem 0.8rem;
+    border-radius: 15px;
+}
+
+#nav-links li a {
+    text-decoration: none;
+    font-weight: 600;
+    color: #000000;
+}
+
+/* Hide divider + extra links on desktop */
+#nav-links :nth-child(5),
+#nav-links :nth-child(6),
+#nav-links :nth-child(7) {
+    display: none;
+}
+
+/* ===== RIGHT HEADER BUTTONS ===== */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#logout-btn {
+    width: 120px;
+    padding: 0.6rem 1.2rem;
+    border: 0.10rem solid #474747;
+    border-radius: 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    text-decoration: none;
+    font-weight: bold;
+    color: #474747;
+}
+
+#user {
+    padding: 0.6em;
+    border: 0.10rem solid #474747;
+    border-radius: 25px;
+}
+
+.page {
+    padding: 96px 24px 16px; /* pushes everything BELOW the nav */
+}
+
+.text {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+}
+
+/* Active tab highlight */
+#nav-links li:nth-child(2) {
+    background-color: #EA580C;
+}
+
+#nav-links li:nth-child(2) a {
+    color: white;
+}
+.top-bar {
+    padding: 0px 5px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Align date text nicely */
+.top-bar-date {
+    text-align: right;
+}
+
+.top-bar-date .date {
+    font-weight: bold
+}
+/* ===== STATS ===== */
+.stats {
+    display: flex;
+    gap: 12px;
+    padding: 16px 0;
+    flex-wrap: wrap;
+}
+
+.stats-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    border-radius: 8px;
+    flex: 1;
+    min-width: 250px;
+}
+
+.stat-number {
+    font-size: x-large;
+}
+
+.pending {
+    background-color: #F5D9D9;
+    border: 2px solid #EA0C10;
+}
+
+.progress-card {
+    background-color: #F5E3BC;
+    border: 2px solid #EAD00C;
+}
+
+.resolved {
+    background-color: #E6FCAE;
+    border: 2px solid #70EA0C;
+}
+
+/* Stats text color follows card theme */
+.pending p { color: #EA0C10; }
+.progress-card p { color: #EAD00C; }
+.resolved p { color: #70EA0C; }
+
+/* ===== FILTERS ===== */
+.filter {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+    flex-wrap: wrap;
+    border: 2px solid #EA580C;
+    border-radius: 8px;
+    background: white;
+    justify-content: space-around;
+}
+
+/* STATUS TAG COLORS (MATCH STATS CARDS) */
+.tag-pending {
+  color: #EA0C10;
+  background-color: #FDB8B8;
+}
+
+.tag-progress {
+  color: #C7B00A;
+  background-color: #FFF0C2;
+}
+
+.tag-resolved {
+  color: #70EA0C;
+  background-color: #E6FCAE;
+}
+
+/* Active filter highlight */
+.active-filter {
+  background-color: #EA580C;
+  color: white;
+}
+
+.button {
+    border: 1px solid #EA580C;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    justify-content: center; 
+    flex: 1;
+    min-width: 140px; 
+    max-width: 220px;      
+}
+
+
+/* ===== COMPLAINT CARD ===== */
+.complaints {
+    border: 2px solid #EA580C;
+    padding: 15px 25px;
+    margin: 16px 0;
+    border-radius: 8px;
+    background: white;
+}
+
+.complaint-top {
+    display: flex;
+    align-items: flex-start;
+}
+
+.complaint-info {
+    max-width: 70%;
+}
+
+.complaint-action {
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.complaint-action select {
+    border: 1px solid #EA580C;
+    padding: 6px 10px;
+    border-radius: 8px;
+}
+
+/* TAG */
+.progress {
+    padding: 4px 8px;
+    border-radius: 8px;
+    margin-left: 8px;
+    font-size: 0.85rem;
+}
+
+/* COMMENT */
+.comment {
+    background-color: #FBD9B8;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 12px;
+    width: 80%;
+}
+
+
+/* ICONS */
+img {
+    width: 24px;
+    height: auto;
+}
+
+/* ===== DELETE BUTTON ===== */
+.delete-btn {
+  background: #fff;
+  color: #EA0C10;
+  border: 1px solid #EA0C10;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 6px;
+}
+
+.delete-btn:hover {
+  background: #EA0C10;
+  color: white;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 576px) {
+    .filter {
+        flex-direction: row;   /* KEEP ROW, allow wrapping */
+        justify-content: center;
+    }
+
+    .button {
+        min-width: 160px;  /* slightly bigger on mobile */
+    }
+
+    .stats-card {
+        min-width: 100%;
+    }
+
+    .complaint-top {
+        flex-direction: column;
+    }
+
+    .complaint-action {
+        margin-left: 0;
+        margin-top: 8px;
+    }
+
+    .comment {
+        width: 100%;
+    }
+}
+@media (max-width: 905px) {
+    #hamburger {
+        display: flex;
+    }
+
+    #nav-links {
+        width: 100%;
+        margin: 0;
+        padding: 1.5rem;
+        border-radius: 0px 0px 15px 15px;
+
+        display: none;
+        flex-flow: column nowrap;
+        gap: 0.4rem;
+
+        position: absolute;
+        top: 78px;
+        right: 0px;
+
+        background-color: #FFFFFF;
+        box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.25);
+    }
+
+    #nav-links.active {
+        display: flex;
+    }
+}
+
+@media (max-width: 460px) {
+
+    .header-right {
+        display: none;
+    }
+
+    /* Show extra nav items in mobile menu */
+    #nav-links :nth-child(5),
+    #nav-links :nth-child(6),
+    #nav-links :nth-child(7) {
+        display: flex;
+    }
+}
