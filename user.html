@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="template/template.css">
+  <link rel="stylesheet" href="assets/styles/main.css">
+
+  <title>User Profile</title>
+</head>
+
+<body>
+
+<header> 
+  <div class="header-brand"> 
+    <button id="hamburger"> 
+      <img src="assets/icons/template/hamburger_menu.svg" 
+alt="Hamburger Menu"> 
+  </button> 
+  <div class="logo"> <img src="assets/icons/template/hawkers.svg" alt="Hawkers Logo"> 
+        <h1>Hawkers</h1> 
+      </div> 
+    </div> 
+    <nav class="header-nav"> 
+      <ul id="nav-links"> 
+        <li><a href="home.html">Home</a></li> 
+        <li><a href="hawker_centers.html">Order</a></li> 
+        <li><a href="history.html">History</a></li> 
+        <li><a href="promotions.html">Promotions</a></li> 
+        <li><div class="divider"></div></li> 
+        <li><a href="cart.html">Cart</a></li> 
+        <li><a href="user.html">User</a></li> 
+      </ul> 
+    </nav> 
+    <div class="header-actions"> 
+  <a href="cart.html" id="cart"> 
+    Cart <img src="assets/icons/template/shopping_cart.svg" alt="Shopping Cart Icon"> 
+  </a>
+
+  <div id="user">
+    <span class="user-mask">
+      <a href="./user.html" class="user-icon" tabindex="-1">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+          />
+        </svg>
+      </a>
+    </span>
+  </div>
+</div>
+    </header>
+
+<div class="page-divider"></div>
+
+<main>
+<section class="profile-section">
+<h2>My Profile</h2>
+
+<div class="profile-card">
+
+<!-- USERNAME -->
+<div class="profile-row">
+  <span class="label">Username</span>
+  <span class="value" id="profileUsername"></span>
+  <button class="btn-pill" data-edit="username">Edit</button>
+</div>
+
+<!-- DESCRIPTION -->
+<div class="profile-row">
+  <span class="label">Description</span>
+  <span class="value" id="profileDescription"></span>
+  <button class="btn-pill" data-edit="description">Edit</button>
+</div>
+
+<!-- EMAIL -->
+<div class="profile-row">
+  <span class="label">Email</span>
+  <span class="value" id="profileEmail"></span>
+  <button class="btn-pill" data-edit="email">Edit</button>
+</div>
+
+<!-- ADDRESS -->
+<div class="profile-row">
+  <span class="label">Address</span>
+  <span class="value" id="profileAddress"></span>
+  <button class="btn-pill" data-edit="address">Edit</button>
+</div>
+
+<!-- PAYMENT -->
+<div class="profile-row">
+  <span class="label">Payment</span>
+  <span class="value" id="profilePayment"></span>
+  <button id="editPaymentBtn" class="btn-pill">Edit</button>
+</div>
+
+<!-- GENERAL EDITOR -->
+<div id="editor" style="display:none;">
+  <input id="editInput" class="input">
+
+  <input id="emailPassword"
+         class="input"
+         type="password"
+         placeholder="Confirm password"
+         style="display:none;">
+
+  <div id="addressFields" style="display:none;">
+    <input id="addrLine" class="input" placeholder="Address line">
+    <input id="addrCity" class="input" placeholder="City">
+    <input id="addrPostal" class="input" placeholder="Postal code">
+  </div>
+
+  <button id="saveEditBtn" class="btn">Save</button>
+</div>
+
+<!-- PAYMENT EDIT -->
+<div id="paymentEdit" style="display:none;">
+  <select id="paymentMethod" class="input">
+    <option value="">Select</option>
+    <option value="Card">Card</option>
+    <option value="PayNow">PayNow</option>
+    <option value="Cash">Cash</option>
+  </select>
+
+  <input id="cardLast4" class="input" maxlength="4" placeholder="Last 4 digits">
+
+  <button id="savePaymentBtn" class="btn">Save Payment</button>
+</div>
+
+<button id="logoutBtn" class="primary-btn">Logout</button>
+
+</div>
+</section>
+</main>
+
+<script type="module" src="assets/scripts/js-ignatius/user.js"></script>
+</body>
+</html>

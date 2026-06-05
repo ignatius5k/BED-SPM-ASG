@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="template/template.css">
+    <link rel="stylesheet" href="assets/styles/cart.css">
+    <title>Cart</title>
+</head>
+<body>
+
+<!-- HEADER (template) -->
+<header>
+    <div class="header-brand">
+        <button id="hamburger">
+            <img src="assets/icons/template/hamburger_menu.svg" alt="Hamburger Menu">
+        </button>
+        <div class="logo">
+            <img src="assets/icons/template/hawkers.svg" alt="Hawkers Logo">
+            <h1>Hawkers</h1>
+        </div>
+    </div>
+
+    <nav class="header-nav">
+        <ul id="nav-links">
+            <li><a href="home.html">Home</a></li>
+            <li><a href="hawker_centers.html">Order</a></li>
+            <li><a href="history.html">History</a></li>
+            <li><a href="promotions.html">Promotions</a></li>
+            <li><div class="divider"></div></li>
+            <li class="active"><a href="cart.html">Cart</a></li>
+            <li><a href="./user.html">User</a></li>
+        </ul>
+    </nav>
+
+    <div class="header-actions">
+        <a href="cart.html" id="cart">
+            Cart <img src="assets/icons/template/shopping_cart.svg" alt="Shopping Cart Icon">
+        </a>
+        <div id="user">
+            <a href="./user.html">
+            <img src="assets/icons/template/user.svg" alt="User Icon">
+            </a>
+        </div>
+    </div>
+</header>
+
+    <main>
+
+    <!-- Breadcrumbs -->
+    <nav id="breadcrumbs">
+        <ul>
+            <li>Cart</li>
+        </ul>
+    </nav>
+
+    <main class="cart-page">
+
+  <h2>My Cart</h2>
+
+  <div class="cart-layout">
+    <div id="cart-items"></div>
+
+    <div class="order-summary">
+      <h3>Order</h3>
+
+      <form id="promo-code">
+        <label for="input-code">Promo Code:</label>
+        <input id="input-code" type="text" placeholder="Enter code">
+        <button id="apply-code" type="submit">Apply</button>
+      </form>
+
+      <div class="summary-row">
+        <span>Subtotal</span>
+        <span id="subtotal">$0.00</span>
+      </div>
+
+      <div id="discounts"></div>
+        <div id="fees"></div>
+
+        
+      </div>
+
+      <div class="summary-total">
+        <span>Grand Total</span>
+        <span id="total">$0.00</span>
+      </div>
+
+      <h4>Payment Method</h4>
+
+<div class="payments">
+  <button data-method="cash">Cash</button>
+  <button data-method="paynow">PayNow</button>
+  <button data-method="visa">Visa</button>
+  <button data-method="mastercard">Mastercard</button>
+</div>
+
+<div class="fulfillment">
+  <h4>Fulfillment</h4>
+
+  <label>
+    <input type="radio" name="fulfillment" value="takeout" checked>
+    Takeout
+  </label>
+
+  <label>
+    <input type="radio" name="fulfillment" value="delivery">
+    Delivery
+  </label>
+</div>
+
+<div id="fees"></div>
+
+
+<button id="pay-now" class="pay-btn">Pay Now</button>
+
+
+    </div>
+  </div>
+
+    </main> 
+
+    <footer>
+        <div class="sub_footer">
+            <div class="footer-branding">
+                <div class="logo">
+                    <img src="assets/icons/template/hawkers_white.svg" alt="Hawkers Logo">
+                    <h1>Hawkers</h1>
+                </div>
+                <h3>Connect with us</h3>
+                <ul>
+                    <li><a href="http://"><img src="assets/icons/template/twitter.svg" alt="Twitter Icon"></a></li>
+                    <li><a href="http://"><img src="assets/icons/template/facebook.svg" alt="Facebook Icon"></a></li>
+                    <li><a href="http://"><img src="assets/icons/template/instagram.svg" alt="Twitter Icon"></a></li>
+                    <li><a href="http://"><img src="assets/icons/template/github.svg" alt="GitHub Icon"></a></li>
+                </ul>
+            </div>
+
+            <div class="footer-nav">
+                <nav>
+                    <h3>Pages</h3>
+                    <ul>
+                        <li><a href="home.html">Home</a></li>
+                        <li><a href="hawker_centers.html">Order</a></li>
+                        <li><a href="history.html">History</a></li>
+                        <li><a href="promotions.html">Promotions</a></li>
+                    </ul>
+                </nav>
+                <nav>
+                    <h3>Order</h3>
+                    <ul>
+                        <li><a href="hawker_centers.html">Hawker Centers</a></li>
+                        <li><a href="stalls.html">Stalls</a></li>
+                        <li><a href="cart.html">Cart</a></li>
+                        <li><a href="./credit.html">Credit</a></li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="footer-info">
+                <h3>Contact Us</h3>
+                <p>21 Revolution Street, Paris, France</p>
+                <p>+65 5752 6239</p>
+                <p>support@company.com</p>    
+            </div>
+        </div>
+        
+        <p>&copy; 2026 Hawkers. All rights reserved.</p>
+    </footer>
+
+    <script src="template/template.js"></script>
+    <script type="module" src="assets/scripts/cart.js"></script>
+
+  <!-- QR PAYMENT MODAL -->
+<div id="qr-modal" class="qr-modal" style="display:none;">
+  <div class="qr-box">
+    <img src="assets/images/Payment/Qr.png" alt="QR Payment">
+    <button id="qr-done">Done</button>
+  </div>
+</div>
+
+</body>

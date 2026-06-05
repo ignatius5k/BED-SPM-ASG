@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <title>Analytics & Reports</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="assets/styles/analytics.css">
+</head>
+
+<body class="text">
+
+<header>
+  <div class="header-brand">
+    <button id="hamburger">
+      <img src="assets/icons/template/hamburger_menu.svg" alt="Hamburger Menu">
+    </button>
+    <div class="logo">
+      <img src="assets/icons/template/hawkers.svg" alt="Hawkers Logo">
+      <h1>Hawkers</h1>
+    </div>
+  </div>
+
+  <nav class="header-nav">
+    <ul id="nav-links">
+      <li><a href="admin.html">Admin Dashboard</a></li>
+      <li><a href="complaint-management.html">Complaint Management</a></li>
+      <li><a href="analytics.html">Analytics & Reports</a></li>
+      <li><a href="user-management.html">User Management</a></li>
+    </ul>
+  </nav>
+
+  <div class="header-right">  
+    <a href="index.html" id="logout-btn">
+      LogOut <img src="assets/icons/template/arrow.svg" alt="Logout Icon">
+    </a>
+    <a href="user-admin.html" id="user">
+      <img src="assets/icons/template/user.svg" alt="User Icon">
+    </a>
+  </div>
+</header>
+
+<!-- EVERYTHING BELOW NAV -->
+<div class="page">
+
+  <!-- Page Header (your original) -->
+  <section class="header">
+    <div class="header-left">
+      <h1>Analytics & Reports</h1>
+    </div>
+  </section>
+
+  <!-- Top summary cards -->
+  <!-- ===== DASHBOARD GRID ===== -->
+<section class="dashboard">
+
+  <div class="dashboard-row">
+
+    <!-- LEFT: 4 STAT CARDS -->
+    <div class="dashboard-col">
+      <div class="stats-grid">
+
+        <div class="stat-card">
+          <h3>Best Hawker</h3>
+          <p id="best-hawker">Loading...</p>
+        </div>
+
+        <div class="stat-card">
+          <h3>Total Users</h3>
+          <p id="total-users">Loading...</p>
+        </div>
+
+        <div class="stat-card">
+          <h3>Total Complaints</h3>
+          <p id="total-complaints">0</p>
+        </div>
+
+        <div class="stat-card">
+          <h3>Average Rating</h3>
+          <p id="avg-rating">0.0/5</p>
+          <p class="stat-subtext">Based on <span id="review-count">0</span> reviews</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RIGHT: BAR CHART -->
+    <div class="dashboard-col">
+      <div class="card fill">
+        <h3>Top Complained Hawker</h3>
+        <div class="chart-placeholder">
+          <canvas id="complaintPolarChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ===== ROW 2 ===== -->
+  <div class="dashboard-row">
+
+    <!-- LEFT: PIE -->
+    <div class="dashboard-col">
+      <div class="card fill">
+        <h3>Complaints by Category</h3>
+        <div class="chart-placeholder">
+          <canvas id="categoryAreaChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: LINE -->
+    <div class="dashboard-col">
+      <div class="card fill">
+        <h3>Monthly Complaint Trend</h3>
+        <div class="chart-placeholder">
+          <canvas id="monthlyLineChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+  <!-- Table Section -->
+  <section class="table-section">
+    <h3>Top Performing Stalls</h3>
+
+    <table>
+      <tr>
+        <th>Rank</th>
+        <th>Stall Name</th>
+        <th>Rating</th>
+        <th>Orders</th>
+        <th>Revenue</th>
+      </tr>
+      <tbody id="top-stalls-body">
+        <!-- Filled by JS -->
+      </tbody>
+    </table>
+  </section>
+
+</div> <!-- END .page -->
+
+<script type="module" src="assets/scripts/analytics-dashboard.js"></script>
+</body>
+</html>

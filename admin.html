@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <title>Admin Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="assets/styles/admin.css">
+</head>
+
+<body class="text">
+
+<header>
+  <div class="header-brand">
+    <button id="hamburger">
+      <img src="assets/icons/template/hamburger_menu.svg" alt="Hamburger Menu">
+    </button>
+    <div class="logo">
+      <img src="assets/icons/template/hawkers.svg" alt="Hawkers Logo">
+      <h1>Hawkers</h1>
+    </div>
+  </div>
+
+  <nav class="header-nav">
+    <ul id="nav-links">
+      <li><a href="admin.html">Admin Dashboard</a></li>
+      <li><a href="complaint-management.html">Complaint Management</a></li>
+      <li><a href="analytics.html">Analytics & Reports</a></li>
+      <li><a href="user-management.html">User Management</a></li>
+    </ul>
+  </nav>
+
+  <div class="header-right">  
+    <a href="index.html" id="logout-btn">
+      LogOut <img src="assets/icons/template/arrow.svg" alt="Logout Icon">
+    </a>
+    <a href="user-admin.html" id="user">
+      <img src="assets/icons/template/user.svg" alt="User Icon">
+    </a>
+  </div>
+</header>
+
+<div class="page">
+
+  <section class="header">
+    <div class="header-left">
+      <h1>Admin Dashboard</h1>
+      <p>Overview of the hawker center operations</p>
+    </div>
+
+    <div class="header-right page-date">
+      <p>Today's Date</p>
+      <p class="date"></p>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats">
+    <div class="stat-card">
+      <h3>Total Stalls</h3>
+      <div class="stat-value">
+        <p id="total-stalls">0</p>
+        <img src="assets/icons/Dashboard/food-stand.png" alt="food stand">
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <h3>Total Users</h3>
+      <div class="stat-value">
+        <p id="total-users">0</p>
+        <img src="assets/icons/Dashboard/user.png" alt="user">
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <h3>Pending Complaints</h3>
+      <div class="stat-value">
+        <p id="pending-complaints">0</p>
+        <img src="assets/icons/Dashboard/report.png" alt="complaint">
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <h3>Average Rating</h3>
+      <div class="stat-value">
+        <p id="avg-rating">0.0</p>
+        <img src="assets/icons/Dashboard/star.png" alt="star">
+      </div>
+      <p class="stat-subtext" id="review-count-text">Based on 0 Reviews</p>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <section class="content">
+    <article class="card" id="highest-rated-card">
+      <h3>Highest Rated Hawker Centres</h3>
+      <canvas id="highestRatedChart"></canvas>
+    </article>
+
+    <article class="card" id="recent-complaints-card">
+      <div class="card-header">
+        <h3>Recent Complaints</h3>
+        <button class="button"><a href="complaint-management.html">View all</a></button>
+      </div>
+
+      <div id="recent-complaints"></div>
+    </article>
+  </section>
+
+  <!-- Quick Actions -->
+  <section class="quick-actions">
+    <h3>Quick Actions</h3>
+    <div class="actions">
+      <div class="action">
+        <a class="button full-btn" href="complaint-management.html">
+          Manage Complaints
+        </a>
+        <img src="assets/icons/Dashboard/report.png" alt="Complaint">
+      </div>
+
+      <div class="action">
+        <a class="button full-btn" href="analytics.html">
+          View Reports
+        </a>
+        <img src="assets/icons/Dashboard/trend.png" alt="Reports">
+      </div>
+
+      <div class="action">
+        <a class="button full-btn" href="user-management.html">
+          Manage Users
+        </a>
+        <img src="assets/icons/Dashboard/user.png" alt="User">
+      </div>
+    </div>
+  </section>
+
+</div> <!-- END .page -->
+
+<script type="module" src="assets/scripts/admin-dashboard.js"></script>
+
+</body>
+</html>

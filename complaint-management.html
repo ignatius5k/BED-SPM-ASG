@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <title>Complaint Management</title>
+  <link rel="stylesheet" href="assets/styles/complaint-management.css">
+</head>
+
+<body class="text">
+
+<header>
+  <div class="header-brand">
+    <button id="hamburger">
+      <img src="assets/icons/template/hamburger_menu.svg" alt="Hamburger Menu">
+    </button>
+    <div class="logo">
+      <img src="assets/icons/template/hawkers.svg" alt="Hawkers Logo">
+      <h1>Hawkers</h1>
+    </div>
+  </div>
+
+  <nav class="header-nav">
+    <ul id="nav-links">
+      <li><a href="admin.html">Admin Dashboard</a></li>
+      <li><a href="complaint-management.html">Complaint Management</a></li>
+      <li><a href="analytics.html">Analytics & Reports</a></li>
+      <li><a href="user-management.html">User Management</a></li>
+    </ul>
+  </nav>
+
+  <div class="header-right">  
+    <a href="index.html" id="logout-btn">
+      LogOut <img src="assets/icons/template/arrow.svg" alt="Logout Icon">
+    </a>
+    <a href="user-admin.html" id="user">
+      <img src="assets/icons/template/user.svg" alt="User Icon">
+    </a>
+  </div>
+</header>
+
+<!-- EVERYTHING BELOW NAV GOES INSIDE .page -->
+<div class="page">
+
+<div class="top-bar">
+  <h1>Complaint Management</h1>
+</div>
+
+  <section class="stats">
+    <div class="stats-card pending">
+      <div>
+        <b class="stat-number" id="pending-count">0</b>
+        <p><b>Pending</b></p>
+      </div>
+      <img src="assets/icons/Dashboard/pending.png" alt="Pending">
+    </div>
+
+    <div class="stats-card progress-card">
+      <div>
+        <b class="stat-number" id="progress-count">0</b>
+        <p><b>In Progress</b></p>
+      </div>
+      <img src="assets/icons/Dashboard/edit.png" alt="Edit">
+    </div>
+
+    <div class="stats-card resolved">
+      <div>
+        <b class="stat-number" id="resolved-count">0</b>
+        <p><b>Resolved</b></p>
+      </div>
+      <img src="assets/icons/Dashboard/seen.png" alt="Done">
+    </div>
+  </section>
+
+  <main>
+
+    <section class="filter">
+      <div class="button" data-filter="all">All <img src="assets/icons/Dashboard/filter.png" alt="filter"></div>
+      <div class="button" data-filter="pending">Pending</div>
+      <div class="button" data-filter="in progress">In Progress</div>
+      <div class="button" data-filter="resolved">Resolved</div>
+      <div class="button" data-filter="cleanliness">Cleanliness</div>
+      <div class="button" data-filter="food quality">Food Quality</div>
+      <div class="button" data-filter="service quality">Service Quality</div>
+      <div class="button" data-filter="others">Others</div>
+    </section>
+
+    <section class="complaints" id="complaints-container">
+      <!-- Complaints will be inserted by JS -->
+    </section>
+
+  </main>
+</div>
+<script type="module" src="assets/scripts/complaint-management.js"></script>
+</body>
+</html>
