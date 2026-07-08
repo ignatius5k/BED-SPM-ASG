@@ -185,7 +185,7 @@ function create_review(userProfile, displayName, reviewDate, reviewRating, revie
 
   let img = document.createElement("img");
   img.className = "review-profile";
-  img.src = userProfile || "assets/icons/feedback/blank-profile.svg";
+  img.src = userProfile || "icons/feedback/blank-profile.svg";
 
   let name = document.createElement("p");
   name.className = "review-name";
@@ -197,7 +197,7 @@ function create_review(userProfile, displayName, reviewDate, reviewRating, revie
 
   let rating = document.createElement("img");
   rating.className = "review-rating";
-  rating.src = `assets/icons/feedback/star-${reviewRating}.svg`;
+  rating.src = `icons/feedback/star-${reviewRating}.svg`;
 
   let desc = document.createElement("p");
   desc.className = "review-desc";
@@ -218,27 +218,27 @@ function updateRating() {
 
   if (ratingOverall <= 0) {
     ratingOverall_h3.style.color = "#474747"
-    ratingOverall_img.src = "assets/icons/feedback/star-empty-5.svg"
+    ratingOverall_img.src = "icons/feedback/star-empty-5.svg"
   }
   else if (ratingOverall <= 1) {
     ratingOverall_h3.style.color = "#AD343E"
-    ratingOverall_img.src = "assets/icons/feedback/star-1.svg"
+    ratingOverall_img.src = "icons/feedback/star-1.svg"
   }
   else if (ratingOverall <= 2) {
     ratingOverall_h3.style.color = "#FF9247"
-    ratingOverall_img.src = "assets/icons/feedback/star-2.svg"
+    ratingOverall_img.src = "icons/feedback/star-2.svg"
   }
   else if (ratingOverall <= 3) {
     ratingOverall_h3.style.color = "#FFD447"
-    ratingOverall_img.src = "assets/icons/feedback/star-3.svg"
+    ratingOverall_img.src = "icons/feedback/star-3.svg"
   }
   else if (ratingOverall <= 4) {
     ratingOverall_h3.style.color = "#4CAF50"
-    ratingOverall_img.src = "assets/icons/feedback/star-4.svg"
+    ratingOverall_img.src = "icons/feedback/star-4.svg"
   }
   else if (ratingOverall >= 4.5) {
     ratingOverall_h3.style.color = "#2E7D32"
-    ratingOverall_img.src = "assets/icons/feedback/star-5.svg"
+    ratingOverall_img.src = "icons/feedback/star-5.svg"
   }
 }
 

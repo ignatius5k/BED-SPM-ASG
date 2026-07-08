@@ -44,7 +44,7 @@ const statSpent = document.getElementById("stat-spent");
 ========================= */
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
-    window.location.href = "login.html";
+    window.location.href = "hawkers-app-ignatius/login-user.html";
     return;
   }
 

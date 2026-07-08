@@ -32,6 +32,10 @@ import {
   getAuth,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+import {
+  normalizeImagePath,
+  setImageSrc
+} from "./image-paths.js";
 
 const auth = getAuth(app);
 
@@ -41,7 +45,7 @@ const totalEl = document.getElementById("total");
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
-    window.location.href = "login.html";
+    window.location.href = "hawkers-app-ignatius/login-user.html";
     return;
   }
 
@@ -64,9 +68,10 @@ onAuthStateChanged(auth, async (user) => {
 
     const div = document.createElement("div");
     div.className = "cart-item";
+    const itemImagePath = normalizeImagePath(item.imagePath, "Background/background.png");
 
     div.innerHTML = `
-      <img src="${item.imagePath}">
+      <img class="cart-item-image" src="${itemImagePath}" alt="${item.name}">
       <div class="cart-info">
         <h4>${item.quantity}x ${item.name}</h4>
         <p>${item.description ?? ""}</p>
@@ -74,6 +79,8 @@ onAuthStateChanged(auth, async (user) => {
         <div class="remove">Remove</div>
       </div>
     `;
+
+    setImageSrc(div.querySelector(".cart-item-image"), itemImagePath);
 
     div.querySelector(".remove").onclick = async () => {
       await deleteDoc(doc(itemsRef, docSnap.id));

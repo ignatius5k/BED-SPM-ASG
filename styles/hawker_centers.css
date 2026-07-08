@@ -15,7 +15,7 @@ layouts and thus use same CSS (hawker_centers.css)
     margin: 0 0 1rem 0;
 
     /* Need to search for better clearer image */
-    background: url("../images/hawker_center/hawker_center_large.jpg") no-repeat center center / cover;
+    background: url("../user_pages/hawker.jpg") no-repeat center center / cover;
 }
 
 /* Hawker Center Container Grid */
@@ -72,7 +72,6 @@ input[type="text"] {
     color: #FC8A06;
 }
 
-/*style="background: url('bg1.jpg') center/cover;*/
 @media (max-width: 1420px) {
     .container {
         max-width: 1010px;

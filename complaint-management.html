@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <title>Complaint Management</title>
-  <link rel="stylesheet" href="assets/styles/complaint-management.css">
+  <link rel="stylesheet" href="styles/complaint-management.css">
 </head>
 
 <body class="text">
@@ -17,10 +17,10 @@
 <header>
   <div class="header-brand">
     <button id="hamburger">
-      <img src="assets/icons/template/hamburger_menu.svg" alt="Hamburger Menu">
+      <img src="icons/template/hamburger_menu.svg" alt="Hamburger Menu">
     </button>
     <div class="logo">
-      <img src="assets/icons/template/hawkers.svg" alt="Hawkers Logo">
+      <img src="icons/template/hawkers.svg" alt="Hawkers Logo">
       <h1>Hawkers</h1>
     </div>
   </div>
@@ -30,16 +30,16 @@
       <li><a href="admin.html">Admin Dashboard</a></li>
       <li><a href="complaint-management.html">Complaint Management</a></li>
       <li><a href="analytics.html">Analytics & Reports</a></li>
-      <li><a href="user-management.html">User Management</a></li>
+      <li><a href="user-admin.html">User Management</a></li>
     </ul>
   </nav>
 
   <div class="header-right">  
     <a href="index.html" id="logout-btn">
-      LogOut <img src="assets/icons/template/arrow.svg" alt="Logout Icon">
+      LogOut <img src="icons/template/arrow.svg" alt="Logout Icon">
     </a>
     <a href="user-admin.html" id="user">
-      <img src="assets/icons/template/user.svg" alt="User Icon">
+      <img src="icons/template/user.svg" alt="User Icon">
     </a>
   </div>
 </header>
@@ -57,7 +57,7 @@
         <b class="stat-number" id="pending-count">0</b>
         <p><b>Pending</b></p>
       </div>
-      <img src="assets/icons/Dashboard/pending.png" alt="Pending">
+      <img src="icons/Dashboard/pending.png" alt="Pending">
     </div>
 
     <div class="stats-card progress-card">
@@ -65,7 +65,7 @@
         <b class="stat-number" id="progress-count">0</b>
         <p><b>In Progress</b></p>
       </div>
-      <img src="assets/icons/Dashboard/edit.png" alt="Edit">
+      <img src="icons/Dashboard/edit.png" alt="Edit">
     </div>
 
     <div class="stats-card resolved">
@@ -73,14 +73,14 @@
         <b class="stat-number" id="resolved-count">0</b>
         <p><b>Resolved</b></p>
       </div>
-      <img src="assets/icons/Dashboard/seen.png" alt="Done">
+      <img src="icons/Dashboard/seen.png" alt="Done">
     </div>
   </section>
 
   <main>
 
     <section class="filter">
-      <div class="button" data-filter="all">All <img src="assets/icons/Dashboard/filter.png" alt="filter"></div>
+      <div class="button" data-filter="all">All <img src="icons/Dashboard/filter.png" alt="filter"></div>
       <div class="button" data-filter="pending">Pending</div>
       <div class="button" data-filter="in progress">In Progress</div>
       <div class="button" data-filter="resolved">Resolved</div>
@@ -96,6 +96,6 @@
 
   </main>
 </div>
-<script type="module" src="assets/scripts/complaint-management.js"></script>
+<script type="module" src="scripts/complaint-management.js"></script>
 </body>
 </html>

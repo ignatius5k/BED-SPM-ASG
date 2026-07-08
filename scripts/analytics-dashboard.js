@@ -24,7 +24,7 @@ hamburger.addEventListener("click", () => {
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     alert("Not logged in");
-    window.location.href = "login-admin.html";
+    window.location.href = "hawkers-app-ignatius/login-admin.html";
     return;
   }
 

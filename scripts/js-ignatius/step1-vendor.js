@@ -13,5 +13,5 @@ document.getElementById("btnPublishStall")?.addEventListener("click", async () =
   const stallAddr = document.getElementById("stallAddr").value.trim();
 
   await saveProfile(user.uid, "vendor", { stallName, stallDesc, stallAddr });
-  window.location.href = "step2-vendor.html";
+  window.location.href = "../vendor_menu.html";
 });

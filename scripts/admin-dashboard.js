@@ -16,7 +16,7 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.8.0/fi
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     alert("Not logged in");
-    window.location.href = "login-admin.html";
+    window.location.href = "hawkers-app-ignatius/login-admin.html";
     return;
   }
 

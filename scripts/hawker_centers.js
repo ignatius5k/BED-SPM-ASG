@@ -7,6 +7,10 @@ import {
   updateDoc,
   increment
 } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+import {
+  resolveHawkerCenterImage,
+  setImageBackground
+} from "./image-paths.js";
 
 /* =========================
    Firebase config
@@ -27,10 +31,8 @@ function createItem(id, name, img) {
   // Create card div
   const item = document.createElement('div');
   item.classList.add('item');
-  item.style.background = `
-    linear-gradient(to top right, rgba(3, 8, 31, 1), rgba(3, 8, 31, 0.8), rgba(3, 8, 31, 0.0), rgba(3, 8, 31, 0), rgba(3, 8, 31, 0)),
-    linear-gradient(to left, rgba(3, 8, 31, 1), rgba(3, 8, 31, 0.4), rgba(3, 8, 31, 0.2), rgba(3, 8, 31, 0), rgba(3, 8, 31, 0)),
-    url('${img}') no-repeat center center / cover`;
+  const imagePath = resolveHawkerCenterImage(id, name, img);
+  setImageBackground(item, imagePath, "user_pages/hawker.jpg");
 
   // Add content
   const hawkerCenterId = document.createElement('p');

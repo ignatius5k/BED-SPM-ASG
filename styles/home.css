@@ -23,7 +23,7 @@ body {
 
     background: 
         radial-gradient(ellipse, rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.1)), 
-        url("../images/home/cta1.svg") no-repeat center center / cover;
+        url("../home/cta1.svg") no-repeat center center / cover;
 }
 
 #cta h2 {

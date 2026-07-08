@@ -26,7 +26,7 @@ hamburger.addEventListener("click", () => {
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     alert("Not logged in");
-    window.location.href = "login-admin.html";
+    window.location.href = "hawkers-app-ignatius/login-admin.html";
     return;
   }
 
@@ -125,7 +125,7 @@ function renderTable(users) {
       <td><span class="badge ${badgeClass}">${roleLabel}</span></td>
       <td>${stall}</td>
       <td>
-        <img src="assets/icons/Dashboard/Delete.png"
+        <img src="icons/Dashboard/Delete.png"
              alt="Delete"
              class="delete-btn"
              data-id="${user.id}">

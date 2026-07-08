@@ -1,6 +1,6 @@
 /* ===== PAGE BACKGROUND ===== */
 body {
-  background-image: url("../../images/order/background.png");
+  background-image: url("../Background/background.png");
   background-repeat: repeat-y;
   background-position: center top;
   background-size: repeat;

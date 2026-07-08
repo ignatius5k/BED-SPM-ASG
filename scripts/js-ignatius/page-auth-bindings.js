@@ -17,7 +17,7 @@ function getRole(){
 
 function getRedirect(role){
   if (role === "user") return "./hawkers-app-ignatius/step1-user.html";
-  if (role === "vendor") return "./hawkers-app-ignatius/step1-vendor.html";
+  if (role === "vendor") return "./vendor_menu.html";
   if (role === "user_login") return "../home.html";   
   if (role === "vendor_login") return "../vendor_menu.html";
   if (role === "admin_login") return "../admin.html"; 

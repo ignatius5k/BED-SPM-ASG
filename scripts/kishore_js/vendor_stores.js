@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
       currentUserUID = user.uid;
       loadStores();
     } else {
-      window.location.href = 'login.html';
+      window.location.href = 'hawkers-app-ignatius/login-vendor.html';
     }
   });
 

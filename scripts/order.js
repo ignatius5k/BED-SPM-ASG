@@ -13,6 +13,12 @@ import {
 import {
   getAuth
 } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+import {
+  resolveHawkerCenterImage,
+  resolveProductImage,
+  resolveStallImage,
+  setImageSrc
+} from "./image-paths.js";
 
 /* =========================
    Firebase config (UNCHANGED)
@@ -71,8 +77,14 @@ document.getElementById("stall-name").textContent =
 document.getElementById("stall-location").textContent =
   center.name;
 
-document.querySelector(".stall-banner").src =
-  stall.imagePath || center.imagePath;
+const centerImagePath = resolveHawkerCenterImage(centerId, center.name, center.imagePath);
+const stallImagePath = resolveStallImage(centerId, stall.name, stall.imagePath || center.imagePath);
+
+setImageSrc(
+  document.querySelector(".stall-banner"),
+  stallImagePath,
+  centerImagePath
+);
 
 /* Back button */
 document.getElementById("back-btn").href =
@@ -122,19 +134,28 @@ function renderProducts(products, isSearch = false) {
 
       const card = document.createElement("div");
       card.className = "product-card";
+      const productImagePath = resolveProductImage(
+        centerId,
+        stall.name,
+        product.name,
+        product.imagePath,
+        stallImagePath
+      );
 
       card.innerHTML = `
-        <img src="${product.imagePath || "assets/images/placeholder.png"}" alt="${product.name}">
+        <img class="product-image" src="${productImagePath}" alt="${product.name}">
         <div class="info">
           <h4>${product.name}</h4>
           <p class="price">$${product.basePrice ?? "--"}</p>
 
           <button class="like-btn">
-            <img class="like-icon" src="assets/icons/order/unlike.svg" alt="like">
+            <img class="like-icon" src="icons/order/unlike.svg" alt="like">
             <span class="like-count">${product.likes ?? 0}</span>
           </button>
         </div>
       `;
+
+      setImageSrc(card.querySelector(".product-image"), productImagePath, stallImagePath);
 
       const likeBtn = card.querySelector(".like-btn");
       const likeIcon = card.querySelector(".like-icon");
@@ -151,8 +172,8 @@ function renderProducts(products, isSearch = false) {
         if (currentToken !== renderToken) return;
 
         likeIcon.src = likeDoc.exists()
-          ? "assets/icons/order/unlike.svg"
-          : "assets/icons/order/like.svg";
+          ? "icons/order/unlike.svg"
+          : "icons/order/like.svg";
       }
 
       likeBtn.addEventListener("click", async (e) => {
@@ -174,7 +195,7 @@ function renderProducts(products, isSearch = false) {
 
               // update UI
               likeCount.textContent = Number(likeCount.textContent) + 1;
-              likeIcon.src = "assets/icons/order/unlike.svg";
+              likeIcon.src = "icons/order/unlike.svg";
 
               // ⭐ FIX: update local cache
               const p = allProducts.find(p => p.id === product.id);
@@ -186,7 +207,7 @@ function renderProducts(products, isSearch = false) {
 
               // update UI
               likeCount.textContent = Number(likeCount.textContent) - 1;
-              likeIcon.src = "assets/icons/order/like.svg";
+              likeIcon.src = "icons/order/like.svg";
 
               // ⭐ FIX: update local cache
               const p = allProducts.find(p => p.id === product.id);

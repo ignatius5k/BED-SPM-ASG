@@ -11,7 +11,7 @@ body {
     font-family: "DM Sans", Arial, Helvetica, sans-serif;
 
     background-color: #FFFFFF;
-    /* background: url("/assets/images/Background.jpg") no-repeat center center / cover fixed; */
+    /* background: url("../Background/background.png") no-repeat center center / cover fixed; */
 }
 
 h3, h4, p {

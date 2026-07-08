@@ -16,6 +16,10 @@ import {
   onAuthStateChanged
 } from
   "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+import {
+  resolveProductImage,
+  setImageSrc
+} from "./image-paths.js";
 
 /* Firebase config (UNCHANGED) */
 const firebaseConfig = {
@@ -36,7 +40,7 @@ let CURRENT_USER_ID = null;
 onAuthStateChanged(auth, (user) => {
   if (!user) {
     console.error("❌ User not logged in");
-    window.location.href = "login.html";
+    window.location.href = "hawkers-app-ignatius/login-user.html";
     return;
   }
 
@@ -84,6 +88,13 @@ const stallData = stallSnap.exists() ? stallSnap.data() : {};
 
 
 const product = productSnap.data();
+const productImagePath = resolveProductImage(
+  centerId,
+  stallData.name,
+  product.name,
+  product.imagePath,
+  stallData.imagePath || centerData.imagePath
+);
 
 /* =========================
    DOM
@@ -103,9 +114,11 @@ let selectedAddons = [];
 ========================= */
 productCard.innerHTML = `
   <h2 class="product-title">${product.name}</h2>
-  <img src="${product.imagePath}">
+  <img src="${productImagePath}" alt="${product.name}">
   <p class="product-desc">${product.description}</p>
 `;
+
+setImageSrc(productCard.querySelector("img"), productImagePath);
 
 /* =========================
    ADDONS (extras / meat / rice)
@@ -227,7 +240,7 @@ document.getElementById("add-to-cart").onclick = async () => {
     await setDoc(itemRef, {
       productId,
       name: product.name,
-      imagePath: product.imagePath,
+      imagePath: productImagePath,
       unitPrice: basePrice + selectedAddons.reduce((s, a) => s + a.price, 0),
       quantity,
       addons: selectedAddons,

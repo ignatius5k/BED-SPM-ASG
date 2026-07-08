@@ -7,6 +7,10 @@ import {
   updateDoc,
   increment
 } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+import {
+  resolvePromotionImage,
+  setImageBackground
+} from "./image-paths.js";
 
 /* =========================
    Firebase config
@@ -28,10 +32,8 @@ function createCodeCard(promoCode, promoText, discount, daysRemaining, img, type
   // Create card div
   const card = document.createElement("div");
   card.classList.add("card");
-  card.style.background = `
-    linear-gradient(to top right, rgba(3, 8, 31, 1), rgba(3, 8, 31, 0.8), rgba(3, 8, 31, 0.0), rgba(3, 8, 31, 0), rgba(3, 8, 31, 0)),
-    linear-gradient(to left, rgba(3, 8, 31, 1), rgba(3, 8, 31, 0.4), rgba(3, 8, 31, 0.2), rgba(3, 8, 31, 0), rgba(3, 8, 31, 0)),
-    url('${img}') no-repeat center center / cover`;
+  const imagePath = resolvePromotionImage(promoCode, promoText, img);
+  setImageBackground(card, imagePath, "promotion/Dish1.jpg");
 
   // Add content
   // Left details section
