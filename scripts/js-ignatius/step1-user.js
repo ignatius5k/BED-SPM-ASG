@@ -1,6 +1,4 @@
 console.log("✅ step1-user.js loaded");
-import { auth } from "./firebase.js";
-import { saveProfile } from "./db.js";
 import { bindImagePreview } from "./ui.js";
 
 bindImagePreview("userPhoto", "userPhotoBox");
