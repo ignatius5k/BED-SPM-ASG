@@ -11,7 +11,8 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 import {
-  getAuth
+  getAuth,
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
 import {
   resolveHawkerCenterImage,
@@ -35,6 +36,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+
+function waitForAuthReady() {
+  return new Promise((resolve) => {
+    const unsubscribe = onAuthStateChanged(auth, () => {
+      unsubscribe();
+      resolve();
+    });
+  });
+}
 
 /* =========================
    URL PARAMS
@@ -148,8 +158,8 @@ function renderProducts(products, isSearch = false) {
           <h4>${product.name}</h4>
           <p class="price">$${product.basePrice ?? "--"}</p>
 
-          <button class="like-btn">
-            <img class="like-icon" src="icons/order/unlike.svg" alt="like">
+          <button class="like-btn" type="button" aria-label="Like product">
+            <img class="like-icon" src="icons/order/like.svg" alt="like">
             <span class="like-count">${product.likes ?? 0}</span>
           </button>
         </div>
@@ -161,11 +171,11 @@ function renderProducts(products, isSearch = false) {
       const likeIcon = card.querySelector(".like-icon");
       const likeCount = card.querySelector(".like-count");
 
-      const userId = auth.currentUser?.uid;
       const productRef = doc(productsRef, product.id);
-      const likeRef = doc(productRef, "likes", userId);
+      const userId = auth.currentUser?.uid;
 
       if (userId) {
+        const likeRef = doc(productRef, "likes", userId);
         const likeDoc = await getDoc(likeRef);
 
         // 🛑 stop if render changed while awaiting
@@ -184,6 +194,8 @@ function renderProducts(products, isSearch = false) {
           alert("You must be signed in to like!");
           return;
         }
+
+        const likeRef = doc(productRef, "likes", userId);
 
         try {
           await runTransaction(db, async (transaction) => {
@@ -232,6 +244,7 @@ function renderProducts(products, isSearch = false) {
 }
 
 /* Initial render */
+await waitForAuthReady();
 renderProducts(allProducts);
 
 /* SEARCH */
