@@ -1,32 +1,34 @@
 const express = require("express");
-const sql = require("mssql"); // Assuming you've installed mssql
-const dbConfig = require("./dbConfig");
+const sql = require("mssql");
+const cors = require("cors");
+const dotenv = require("dotenv");
+dotenv.config();
+
+const userController = require("./controllers/userController");
+const { validateRegister, validateLogin } = require("./middlewares/userValidation");
+const { requireAuth } = require("./middlewares/authMiddleware");
 
 const app = express();
-const port = process.env.PORT || 3000; // Use environment variable or default port
+const port = process.env.PORT || 3000;
 
-app.use(express.json()); // middleware inbuilt in express to recognize the incoming Request Object as a JSON Object.
-app.use(express.urlencoded()); // middleware inbuilt in express to recognize the incoming Request Object as strings or arrays
+app.use(cors()); // frontend runs on a different origin/port, so this is needed
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.listen(port, async () => {
-  try {
-    // Connect to the database
-    await sql.connect(dbConfig);
-    console.log("Database connection established successfully");
-  } catch (err) {
-    console.error("Database connection error:", err);
-    // Terminate the application with an error code (optional)
-    process.exit(1); // Exit with code 1 indicating an error
-  }
+// --- User / Auth routes ---
+app.post("/users/register", validateRegister, userController.register);
+app.post("/users/login", validateLogin, userController.login);
+app.put("/users/change-password", requireAuth, userController.changePassword);
 
-  console.log(`Server listening on port ${port}`);
+
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
 
-// Close the connection pool on SIGINT signal
+// Graceful shutdown
 process.on("SIGINT", async () => {
   console.log("Server is gracefully shutting down");
-  // Perform cleanup tasks (e.g., close database connections)
   await sql.close();
-  console.log("Database connection closed");
-  process.exit(0); // Exit with code 0 indicating successful shutdown
+  console.log("Database connections closed");
+  process.exit(0);
 });
