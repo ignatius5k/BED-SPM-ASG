@@ -1,5 +1,3 @@
-import { auth } from "./firebase.js";
-import { saveProfile } from "./db.js";
 import { bindChips } from "./ui.js";
 
 const chips = bindChips("chipList", 1);
