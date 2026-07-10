@@ -125,4 +125,63 @@ async function updatePassword(id, newHashedPassword) {
   }
 }
 
-module.exports = { createUser, getUserByEmail, getUserById, updatePassword };
+async function getAllUsers() {
+  let connection;
+  try {
+    connection = await sql.connect(dbConfig);
+    const result = await connection.request().query(
+      "SELECT id, username, email, role FROM Users"
+    );
+    return result.recordset;
+  } catch (error) {
+    console.error("Database error in getAllUsers:", error);
+    throw error;
+  } finally {
+    if (connection) await connection.close();
+  }
+}
+
+async function updateUser(id, updates) {
+  let connection;
+  try {
+    connection = await sql.connect(dbConfig);
+    const req = connection.request();
+    req.input("id", id);
+    req.input("username", updates.username);
+    req.input("email", updates.email);
+    await req.query(`
+      UPDATE Users
+      SET username = @username, email = @email
+      WHERE id = @id
+    `);
+    return await getUserById(id);
+  } catch (error) {
+    console.error("Database error in updateUser:", error);
+    throw error;
+  } finally {
+    if (connection) await connection.close();
+  }
+}
+
+async function deleteUser(id) {
+  let connection;
+  try {
+    connection = await sql.connect(dbConfig);
+    const req = connection.request();
+    req.input("id", id);
+    const result = await req.query(
+      "DELETE FROM Users OUTPUT DELETED.id, DELETED.username WHERE id = @id"
+    );
+    return result.recordset[0] || null;
+  } catch (error) {
+    console.error("Database error in deleteUser:", error);
+    throw error;
+  } finally {
+    if (connection) await connection.close();
+  }
+}
+
+module.exports = {
+  createUser, getUserByEmail, getUserById, updatePassword,
+  getAllUsers, updateUser, deleteUser
+};

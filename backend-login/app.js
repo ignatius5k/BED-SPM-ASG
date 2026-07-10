@@ -15,6 +15,10 @@ app.use(express.urlencoded({ extended: true }));
 app.post("/users/register", validateRegister, userController.register);
 app.post("/users/login", validateLogin, userController.login);
 app.put("/users/change-password", requireAuth, userController.changePassword);
+app.get("/users", userController.getAllUsers);
+app.get("/users/:id", requireAuth, userController.getUserById);
+app.put("/users/:id", requireAuth, userController.updateUser);
+app.delete("/users/:id", requireAuth, userController.deleteUser);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
