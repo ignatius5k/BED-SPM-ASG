@@ -3,9 +3,10 @@ module.exports = {
   password: "123",
   server: "localhost",
   database: "hawkerCentreDB",
-  trustServerCertificate: true,
+  port: 1433,
+  connectionTimeout: 60000,
   options: {
-    port: 1433, // Default SQL Server port
-    connectionTimeout: 60000, // Connection timeout in milliseconds
+    trustServerCertificate: true,
+    encrypt: false, 
   },
 };

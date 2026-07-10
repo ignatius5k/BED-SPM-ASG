@@ -5,6 +5,7 @@
   "main": "app.js",
   "dependencies": {
     "accepts": "^2.0.0",
+    "bcryptjs": "^3.0.3",
     "body-parser": "^2.3.0",
     "bytes": "^3.1.2",
     "call-bind-apply-helpers": "^1.0.2",
@@ -38,6 +39,8 @@
     "inherits": "^2.0.4",
     "ipaddr.js": "^1.9.1",
     "is-promise": "^4.0.0",
+    "joi": "^18.2.3",
+    "jsonwebtoken": "^9.0.3",
     "math-intrinsics": "^1.1.0",
     "media-typer": "^1.1.0",
     "merge-descriptors": "^2.0.0",

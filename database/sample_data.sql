@@ -1,3 +1,4 @@
+
 INSERT INTO Users (id, username, email, password, role) VALUES
 ('CUST001', 'alicetan',      'alicetan@example.com',        '$2b$10$F8W4aC8xV1BzrpaHcw0zL.43mX5SjbJktOsb0dNuVPBr36F1De.Fi', 'customer'),
 ('CUST002', 'davidlim',      'davidlim01@example.com',      '$2b$10$placeholderhash0000000000000000000000000000000002', 'customer'),
