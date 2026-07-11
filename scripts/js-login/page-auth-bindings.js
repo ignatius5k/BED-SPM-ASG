@@ -1,15 +1,5 @@
-import { auth, provider } from "./firebase.js";
-import { saveProfile } from "./db.js";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signInWithPopup
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { registerUser, loginUser } from "./api.js";
 
-/**
- * Binds auth buttons on signup/login pages.
- * Decides redirect based on page role.
- */
 function getRole(){
   const form = document.querySelector("form[data-role]");
   return form?.dataset.role || "";
@@ -18,10 +8,15 @@ function getRole(){
 function getRedirect(role){
   if (role === "user") return "./hawkers-app-ignatius/step1-user.html";
   if (role === "vendor") return "./vendor_menu.html";
-  if (role === "user_login") return "../home.html";   
+  if (role === "user_login") return "../home.html";
   if (role === "vendor_login") return "../vendor_menu.html";
-  if (role === "admin_login") return "../admin.html"; 
   return "../index.html";
+}
+
+function toBackendRole(role){
+  if (role.includes("vendor")) return "vendor";
+  if (role.includes("inspector")) return "inspector";
+  return "customer";
 }
 
 function getInputs(){
@@ -33,35 +28,22 @@ function getInputs(){
   };
 }
 
-async function postAuthProfile(user, role, name){
-  const profile = {
-    displayName: name || user.displayName || "",
-    email: user.email || ""
-  };
-
-  const resolvedRole =
-    role.includes("vendor") ? "vendor" :
-    role.includes("admin") ? "admin" :
-    "user";
-
-  await saveProfile(user.uid, resolvedRole, profile);
-}
-
-async function handleEmail(){
+async function handleSubmit(){
   const role = getRole();
   const { name, email, password, terms } = getInputs();
   const redirect = getRedirect(role);
+  const isSignup = role === "user" || role === "vendor";
 
   if (!email || !password) return alert("Please fill in email + password.");
-  if (!terms) return alert("Please agree to the terms & policy.");
+  if (isSignup && !terms) return alert("Please agree to the terms & policy.");
+  if (isSignup && !name) return alert("Please enter your name.");
 
   try {
-    if (role === "user" || role === "vendor") {
-      const cred = await createUserWithEmailAndPassword(auth, email, password);
-      await postAuthProfile(cred.user, role, name);
+    if (isSignup) {
+      await registerUser(name, email, password, toBackendRole(role));
+      await loginUser(email, password); // auto-login right after signup
     } else {
-      const cred = await signInWithEmailAndPassword(auth, email, password);
-      await postAuthProfile(cred.user, role, name);
+      await loginUser(email, password);
     }
     window.location.href = redirect;
   } catch (err) {
@@ -69,18 +51,4 @@ async function handleEmail(){
   }
 }
 
-async function handleGoogle(){
-  const role = getRole();
-  const redirect = getRedirect(role);
-
-  try {
-    const cred = await signInWithPopup(auth, provider);
-    await postAuthProfile(cred.user, role, "");
-    window.location.href = redirect;
-  } catch (err) {
-    alert(err.message);
-  }
-}
-
-document.getElementById("btnPrimary")?.addEventListener("click", handleEmail);
-document.getElementById("btnGoogle")?.addEventListener("click", handleGoogle);
+document.getElementById("btnPrimary")?.addEventListener("click", handleSubmit);
