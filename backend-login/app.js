@@ -1,13 +1,18 @@
 const express = require("express");
 const sql = require("mssql");
+const cors = require("cors");
 
 const userController = require("./controllers/userController");
 const { validateRegister, validateLogin } = require("./middleware/userValidation");
 const { requireAuth } = require("./middleware/authMiddleware");
 
+// --- Notifications ---
+const notificationRoutes = require("../backend-notifications/routes/notificationRoutes");
+
 const app = express();
 const port = 3000;
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -19,6 +24,9 @@ app.get("/users", userController.getAllUsers);
 app.get("/users/:id", requireAuth, userController.getUserById);
 app.put("/users/:id", requireAuth, userController.updateUser);
 app.delete("/users/:id", requireAuth, userController.deleteUser);
+
+// --- Notifications routes ---
+app.use("/notifications", notificationRoutes);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

@@ -30,3 +30,12 @@ CREATE TABLE MenuItems (
   Category VARCHAR(50),
   IsAvailable BIT DEFAULT 1
 );
+
+CREATE TABLE Notifications (
+    NotificationID VARCHAR(20) PRIMARY KEY,
+    VendorID VARCHAR(10) NOT NULL FOREIGN KEY REFERENCES Users(id),
+    OrderID VARCHAR(20),
+    Message TEXT NOT NULL,
+    IsRead TEXT DEFAULT 'False',
+    CreatedAt DATETIME DEFAULT GETDATE(),
+);
