@@ -5,12 +5,17 @@ function getRole(){
   return form?.dataset.role || "";
 }
 
-function getRedirect(role){
-  if (role === "user") return "./hawkers-app-ignatius/step1-user.html";
+function getSignupRedirect(role){
+  if (role === "user") return "./home.html";
   if (role === "vendor") return "./vendor_menu.html";
-  if (role === "user_login") return "../home.html";
-  if (role === "vendor_login") return "../vendor_menu.html";
-  return "../index.html";
+  return "signup.html";
+}
+
+function getLoginRedirect(backendRole){
+  if (backendRole === "customer") return "../home.html";
+  if (backendRole === "vendor") return "../vendor_menu.html";
+  if (backendRole === "inspector") return "../inspector_dashboard.html";
+  return "../signup.html";
 }
 
 function toBackendRole(role){
@@ -31,7 +36,6 @@ function getInputs(){
 async function handleSubmit(){
   const role = getRole();
   const { name, email, password, terms } = getInputs();
-  const redirect = getRedirect(role);
   const isSignup = role === "user" || role === "vendor";
 
   if (!email || !password) return alert("Please fill in email + password.");
@@ -41,11 +45,11 @@ async function handleSubmit(){
   try {
     if (isSignup) {
       await registerUser(name, email, password, toBackendRole(role));
-      await loginUser(email, password); // auto-login right after signup
+      window.location.href = getSignupRedirect(role);
     } else {
-      await loginUser(email, password);
+      const data = await loginUser(email, password);
+      window.location.href = getLoginRedirect(data.role);
     }
-    window.location.href = redirect;
   } catch (err) {
     alert(err.message);
   }
