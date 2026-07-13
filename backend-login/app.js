@@ -1,5 +1,6 @@
 const express = require("express");
 const sql = require("mssql");
+const cors = require("cors");
 
 const userController = require("./controllers/userController");
 const { validateRegister, validateLogin } = require("./middleware/userValidation");
@@ -8,8 +9,9 @@ const { requireAuth } = require("./middleware/authMiddleware");
 const app = express();
 const port = 3000;
 
+app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true })); 
 
 // --- User / Auth routes ---
 app.post("/users/register", validateRegister, userController.register);
