@@ -29,7 +29,7 @@ function getRedirect(backendRole, fromSignupPage){
   if (backendRole === "customer") return fromSignupPage ? "../home.html" : "home.html".replace("home.html", "../home.html");
   if (backendRole === "vendor")   return fromSignupPage ? "../vendor_menu.html" : "../vendor_menu.html";
   if (backendRole === "inspector")return fromSignupPage ? "../inspector_dashboard.html" : "../inspector_dashboard.html";
-  return fromSignupPage ? "hawkers-app-ignatius/login.html" : "../signup.html";
+  return fromSignupPage ? "../login.html" : "../signup.html";
 }
 
 /* =========================
