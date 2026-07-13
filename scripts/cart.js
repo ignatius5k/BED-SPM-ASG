@@ -45,7 +45,7 @@ const totalEl = document.getElementById("total");
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
-    window.location.href = "hawkers-app-ignatius/login-user.html";
+    window.location.href = "hawkers-app-ignatius/login.html";
     return;
   }
 
