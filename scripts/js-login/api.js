@@ -23,14 +23,30 @@ export async function loginUser(email, password) {
   localStorage.setItem("token", data.token);
   localStorage.setItem("userId", data.id);
   localStorage.setItem("role", data.role);
+  localStorage.removeItem("guest"); // real login overrides any guest state
 
   return data;
+}
+
+// --- GUEST MODE ---
+// No backend call at all - per the brief, guest order history is stored
+// locally, not tied to a Users row. Only valid for the customer role.
+export function continueAsGuest() {
+  localStorage.setItem("guest", "true");
+  localStorage.removeItem("token");
+  localStorage.removeItem("userId");
+  localStorage.removeItem("role");
+}
+
+export function isGuest() {
+  return localStorage.getItem("guest") === "true";
 }
 
 export function logoutUser() {
   localStorage.removeItem("token");
   localStorage.removeItem("userId");
   localStorage.removeItem("role");
+  localStorage.removeItem("guest");
 }
 
 export function getToken() {

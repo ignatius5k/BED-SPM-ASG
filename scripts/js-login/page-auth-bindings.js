@@ -55,4 +55,6 @@ async function handleSubmit(){
   }
 }
 
+document.getElementById("btnGuest")?.addEventListener("click", handleGuest);
+
 document.getElementById("btnPrimary")?.addEventListener("click", handleSubmit);
