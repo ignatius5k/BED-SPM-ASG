@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="inspector-analysis.css">
+    <title>Document</title>
+</head>
+<body>
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+
+        <h1 style="text-align:center; margin-top:60px;">Analytics & Reporting</h1>
+
+        <div class="analytics-grid">
+
+            <!-- Sales Analytics -->
+            <div class="analytics-card" onclick="location.href='inspector-sales.html'">
+                <h3>Sales<br>Analytics</h3>
+                <img src="../analytics/Sale Analytics.jpg" alt="Sales Analytics" style="width:220px; height:150px; ">
+                <p style="font-size:0.9rem;">
+                    Data on popular items and peak hours across Hawker Centres
+                </p>
+                <button class="card-btn">Enter</button>
+            </div>
+
+            <!-- Customer Satisfaction -->
+            <div class="analytics-card" onclick="location.href='inspector-satisfaction.html'">
+                <h3>Customer<br>Satisfaction</h3>
+                <img src="../icons/analytics/Customer Satisfaction.jpg" alt="Customer Satisfaction" style="width:220px; height:150px; ">
+                <p style="font-size:0.9rem;">
+                    Dashboard compilation of customer feedback and complaints
+                </p>
+                <button class="card-btn">Enter</button>
+            </div>
+
+            <!-- Other Data -->
+            <div class="analytics-card" onclick="location.href='inspector-overview.html'">
+                <h3>Other<br>Data</h3>
+                <img src="../icons/analytics/Other Data.jpg" alt="Other Data" style="width:220px; height:150px; ">
+                <p style="font-size:0.9rem;">
+                    Inspection trends and hygiene grade history of Hawker Centre stalls
+                </p>
+                <button class="card-btn">Enter</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MOBILE BOTTOM NAV -->
+    <nav class="mobile-bottom-nav">
+        <a href="inspector-dashboard.html" class="mobile-nav-item">
+            <ion-icon name="grid-outline"></ion-icon>
+            <span>Home</span>
+        </a>
+        <a href="inspector-scheduling.html" class="mobile-nav-item">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <span>Schedule</span>
+        </a>
+        <a href="inspector-analytics.html" class="mobile-nav-item active">
+            <ion-icon name="bar-chart-outline"></ion-icon>
+            <span>Stats</span>
+        </a>
+        <a href="../index.html" class="mobile-nav-item">
+            <ion-icon name="person-circle-outline"></ion-icon>
+            <span>Profile</span>
+        </a>
+    </nav>
+    <!-- Header -->
+    <header>
+        <div class="header-brand">
+            <button id="hamburger">
+                <img src="../icons/template/hamburger_menu.svg" alt="Hamburger Menu">
+            </button>
+            <div class="logo">
+                <img src="../icons/template/hawkers.svg" alt="Hawkers Logo">
+                <h1>Hawkers</h1>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <ul id="nav-links">
+                <li><a href="../home.html">Home</a></li>
+                <li><a href="../order.html">Order</a></li>
+                <li><a href="../history.html">History</a></li>
+                <li><a href="../promotions.html">Promotions</a></li>
+                <li><div class="divider"></div></li>
+                <li><a href="../cart.html">Cart</a></li>
+                <li><a href="../user.html">User</a></li>
+            </ul>
+        </nav>
+        <div class="header-actions">
+            <a href="../cart.html" id="cart">
+                Cart <img src="../icons/template/shopping_cart.svg" alt="Shopping Cart Icon">
+            </a>
+            <div id="user">
+                <a href="../user.html">
+                    <img src="../icons/template/user.svg" alt="User Icon">
+                </a>
+            </div>
+    </header>
+
+
+    <!-- Footer -->
+    <footer>
+        <div class="sub_footer">
+            <div class="footer-branding">
+                <div class="logo">
+                    <img src="../icons/template/hawkers_white.svg" alt="Hawkers Logo">
+                    <h1>Hawkers</h1>
+                </div>
+                <h3>Connect with us</h3>
+                <ul>
+                    <li><a href="http://"><img src="../icons/template/twitter.svg" alt="Twitter Icon"></a></li>
+                    <li><a href="http://"><img src="../icons/template/facebook.svg" alt="Facebook Icon"></a></li>
+                    <li><a href="http://"><img src="../icons/template/instagram.svg" alt="Twitter Icon"></a></li>
+                    <li><a href="http://"><img src="../icons/template/github.svg" alt="GitHub Icon"></a></li>
+                </ul>
+            </div>
+
+            <div class="footer-nav">
+                <nav>
+                    <h3>Pages</h3>
+                    <ul>
+                        <li><a href="../home.html">Home</a></li>
+                        <li><a href="../order.html">Order</a></li>
+                        <li><a href="../history.html">History</a></li>
+                        <li><a href="../promotions.html">Promotions</a></li>
+                    </ul>
+                </nav>
+                <nav>
+                    <h3>Order</h3>
+                    <ul>
+                        <li><a href="../hawker_centers.html">Hawker Centers</a></li>
+                        <li><a href="../food_stalls.html">Stalls</a></li>
+                        <li><a href="../cart.html">Cart</a></li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="footer-info">
+                <h3>Contact Us</h3>
+                <p>21 Revolution Street, Paris, France</p>
+                <p>+65 5752 6239</p>
+                <p>support@company.com</p>    
+            </div>
+        </div>
+        
+        <p>&copy; 2026 Hawkers. All rights reserved.</p>
+    </footer>
+
+    <!-- Hamburger Menu Script -->
+    <script src="inspector-analysis.js"></script>
+</body>
+</html>
