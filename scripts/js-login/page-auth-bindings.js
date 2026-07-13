@@ -1,60 +1,155 @@
-import { registerUser, loginUser } from "./api.js";
+import { registerUser, loginUser, continueAsGuest } from "./api.js";
 
-function getRole(){
-  const form = document.querySelector("form[data-role]");
-  return form?.dataset.role || "";
+/* =========================
+   MESSAGE DISPLAY
+========================= */
+function showMessage(text, type = "error"){
+  const el = document.getElementById("formMessage");
+  if (!el) { alert(text); return; }
+  el.textContent = text;
+  el.className = `form-message ${type}`;
 }
 
-function getSignupRedirect(role){
-  if (role === "user") return "./home.html";
-  if (role === "vendor") return "./vendor_menu.html";
-  return "signup.html";
+function clearMessage(){
+  const el = document.getElementById("formMessage");
+  if (el) el.className = "form-message";
 }
 
-function getLoginRedirect(backendRole){
-  if (backendRole === "customer") return "../home.html";
-  if (backendRole === "vendor") return "../vendor_menu.html";
-  if (backendRole === "inspector") return "../inspector_dashboard.html";
-  return "../signup.html";
+/* =========================
+   PAGE TYPE DETECTION
+========================= */
+function isSignupPage(){
+  return !!document.querySelector('form[data-role="signup"]');
 }
 
-function toBackendRole(role){
-  if (role.includes("vendor")) return "vendor";
-  if (role.includes("inspector")) return "inspector";
-  return "customer";
+/* =========================
+   REDIRECTS
+========================= */
+function getRedirect(backendRole, fromSignupPage){
+  if (backendRole === "customer") return fromSignupPage ? "../home.html" : "home.html".replace("home.html", "../home.html");
+  if (backendRole === "vendor")   return fromSignupPage ? "../vendor_menu.html" : "../vendor_menu.html";
+  if (backendRole === "inspector")return fromSignupPage ? "../inspector_dashboard.html" : "../inspector_dashboard.html";
+  return fromSignupPage ? "hawkers-app-ignatius/login.html" : "../signup.html";
 }
 
+/* =========================
+   LIVE PASSWORD VALIDATION
+========================= */
+function setupPasswordChecklist(){
+  const passwordInput = document.getElementById("password");
+  const checklist = document.getElementById("passwordChecklist");
+  if (!passwordInput || !checklist) return;
+
+  const items = checklist.querySelectorAll("li");
+
+  passwordInput.addEventListener("input", () => {
+    const val = passwordInput.value;
+    const checks = {
+      checkLength: val.length >= 8,
+      checkUpper: /[A-Z]/.test(val),
+      checkLower: /[a-z]/.test(val),
+      checkNumber: /\d/.test(val),
+    };
+
+    items.forEach(li => {
+      const passed = checks[li.id];
+      const symbol = passed ? "✓" : "✗";
+      li.textContent = `${symbol} ${li.dataset.label}`;
+      li.classList.toggle("ok", passed);
+      li.classList.toggle("fail", !passed && val.length > 0);
+    });
+  });
+}
+
+function isPasswordValid(password){
+  return password.length >= 8 && /[A-Z]/.test(password) && /[a-z]/.test(password) && /\d/.test(password);
+}
+
+/* =========================
+   ROLE SELECT -> SHOW/HIDE BADGE FIELD
+========================= */
+function setupRoleToggle(){
+  const roleSelect = document.getElementById("accountRole");
+  const badgeField = document.getElementById("badgeField");
+  if (!roleSelect || !badgeField) return;
+
+  roleSelect.addEventListener("change", () => {
+    badgeField.style.display = roleSelect.value === "inspector" ? "block" : "none";
+  });
+}
+
+/* =========================
+   FORM INPUT COLLECTION
+========================= */
 function getInputs(){
   return {
+    role: document.getElementById("accountRole")?.value || "",
     name: document.getElementById("name")?.value?.trim() || "",
     email: document.getElementById("email")?.value?.trim() || "",
     password: document.getElementById("password")?.value || "",
+    badgeNumber: document.getElementById("badgeNumber")?.value?.trim() || "",
     terms: document.getElementById("terms")?.checked ?? true
   };
 }
 
-async function handleSubmit(){
-  const role = getRole();
-  const { name, email, password, terms } = getInputs();
-  const isSignup = role === "user" || role === "vendor";
+/* =========================
+   SUBMIT HANDLERS
+========================= */
+async function handleSignup(){
+  clearMessage();
+  const { role, name, email, password, badgeNumber, terms } = getInputs();
 
-  if (!email || !password) return alert("Please fill in email + password.");
-  if (isSignup && !terms) return alert("Please agree to the terms & policy.");
-  if (isSignup && !name) return alert("Please enter your name.");
+  if (!role) return showMessage("Please select an account type.");
+  if (!name) return showMessage("Please enter your name.");
+  if (!email) return showMessage("Please enter your email.");
+  if (!isPasswordValid(password)) return showMessage("Password does not meet the requirements above.");
+  if (!terms) return showMessage("Please agree to the terms & policy.");
+  if (role === "inspector" && !badgeNumber) return showMessage("Badge number is required for inspectors.");
 
   try {
-    if (isSignup) {
-      await registerUser(name, email, password, toBackendRole(role));
-      window.location.href = getSignupRedirect(role);
-    } else {
-      const data = await loginUser(email, password);
-      window.location.href = getLoginRedirect(data.role);
-    }
+    await registerUser(name, email, password, role, badgeNumber);
+    const loginData = await loginUser(email, password);
+
+    showMessage(`Account created! Welcome, ${loginData.username} (${loginData.role}). Redirecting...`, "success");
+
+    setTimeout(() => {
+      window.location.href = getRedirect(loginData.role, true);
+    }, 1200);
   } catch (err) {
-    alert(err.message);
+    showMessage(err.message);
   }
 }
 
-document.getElementById("btnGuest")?.addEventListener("click", handleGuest);
+async function handleLogin(){
+  clearMessage();
+  const { email, password } = getInputs();
 
-document.getElementById("btnPrimary")?.addEventListener("click", handleSubmit);
+  if (!email || !password) return showMessage("Please fill in email + password.");
+
+  try {
+    const data = await loginUser(email, password);
+    showMessage(`Welcome back, ${data.username}!`, "success");
+    setTimeout(() => {
+      window.location.href = getRedirect(data.role, false);
+    }, 800);
+  } catch (err) {
+    showMessage(err.message);
+  }
+}
+
+function handleGuest(){
+  continueAsGuest();
+  window.location.href = "../home.html";
+}
+
+/* =========================
+   INIT
+========================= */
+if (isSignupPage()) {
+  setupPasswordChecklist();
+  setupRoleToggle();
+  document.getElementById("btnPrimary")?.addEventListener("click", handleSignup);
+} else {
+  document.getElementById("btnPrimary")?.addEventListener("click", handleLogin);
+  document.getElementById("btnGuest")?.addEventListener("click", handleGuest);
+}

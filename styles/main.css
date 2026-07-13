@@ -534,3 +534,42 @@ label{
 .back-btn:hover {
   text-decoration: underline;
 }
+
+/* ---------- Inline form messages ---------- */
+.form-message{
+  display:none;
+  font-size:12px;
+  padding:8px 12px;
+  border-radius:8px;
+  margin-bottom:6px;
+}
+.form-message.error{
+  display:block;
+  color:#b23a43;
+  background:#fdecec;
+  border:1px solid #f2b8bb;
+}
+.form-message.success{
+  display:block;
+  color:#1a7a3a;
+  background:#e9f8ee;
+  border:1px solid #b7e4c7;
+}
+
+/* ---------- Password live checklist ---------- */
+.password-checklist{
+  list-style:none;
+  padding:0;
+  margin:4px 0 2px;
+  font-size:10px;
+}
+.password-checklist li{
+  color:var(--muted);
+  transition: color 0.15s ease;
+}
+.password-checklist li.ok{
+  color:#1a7a3a; /* green */
+}
+.password-checklist li.fail{
+  color:#b23a43; /* red */
+}
