@@ -30,3 +30,21 @@ CREATE TABLE MenuItems (
   Category VARCHAR(50),
   IsAvailable BIT DEFAULT 1
 );
+
+CREATE TABLE Inspections (
+  InspectionID INT IDENTITY(1,1) PRIMARY KEY,
+  StallID VARCHAR(10) NOT NULL,
+  InspectorID VARCHAR(10) NOT NULL,
+  InspectionDate DATE NOT NULL,
+  CleanlinessScore INT NOT NULL
+      CHECK (CleanlinessScore BETWEEN 0 AND 100),
+  FoodHandlingScore INT NOT NULL
+      CHECK (FoodHandlingScore BETWEEN 0 AND 100),
+  Remarks VARCHAR(500),
+  Grade CHAR(1) NOT NULL
+      CHECK (Grade IN ('A','B','C','D')),
+  FOREIGN KEY (StallID)
+      REFERENCES Stalls(StallID),
+  FOREIGN KEY (InspectorID)
+      REFERENCES Users(id)
+);
