@@ -1,3 +1,4 @@
+ 
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/userModel");
@@ -6,9 +7,10 @@ require("dotenv").config();
 const JWT_SECRET = process.env.JWT_SECRET;
 
 async function register(req, res) {
-  try {
-    const { username, email, password, role, badgeNumber, department } = req.body;
+    console.log("REGISTER BODY:", req.body);
 
+    try {
+        const { username, email, password, role, badgeNumber, department } = req.body;
     const existing = await userModel.getUserByEmail(email);
     if (existing) {
       return res.status(400).json({ error: "Email already registered" });
