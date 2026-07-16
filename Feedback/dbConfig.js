@@ -5,7 +5,7 @@ const dbConfig = {
     database: "BED ASG",
     options: {
         trustServerCertificate: true,
-        encrypt: false
+        encrypt: true,
     }
 };
 
