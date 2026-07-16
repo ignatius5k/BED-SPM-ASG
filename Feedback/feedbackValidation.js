@@ -19,8 +19,29 @@ const feedbackSchema = Joi.object({
   }),
 });
 
+// For updates - only rating/comments can change, no need to resend customer_id/stall_id
+const updateFeedbackSchema = Joi.object({
+  rating: Joi.number().integer().min(1).max(5).required().messages({
+    "number.min": "rating must be between 1 and 5",
+    "number.max": "rating must be between 1 and 5",
+    "any.required": "rating is required",
+  }),
+  comments: Joi.string().max(500).allow("", null).messages({
+    "string.max": "comments cannot exceed 500 characters",
+  }),
+});
+
 function validateFeedback(req, res, next) {
   const { error } = feedbackSchema.validate(req.body, { abortEarly: false });
+  if (error) {
+    const errorMessage = error.details.map((d) => d.message).join(", ");
+    return res.status(400).json({ error: errorMessage });
+  }
+  next();
+}
+
+function validateUpdateFeedback(req, res, next) {
+  const { error } = updateFeedbackSchema.validate(req.body, { abortEarly: false });
   if (error) {
     const errorMessage = error.details.map((d) => d.message).join(", ");
     return res.status(400).json({ error: errorMessage });
@@ -38,5 +59,6 @@ function validateFeedbackId(req, res, next) {
 
 module.exports = {
   validateFeedback,
+  validateUpdateFeedback,
   validateFeedbackId,
 };
