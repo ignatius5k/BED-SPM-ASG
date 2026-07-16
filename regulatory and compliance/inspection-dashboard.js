@@ -27,16 +27,16 @@ async function loadInspections() {
             const row = document.createElement("tr");
 
             row.innerHTML = `
-                <td>${inspection.InspectionID}</td>
-                <td>${inspection.StallID}</td>
-                <td>${inspection.InspectorID}</td>
-                <td>${formatDate(inspection.InspectionDate)}</td>
-                <td>${inspection.Grade}</td>
-                <td>${averageScore}</td>
-                <td>
-                    <button class="action-btn edit" onclick="editInspection(${inspection.InspectionID})">Edit</button>
-                    <button class="action-btn delete" onclick="deleteInspection(${inspection.InspectionID})">Delete</button>
-                </td>
+            <td>${inspection.InspectionID}</td>
+            <td>${inspection.StallName}</td>
+            <td>${inspection.InspectorName}</td>
+            <td>${formatDate(inspection.InspectionDate)}</td>
+            <td>${inspection.Grade}</td>
+            <td>${averageScore}</td>
+            <td>
+            <button class="action-btn edit" onclick="editInspection(${inspection.InspectionID})">Edit</button>
+            <button class="action-btn delete" onclick="deleteInspection(${inspection.InspectionID})">Delete</button>
+            </td>
             `;
 
             tableBody.appendChild(row);

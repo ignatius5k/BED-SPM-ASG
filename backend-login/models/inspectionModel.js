@@ -33,6 +33,22 @@ async function getAllInspections() {
     }
 }
 
+
+async function deleteInspection(id) {
+
+    const pool = await sql.connect(dbConfig);
+
+    const result = await pool.request()
+        .input("id", sql.Int, id)
+        .query(`
+            DELETE FROM Inspections
+            WHERE InspectionID = @id
+        `);
+
+    return result.rowsAffected[0] > 0;
+}
+
 module.exports = {
-    getAllInspections
+    getAllInspections,
+    deleteInspection
 };
