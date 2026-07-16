@@ -2,127 +2,146 @@
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Arial,sans-serif;
+
 }
 
 body{
-
-background:#f4f6f9;
-
-padding:40px;
-
+background:#f5f7f9;
+color:#333;
+font-family:"Poppins",sans-serif;
 }
 
 .container{
-
 max-width:1200px;
-
-margin:auto;
-
-background:white;
-
-padding:30px;
-
-border-radius:12px;
-
-box-shadow:0 4px 15px rgba(0,0,0,.15);
-
+margin:40px auto;
+padding:0 30px;
 }
 
-h1{
-
-margin-bottom:25px;
-
-color:#2e7d32;
-
+.container h1{
+font-size:2rem;
+font-weight:600;
+margin-bottom:30px;
+color:#2c3e50;
 }
 
 .top-buttons{
-
 display:flex;
-
+justify-content:flex-end;
 gap:15px;
-
 margin-bottom:25px;
-
 }
 
-button{
-
-padding:12px 20px;
-
-background:#2e7d32;
-
-color:white;
-
+.top-buttons button{
+padding:12px 24px;
 border:none;
-
-border-radius:8px;
-
+border-radius:10px;
+background:#2e7d32;
+color:white;
+font-size:15px;
+font-weight:500;
 cursor:pointer;
-
-transition:.3s;
-
+transition:.25s;
+box-shadow:0 4px 12px rgba(0,0,0,.08);
 }
 
-button:hover{
-
-background:#1b5e20;
-
+.top-buttons button:hover{
+background:#256428;
+transform:translateY(-2px);
 }
 
 table{
-
 width:100%;
-
 border-collapse:collapse;
-
+background:white;
+border-radius:16px;
+overflow:hidden;
+box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
 
 thead{
-
 background:#2e7d32;
-
 color:white;
-
 }
 
-th,td{
+thead th{
+padding:18px;
+font-weight:600;
+font-size:15px;
+text-align:left;
+}
 
-padding:14px;
+tbody td{
+padding:18px;
+border-bottom:1px solid #ececec;
+font-size:14px;
+}
 
-text-align:center;
-
-border-bottom:1px solid #ddd;
-
+tbody tr:last-child td{
+border-bottom:none;
 }
 
 tbody tr:hover{
-
-background:#f7f7f7;
-
+background:#f8fff8;
 }
 
 .action-btn{
-
-padding:8px 14px;
-
-margin:2px;
-
-border-radius:6px;
-
-font-size:14px;
-
+padding:8px 16px;
+border:none;
+border-radius:8px;
+background:#2e7d32;
+color:white;
+cursor:pointer;
+font-size:13px;
+transition:.25s;
 }
 
-.edit{
-
-background:#1565c0;
-
+.action-btn:hover{
+background:#256428;
 }
 
-.delete{
+.grade{
+display:inline-block;
+padding:6px 12px;
+border-radius:30px;
+font-weight:600;
+color:white;
+font-size:13px;
+}
 
-background:#c62828;
+.grade.A{
+background:#2e7d32;
+}
+
+.grade.B{
+background:#43a047;
+}
+
+.grade.C{
+background:#f9a825;
+}
+
+.grade.D{
+background:#d32f2f;
+}
+
+@media(max-width:900px){
+
+.container{
+padding:20px;
+}
+
+.top-buttons{
+flex-direction:column;
+}
+
+.top-buttons button{
+width:100%;
+}
+
+table{
+display:block;
+overflow-x:auto;
+white-space:nowrap;
+}
 
 }
