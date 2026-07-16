@@ -32,3 +32,13 @@ process.on("SIGINT", async () => {
   console.log("Database connections closed");
   process.exit(0);
 });
+
+
+// --- Inspection Routes ---
+const inspectionRoutes =
+require("./inspectionRoutes");
+
+app.use(
+"/inspections",
+inspectionRoutes
+);
