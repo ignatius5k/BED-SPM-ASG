@@ -34,7 +34,6 @@ async function loadInspections() {
             <td>${inspection.Grade}</td>
             <td>${averageScore}</td>
             <td>
-            <button class="action-btn edit" onclick="editInspection(${inspection.InspectionID})">Edit</button>
             <button class="action-btn delete" onclick="deleteInspection(${inspection.InspectionID})">Delete</button>
             </td>
             `;

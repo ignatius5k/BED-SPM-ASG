@@ -35,7 +35,7 @@ margin-bottom:25px;
 padding:12px 24px;
 border:none;
 border-radius:10px;
-background:#2e7d32;
+background:#FFC107;
 color:white;
 font-size:15px;
 font-weight:500;
@@ -45,7 +45,7 @@ box-shadow:0 4px 12px rgba(0,0,0,.08);
 }
 
 .top-buttons button:hover{
-background:#256428;
+background:#E5AC00;
 transform:translateY(-2px);
 }
 
@@ -59,7 +59,7 @@ box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
 
 thead{
-background:#2e7d32;
+background:#e27843;
 color:white;
 }
 
@@ -88,7 +88,7 @@ background:#f8fff8;
 padding:8px 16px;
 border:none;
 border-radius:8px;
-background:#2e7d32;
+background:#b34711;
 color:white;
 cursor:pointer;
 font-size:13px;
@@ -96,7 +96,7 @@ transition:.25s;
 }
 
 .action-btn:hover{
-background:#256428;
+background:#79300c;
 }
 
 .grade{
