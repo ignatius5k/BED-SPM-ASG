@@ -1,5 +1,4 @@
 body{
-font-family:'Outfit',sans-serif;
 background:#f5f6fa;
 }
 
@@ -48,7 +47,7 @@ box-shadow:0 5px 20px rgba(0,0,0,.08);
 }
 
 th{
-background:#1b5e20;
+background:#e27843;
 color:white;
 padding:15px;
 }
@@ -64,7 +63,7 @@ background:#f9f9f9;
 }
 
 .view-btn{
-background:#2e7d32;
+background:#b34711;
 color:white;
 border:none;
 padding:8px 18px;

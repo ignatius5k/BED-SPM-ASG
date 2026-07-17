@@ -35,10 +35,8 @@ process.on("SIGINT", async () => {
 
 
 // --- Inspection Routes ---
-const inspectionRoutes =
-require("./inspectionRoutes");
+const inspectionRoutes = require("./inspectionRoutes");
+app.use("/inspections",inspectionRoutes);
 
-app.use(
-"/inspections",
-inspectionRoutes
-);
+const stallRoutes = require("./stallRoutes");
+app.use("/stalls", stallRoutes);
