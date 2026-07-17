@@ -1,6 +1,6 @@
 const STALL_API = "http://localhost:3000/stalls";
 const INSPECTOR_API = "http://localhost:3000/inspectors";
-const SCHEDULE_API = "http://localhost:3000/schedules";
+const SCHEDULE_API = "http://localhost:3000/schedule";
 
 window.onload = () => {
     loadStalls();
@@ -292,5 +292,17 @@ async function deleteSchedule(id) {
 function formatDate(date) {
 
     return new Date(date).toLocaleDateString("en-SG");
+
+}
+
+function formatTime(timeString) {
+
+    const date = new Date(timeString);
+
+    return date.toLocaleTimeString("en-SG", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+    });
 
 }

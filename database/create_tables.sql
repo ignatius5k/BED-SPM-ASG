@@ -48,3 +48,16 @@ CREATE TABLE Inspections (
   FOREIGN KEY (InspectorID)
       REFERENCES Users(id)
 );
+
+CREATE TABLE InspectionSchedule (
+    ScheduleID INT IDENTITY(1,1) PRIMARY KEY,
+    StallID VARCHAR(10) NOT NULL,
+    InspectorID VARCHAR(10) NOT NULL,
+    ScheduledDate DATE NOT NULL,
+    ScheduledTime TIME NOT NULL,
+    Status VARCHAR(20) DEFAULT 'Pending',
+    FOREIGN KEY (StallID)
+        REFERENCES Stalls(StallID),
+    FOREIGN KEY (InspectorID)
+        REFERENCES Users(id)
+);
