@@ -112,9 +112,9 @@ async function loadSchedules() {
 
             row.innerHTML = `
 
-                <td>${formatDate(schedule.ScheduleDate)}</td>
+                <td>${formatDate(schedule.ScheduledDate)}</td>
 
-                <td>${schedule.ScheduleTime}</td>
+                <td>${formatTime(schedule.ScheduledTime)}</td>
 
                 <td>${schedule.InspectorName}</td>
 
@@ -176,24 +176,23 @@ async function createSchedule(event) {
 
     const schedule = {
 
-        ScheduleDate:
-            document.getElementById("inspectionDate").value,
+    ScheduledDate:
+        document.getElementById("inspectionDate").value,
 
-        ScheduleTime:
-            document.getElementById("inspectionTime").value,
+    ScheduledTime:
+        document.getElementById("inspectionTime").value + ":00",
 
-        StallID:
-            document.getElementById("stallSelect").value,
+    StallID:
+        document.getElementById("stallSelect").value,
 
-        InspectorID:
-            document.getElementById("inspectorSelect").value,
+    InspectorID:
+        document.getElementById("inspectorSelect").value,
 
-        Purpose:
-            document.getElementById("purpose").value,
+    Status: "Pending"
 
-        Status: "Pending"
+};
 
-    };
+console.log(schedule);
 
     try {
 
@@ -267,9 +266,15 @@ async function deleteSchedule(id) {
 
         if (!response.ok) {
 
-            throw new Error();
+    const error = await response.json();
 
-        }
+    console.log(error);
+
+    alert(error.message);
+
+    return;
+
+}
 
         alert("Schedule deleted.");
 
