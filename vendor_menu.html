@@ -22,7 +22,7 @@
         <h2>Menu Management</h2>
         <p>Manage your menu items, pricing, and availability</p>
       </div>
-      <button class="btn btn-primary">
+      <button id="addMenuButton" class="btn btn-primary" type="button">
         <i data-lucide="plus" class="icon"></i>
         Add Menu Item
       </button>
@@ -33,14 +33,38 @@
       <div class="card-content">
         <div class="banner-content">
           <div class="banner-icon">
-            <i data-lucide="utensils-crossed" class="icon-lg icon-white"></i>
+            <img src="./icons/home/main-dish.svg" alt="">
           </div>
           <div>
-            <h3 class="banner-title">Maxwell Hainanese Chicken Rice</h3>
-            <p class="banner-subtitle">Maxwell Food Centre | Chinese Cuisine | Open</p>
+            <h3 id="vendorStallName" class="banner-title">Your vendor menu</h3>
+            <p id="vendorStallDetails" class="banner-subtitle">Loading stall information...</p>
           </div>
         </div>
       </div>
+    </div>
+
+    <p id="menuMessage" class="menu-message" role="status">Loading menu items...</p>
+
+    <!-- Search and filters follow the existing vendor dashboard pattern. -->
+    <div class="menu-toolbar" aria-label="Menu filters">
+      <label class="toolbar-field toolbar-search">
+        <span>Search menu</span>
+        <input id="menuSearch" type="search" placeholder="Search by item name or category">
+      </label>
+
+      <label class="toolbar-field">
+        <span>Stall</span>
+        <select id="stallFilter">
+          <option value="all">All stalls</option>
+        </select>
+      </label>
+
+      <label class="toolbar-field">
+        <span>Cuisine</span>
+        <select id="cuisineFilter">
+          <option value="all">All cuisines</option>
+        </select>
+      </label>
     </div>
 
     <!-- Menu Items by Category -->
@@ -50,8 +74,8 @@
     <div class="grid-stats" id="stats-grid"></div>
   </main>
 
-  <script type="module" src="scripts/kishore_js/vendor_menu.js"></script>
-  <script src="scripts/kishore_js/vendor_nav.js"></script>
+  <script src="./scripts/vendor/vendor_menu.js"></script>
+  <script src="./scripts/vendor/vendor_nav.js"></script>
 
   <script>
     if (typeof lucide !== 'undefined') {

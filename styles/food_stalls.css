@@ -28,6 +28,95 @@
     border-radius: 15px;
 }
 
+/* SA2-26: Customer cuisine filters */
+.cuisine-filters {
+    grid-column: 1 / -1;
+
+    display: flex;
+    flex-flow: row wrap;
+    gap: 0.5rem;
+}
+
+.cuisine-filter-button {
+    min-height: 2.4rem;
+    padding: 0.5rem 0.9rem;
+    border: 1px solid #DBDFD0;
+    border-radius: 25px;
+
+    color: #474747;
+    font-family: "DM Sans", Arial, Helvetica, sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    background-color: #FFFFFF;
+    cursor: pointer;
+}
+
+.cuisine-filter-button:hover {
+    border-color: #474747;
+    background-color: #F8F8F5;
+}
+
+.cuisine-filter-button.active {
+    border-color: #AD343E;
+
+    color: #FFFFFF;
+    background-color: #AD343E;
+}
+
+.cuisine-filter-button:focus-visible {
+    outline: 3px solid rgba(173, 52, 62, 0.22);
+    outline-offset: 2px;
+}
+
+.cuisine-filter-message {
+    min-height: 1.2rem;
+    margin: -0.25rem 0 0;
+
+    color: #686861;
+    font-size: 0.8rem;
+
+    grid-column: 1 / -1;
+}
+
+.cuisine-filter-message.error {
+    color: #AD343E;
+}
+
+.merchant-cuisine-tags {
+    margin-top: 0.35rem;
+
+    display: flex;
+    flex-flow: row wrap;
+    gap: 0.35rem;
+}
+
+.merchant-cuisine-tag {
+    padding: 0.2rem 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    border-radius: 15px;
+
+    color: #FFFFFF;
+    font-size: 0.68rem;
+    font-weight: 700;
+    background-color: rgba(71, 71, 71, 0.72);
+}
+
+.merchant-cuisine-pending {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.7rem;
+}
+
+.no-filter-results {
+    padding: 2rem;
+    border: 1px dashed #DBDFD0;
+    border-radius: 15px;
+
+    color: #686861;
+    text-align: center;
+
+    grid-column: 1 / -1;
+}
+
 @media (max-width: 1428px) {
     #hawker-center-info {
         max-width: 1010px;

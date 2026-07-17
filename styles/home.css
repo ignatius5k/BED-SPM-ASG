@@ -53,6 +53,265 @@ body {
     background-color: #AD343E;
 }
 
+/* SA2-35: Customer sales analytics */
+#sales-analytics {
+    max-width: 1200px;
+    margin: 4rem auto;
+    padding: 0 2rem;
+}
+
+.analytics-heading {
+    margin-bottom: 1rem;
+
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 2rem;
+}
+
+.analytics-heading h3 {
+    margin: 0.2rem 0 0.5rem;
+
+    font-family: "Playfair Display";
+    font-size: 2.5rem;
+    font-weight: 400;
+}
+
+.analytics-heading p {
+    max-width: 620px;
+    margin: 0;
+
+    color: #474747;
+}
+
+.analytics-heading .section-label {
+    color: #AD343E;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.analytics-heading a {
+    padding: 0.7rem 1.1rem;
+    border: 1px solid #474747;
+    border-radius: 25px;
+
+    flex: 0 0 auto;
+
+    color: #474747;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.analytics-message {
+    min-height: 1.25rem;
+    margin: 0 0 1rem;
+
+    color: #686861;
+    font-size: 0.85rem;
+}
+
+.analytics-message.error {
+    color: #AD343E;
+}
+
+.analytics-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+    gap: 1rem;
+}
+
+.analytics-panel {
+    padding: 1.5rem;
+    border: 2px solid #DBDFD0;
+    border-radius: 10px;
+
+    background-color: #FFFFFF;
+}
+
+.panel-heading {
+    margin-bottom: 1rem;
+
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.panel-heading h4 {
+    margin: 0.15rem 0 0;
+
+    font-family: "Playfair Display";
+    font-size: 1.55rem;
+    font-weight: 500;
+}
+
+.panel-heading > span {
+    padding: 0.3rem 0.65rem;
+    border-radius: 15px;
+
+    color: #474747;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background-color: #DBDFD0;
+}
+
+.panel-label {
+    margin: 0;
+
+    color: #AD343E;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.popular-items {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.popular-item {
+    min-width: 0;
+    padding: 1rem;
+    border: 1px solid #DBDFD0;
+    border-radius: 10px;
+
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.8rem;
+
+    background-color: #F8F8F5;
+}
+
+.popular-item:first-child {
+    grid-column: 1 / -1;
+
+    background-color: #F1F3EC;
+}
+
+.item-rank {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #FFFFFF;
+    font-size: 0.82rem;
+    font-weight: 700;
+    background-color: #AD343E;
+}
+
+.item-details {
+    min-width: 0;
+}
+
+.item-details h5 {
+    margin: 0 0 0.15rem;
+
+    overflow: hidden;
+
+    font-size: 0.95rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.item-details p {
+    margin: 0;
+
+    overflow: hidden;
+
+    color: #686861;
+    font-size: 0.76rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.item-price {
+    text-align: right;
+}
+
+.item-price strong,
+.item-price span {
+    display: block;
+}
+
+.item-price strong {
+    color: #AD343E;
+    font-size: 0.9rem;
+}
+
+.item-price span {
+    margin-top: 0.15rem;
+
+    color: #686861;
+    font-size: 0.7rem;
+}
+
+.popular-empty {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 2rem 1rem;
+
+    color: #686861;
+    text-align: center;
+}
+
+.busy-panel {
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.busy-summary {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 10px;
+
+    background-color: #F1F3EC;
+}
+
+.busy-summary p,
+.busy-summary span {
+    margin: 0;
+
+    color: #686861;
+    font-size: 0.78rem;
+}
+
+.busy-summary strong {
+    margin: 0.15rem 0;
+
+    display: block;
+
+    color: #AD343E;
+    font-family: "Playfair Display";
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.chart-wrap {
+    width: 100%;
+    min-height: 230px;
+
+    position: relative;
+}
+
+.chart-note {
+    margin: 0.75rem 0 0;
+
+    color: #686861;
+    font-size: 0.75rem;
+}
+
 /* Local Highlights */
 #local-highlights {
     margin: 2rem;
@@ -94,5 +353,37 @@ body {
 @media (max-width: 460px) {
     #cta h2 {
         font-size: 3rem;
+    }
+
+    #sales-analytics {
+        padding: 0 1rem;
+    }
+
+    .analytics-heading h3 {
+        font-size: 2rem;
+    }
+
+    .analytics-panel {
+        padding: 1rem;
+    }
+
+    .popular-items {
+        grid-template-columns: 1fr;
+    }
+
+    .popular-item:first-child {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 860px) {
+    .analytics-heading {
+        align-items: flex-start;
+        flex-flow: column nowrap;
+        gap: 1rem;
+    }
+
+    .analytics-layout {
+        grid-template-columns: 1fr;
     }
 }

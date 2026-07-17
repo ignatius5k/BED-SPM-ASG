@@ -5,6 +5,13 @@ const cors = require("cors");
 const userController = require("./controllers/userController");
 const { validateRegister, validateLogin } = require("./middleware/userValidation");
 const { requireAuth } = require("./middleware/authMiddleware");
+const inspectionRoutes = require("./inspectionRoutes");
+const stallRoutes = require("./stallRoutes");
+const scheduleRoutes = require("./scheduleRoutes");
+const inspectorRoutes = require("./inspectorRoutes");
+const vendorPerformanceRoutes = require("./vendorPerformanceRoutes");
+const salesAnalyticsRoutes = require("./salesAnalyticsRoutes");
+const menuItemRoutes = require("./menuItemRoutes");
 
 const app = express();
 const port = 3000;
@@ -22,9 +29,21 @@ app.get("/users/:id", requireAuth, userController.getUserById);
 app.put("/users/:id", requireAuth, userController.updateUser);
 app.delete("/users/:id", requireAuth, userController.deleteUser);
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+// --- Feature routes ---
+app.use("/inspections", inspectionRoutes);
+app.use("/stalls", stallRoutes);
+app.use("/schedule", scheduleRoutes);
+app.use("/inspectors", inspectorRoutes);
+app.use("/vendor-performance", vendorPerformanceRoutes);
+app.use("/sales-analytics", salesAnalyticsRoutes);
+app.use("/menu-items", menuItemRoutes);
+
+// --- Start server ---
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
+}
 
 process.on("SIGINT", async () => {
   console.log("Server is gracefully shutting down");
@@ -33,16 +52,4 @@ process.on("SIGINT", async () => {
   process.exit(0);
 });
 
-
-// --- Inspection Routes ---
-const inspectionRoutes = require("./inspectionRoutes");
-app.use("/inspections",inspectionRoutes);
-
-const stallRoutes = require("./stallRoutes");
-app.use("/stalls", stallRoutes);
-
-const scheduleRoutes = require("./scheduleRoutes");
-app.use("/schedule", scheduleRoutes);
-
-const inspectorRoutes = require("./inspectorRoutes");
-app.use("/inspectors", inspectorRoutes);
+module.exports = app;
