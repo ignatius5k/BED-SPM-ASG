@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inspection Scheduling</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet">
+
+
+    <!-- Existing CSS -->
+    <link rel="stylesheet" href="../template/template.css">   
+    <!-- Page CSS -->
+    <link rel="stylesheet" href="inspection-scheduling.css">
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</head>
+<header>
+        <div class="header-brand">
+            <button id="hamburger">
+                <img src="../icons/template/hamburger_menu.svg" alt="Hamburger Menu">
+            </button>
+            <div class="logo">
+                <img src="../icons/template/hawkers.svg" alt="Hawkers Logo">
+                <h1>Hawkers</h1>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <ul id="nav-links">
+                <li><a href="inspection-dashboard.html">Dashboard</a></li>
+                <li><a href="inspection-scheduling.html">Scheduling</a></li>
+                <li><a href="inspection-form.html">Form</a></li>
+                <li><a href="inspection-history.html">History</a></li>
+                <li><div class="divider"></div></li>
+                <li><a href="../user.html">User</a></li>
+            </ul>
+        </nav>
+        <div class="header-actions">
+            
+            <div id="user">
+                <a href="../user.html">
+                    <img src="../icons/template/user.svg" alt="User Icon">
+                </a>
+            </div>
+    </header>
+<body>
+
+
+
+<!-- ================= PAGE ================= -->
+
+<div class="schedule-container">
+
+    <div class="page-header">
+
+        <h1>Inspection Scheduling</h1>
+
+        <p>
+            Schedule inspections for NEA officers.
+        </p>
+
+    </div>
+
+    <div class="schedule-card">
+
+        <h2>Schedule New Inspection</h2>
+
+        <form id="scheduleForm">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label>Inspection Date</label>
+
+                    <input
+                        type="date"
+                        id="inspectionDate"
+                        required>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Inspection Time</label>
+
+                    <input
+                        type="time"
+                        id="inspectionTime"
+                        required>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Inspector</label>
+
+                    <select
+                        id="inspectorSelect"
+                        required>
+
+                        <option value="">
+                            Loading Inspectors...
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Stall</label>
+
+                    <select
+                        id="stallSelect"
+                        required>
+
+                        <option value="">
+                            Loading Stalls...
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Purpose</label>
+
+                <textarea
+                    id="purpose"
+                    rows="4"
+                    placeholder="Inspection remarks or purpose..."></textarea>
+
+            </div>
+
+            <button
+                class="schedule-btn"
+                type="submit">
+
+                Schedule Inspection
+
+            </button>
+
+        </form>
+
+    </div>
+
+    <div class="table-card">
+
+        <div class="table-header">
+
+            <h2>Upcoming Inspections</h2>
+
+            <button
+                id="refreshBtn"
+                class="refresh-btn">
+
+                Refresh
+
+            </button>
+
+        </div>
+
+        <table id="scheduleTable">
+
+            <thead>
+
+                <tr>
+
+                    <th>Date</th>
+
+                    <th>Time</th>
+
+                    <th>Inspector</th>
+
+                    <th>Stall</th>
+
+                    <th>Status</th>
+
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <!-- JS inserts rows here -->
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+        <div class="sub_footer">
+            <div class="footer-branding">
+                <div class="logo">
+                    <img src="../icons/template/hawkers_white.svg" alt="Hawkers Logo">
+                    <h1>Hawkers</h1>
+                </div>
+                <h3>Connect with us</h3>
+                <ul>
+                    <li><a href="http://"><img src="../icons/template/twitter.svg" alt="Twitter Icon"></a></li>
+                    <li><a href="http://"><img src="../icons/template/facebook.svg" alt="Facebook Icon"></a></li>
+                    <li><a href="http://"><img src="../icons/template/instagram.svg" alt="Twitter Icon"></a></li>
+                    <li><a href="http://"><img src="../icons/template/github.svg" alt="GitHub Icon"></a></li>
+                </ul>
+            </div>
+
+            <div class="footer-nav">
+                <nav>
+                    <h3>Pages</h3>
+                    <ul>
+                        <li><a href="inspection-dashboard.html">Inspection Dashboard</a></li>
+                        <li><a href="inspection-scheduling.html">Inspection Scheduling</a></li>
+                        <li><a href="inspection-form.html">Inspection Form</a></li>
+                        <li><a href="inspection-history.html">Inspection History</a></li>
+                    </ul>
+                </nav>
+                <nav>
+                    
+                </nav>
+            </div>
+
+            <div class="footer-info">
+                <h3>Contact Us</h3>
+                <p>21 Revolution Street, Paris, France</p>
+                <p>+65 5752 6239</p>
+                <p>support@company.com</p>    
+            </div>
+        </div>
+        
+        <p>&copy; 2026 Hawkers. All rights reserved.</p>
+    </footer>
+
+<!-- ================= JS ================= -->
+
+<script src="inspection-scheduling.js"></script>
+
+</body>
+
+</html>
