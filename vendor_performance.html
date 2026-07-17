@@ -26,7 +26,7 @@
 
                 <div class="performance-context" aria-label="Dashboard context">
                     <span class="stall-badge" id="stallNameBadge">Loading stall...</span>
-                    <span class="period-label">Last 7 months</span>
+                    <span class="period-label" id="periodLabel">Last 6 months</span>
                 </div>
             </div>
 
@@ -56,17 +56,37 @@
             </article>
         </section>
 
+        <!-- SA2-42: QUICK DATE FILTERS FOR BOTH SALES CHARTS -->
+        <section class="chart-filter-panel" aria-labelledby="chartFilterTitle">
+            <div class="chart-filter-copy">
+                <h3 id="chartFilterTitle">Chart period</h3>
+                <p>Select a period to update both charts.</p>
+            </div>
+
+            <div class="chart-range-buttons" role="group" aria-label="Select chart period">
+                <button class="range-button" type="button" data-months="1" aria-pressed="false">1 month</button>
+                <button class="range-button" type="button" data-months="3" aria-pressed="false">3 months</button>
+                <button class="range-button active" type="button" data-months="6" aria-pressed="true">6 months</button>
+                <button class="range-button" type="button" data-months="12" aria-pressed="false">12 months</button>
+            </div>
+
+            <p class="date-filter-message" id="dateFilterMessage" role="status" aria-live="polite">
+                Showing the last 6 months.
+            </p>
+        </section>
+
         <!-- SALES CHARTS -->
         <section class="analytics-grid" aria-label="Sales trends">
             <article class="analytics-panel analytics-panel-wide">
                 <div class="panel-header">
                     <div>
                         <h3>Revenue trend</h3>
-                        <p>Paid and completed sales by month</p>
+                        <p id="revenueChartSubtitle">Paid and completed sales by month</p>
                     </div>
                 </div>
                 <div class="chart-container chart-container-large">
                     <canvas id="revenueChart" role="img" aria-label="Monthly revenue line chart"></canvas>
+                    <p class="chart-empty" id="revenueChartEmpty" hidden>No revenue was found for this period.</p>
                 </div>
             </article>
 
@@ -74,11 +94,12 @@
                 <div class="panel-header">
                     <div>
                         <h3>Order volume</h3>
-                        <p>Orders completed by month</p>
+                        <p id="ordersChartSubtitle">Orders completed by month</p>
                     </div>
                 </div>
                 <div class="chart-container chart-container-small">
                     <canvas id="ordersChart" role="img" aria-label="Monthly order volume bar chart"></canvas>
+                    <p class="chart-empty" id="ordersChartEmpty" hidden>No orders were found for this period.</p>
                 </div>
             </article>
         </section>

@@ -1,7 +1,7 @@
 const sql = require("mssql");
 const dbConfig = require("../dbConfig");
 
-async function getVendorPerformance(vendorId) {
+async function getVendorPerformance(vendorId, dateFilter = null) {
   let connection;
 
   try {
@@ -57,31 +57,89 @@ async function getVendorPerformance(vendorId) {
       WHERE s.OwnerID = @vendorId;
     `);
 
-    // STEP 3: Group paid orders by month for the two charts.
-    const monthlyRequest = connection.request();
-    monthlyRequest.input("vendorId", sql.VarChar(10), vendorId);
+    // STEP 3: Group paid orders by week or month for the two charts.
+    const trendRequest = connection.request();
+    trendRequest.input("vendorId", sql.VarChar(10), vendorId);
 
-    const monthlyResult = await monthlyRequest.query(`
-      SELECT
-        DATEFROMPARTS(YEAR(o.OrderDate), MONTH(o.OrderDate), 1) AS monthStart,
-        FORMAT(o.OrderDate, 'MMM yyyy') AS monthLabel,
-        COUNT(o.OrderID) AS totalOrders,
-        CAST(SUM(o.TotalAmount) AS DECIMAL(10, 2)) AS revenue
-      FROM Stalls s
-      INNER JOIN Orders o ON s.StallID = o.StallID
-      WHERE s.OwnerID = @vendorId
-        AND o.Status IN ('paid', 'completed')
-        AND o.OrderDate >= DATEADD(
-          MONTH,
-          -6,
-          DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1)
+    let trendDateCondition = `
+      AND o.OrderDate >= DATEADD(
+        MONTH,
+        -6,
+        DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1)
+      )
+      AND o.OrderDate < DATEADD(
+        MONTH,
+        1,
+        DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1)
+      )
+    `;
+
+    if (dateFilter) {
+      trendRequest.input("startDate", sql.Date, dateFilter.startDate);
+      trendRequest.input("endDate", sql.Date, dateFilter.endDate);
+      trendDateCondition = `
+        AND CAST(o.OrderDate AS DATE) >= @startDate
+        AND CAST(o.OrderDate AS DATE) <= @endDate
+      `;
+    }
+
+    let trendResult;
+
+    if (dateFilter && dateFilter.granularity === "week") {
+      trendResult = await trendRequest.query(`
+        WITH WeeklyOrders AS (
+          SELECT
+            DATEDIFF(
+              DAY,
+              @startDate,
+              CAST(o.OrderDate AS DATE)
+            ) / 7 AS weekNumber,
+            o.OrderID,
+            o.TotalAmount
+          FROM Stalls s
+          INNER JOIN Orders o ON s.StallID = o.StallID
+          WHERE s.OwnerID = @vendorId
+            AND o.Status IN ('paid', 'completed')
+            ${trendDateCondition}
         )
-      GROUP BY
-        YEAR(o.OrderDate),
-        MONTH(o.OrderDate),
-        FORMAT(o.OrderDate, 'MMM yyyy')
-      ORDER BY monthStart;
-    `);
+        SELECT
+          DATEADD(DAY, weekNumber * 7, @startDate) AS monthStart,
+          FORMAT(
+            DATEADD(DAY, weekNumber * 7, @startDate),
+            'd MMM'
+          ) + ' - ' + FORMAT(
+            CASE
+              WHEN DATEADD(DAY, weekNumber * 7 + 6, @startDate) > @endDate
+              THEN @endDate
+              ELSE DATEADD(DAY, weekNumber * 7 + 6, @startDate)
+            END,
+            'd MMM'
+          ) AS monthLabel,
+          COUNT(OrderID) AS totalOrders,
+          CAST(SUM(TotalAmount) AS DECIMAL(10, 2)) AS revenue
+        FROM WeeklyOrders
+        GROUP BY weekNumber
+        ORDER BY monthStart;
+      `);
+    } else {
+      trendResult = await trendRequest.query(`
+        SELECT
+          DATEFROMPARTS(YEAR(o.OrderDate), MONTH(o.OrderDate), 1) AS monthStart,
+          FORMAT(o.OrderDate, 'MMM yyyy') AS monthLabel,
+          COUNT(o.OrderID) AS totalOrders,
+          CAST(SUM(o.TotalAmount) AS DECIMAL(10, 2)) AS revenue
+        FROM Stalls s
+        INNER JOIN Orders o ON s.StallID = o.StallID
+        WHERE s.OwnerID = @vendorId
+          AND o.Status IN ('paid', 'completed')
+          ${trendDateCondition}
+        GROUP BY
+          YEAR(o.OrderDate),
+          MONTH(o.OrderDate),
+          FORMAT(o.OrderDate, 'MMM yyyy')
+        ORDER BY monthStart;
+      `);
+    }
 
     // STEP 4: Rank every menu item using quantities from completed orders.
     const itemRequest = connection.request();
@@ -118,7 +176,7 @@ async function getVendorPerformance(vendorId) {
     return {
       stalls: stallResult.recordset,
       summary: summaryResult.recordset[0],
-      monthly: monthlyResult.recordset,
+      monthly: trendResult.recordset,
       items: items,
       bestSellingItem: items.length > 0 ? items[0] : null,
       leastSellingItem: items.length > 0 ? items[items.length - 1] : null,
