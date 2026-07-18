@@ -66,6 +66,29 @@ CREATE TABLE OrderItems (
   UnitPrice DECIMAL(6,2) NOT NULL CHECK (UnitPrice >= 0)
 );
 
+-- Customer satisfaction tables - used by the vendor feedback and complaints dashboard.
+-- The Feedback column names match the existing Feedback CRUD feature.
+CREATE TABLE Feedback (
+  feedback_id INT IDENTITY(1,1) PRIMARY KEY,
+  customer_id VARCHAR(10) NOT NULL FOREIGN KEY REFERENCES Users(id),
+  stall_id VARCHAR(10) NOT NULL FOREIGN KEY REFERENCES Stalls(StallID),
+  rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+  comments VARCHAR(500),
+  created_at DATETIME2 NOT NULL DEFAULT GETDATE()
+);
+
+CREATE TABLE Complaints (
+  complaint_id INT IDENTITY(1,1) PRIMARY KEY,
+  customer_id VARCHAR(10) NOT NULL FOREIGN KEY REFERENCES Users(id),
+  stall_id VARCHAR(10) NOT NULL FOREIGN KEY REFERENCES Stalls(StallID),
+  category VARCHAR(50) NOT NULL
+    CHECK (category IN ('Cleanliness', 'Food Quality', 'Service Quality', 'Waiting Time', 'Others')),
+  description VARCHAR(500) NOT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT 'pending'
+    CHECK (status IN ('pending', 'in progress', 'resolved')),
+  complaint_date DATETIME2 NOT NULL DEFAULT GETDATE()
+);
+
 CREATE TABLE Inspections (
   InspectionID INT IDENTITY(1,1) PRIMARY KEY,
   StallID VARCHAR(10) NOT NULL,

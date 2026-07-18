@@ -174,6 +174,46 @@ INSERT INTO OrderItems (OrderID, MenuItemID, Quantity, UnitPrice) VALUES
 ('ORD011', 'MENU004', 1, 5.00);
 
 -- ---------------------------------------------------------
+-- Customer satisfaction sample data for SA2-36.
+-- Relative dates support the 1, 3, 6, and 12 month dashboard filters.
+-- ---------------------------------------------------------
+INSERT INTO Feedback
+  (customer_id, stall_id, rating, comments, created_at)
+VALUES
+('CUST001', 'STALL001', 5, 'Chicken was tender and the rice was fragrant.', DATEADD(DAY, -2, GETDATE())),
+('CUST002', 'STALL001', 4, 'Good portion and quick collection.', DATEADD(DAY, -7, GETDATE())),
+('CUST003', 'STALL001', 5, 'Friendly service and excellent chilli.', DATEADD(DAY, -13, GETDATE())),
+('CUST004', 'STALL001', 3, 'Food was good but the queue moved slowly.', DATEADD(DAY, -20, GETDATE())),
+('CUST005', 'STALL001', 4, 'Roasted chicken was flavourful.', DATEADD(MONTH, -1, DATEADD(DAY, -3, GETDATE()))),
+('CUST006', 'STALL001', 5, 'Consistently tasty and well packed.', DATEADD(MONTH, -1, DATEADD(DAY, -12, GETDATE()))),
+('CUST007', 'STALL001', 4, 'Lime juice was fresh and not too sweet.', DATEADD(MONTH, -2, GETDATE())),
+('CUST008', 'STALL001', 2, 'Rice was slightly dry during the evening.', DATEADD(MONTH, -2, DATEADD(DAY, -9, GETDATE()))),
+('CUST009', 'STALL001', 5, 'Excellent value for the portion.', DATEADD(MONTH, -3, GETDATE())),
+('CUST010', 'STALL001', 4, 'Fast service during lunch.', DATEADD(MONTH, -4, GETDATE())),
+('CUST011', 'STALL001', 3, 'Soup could have been warmer.', DATEADD(MONTH, -5, GETDATE())),
+('CUST012', 'STALL001', 5, 'One of my favourite chicken rice stalls.', DATEADD(MONTH, -6, GETDATE())),
+('CUST013', 'STALL001', 4, 'Reliable meal and polite staff.', DATEADD(MONTH, -8, GETDATE())),
+('CUST014', 'STALL001', 3, 'Waiting time was longer than expected.', DATEADD(MONTH, -10, GETDATE())),
+('CUST015', 'STALL001', 5, 'The roasted chicken was excellent.', DATEADD(MONTH, -11, GETDATE())),
+('CUST016', 'STALL002', 1, 'This belongs to a different vendor.', DATEADD(DAY, -4, GETDATE()));
+
+INSERT INTO Complaints
+  (customer_id, stall_id, category, description, status, complaint_date)
+VALUES
+('CUST017', 'STALL001', 'Food Quality', 'The chicken was colder than expected.', 'pending', DATEADD(DAY, -3, GETDATE())),
+('CUST018', 'STALL001', 'Service Quality', 'My collection number was skipped.', 'resolved', DATEADD(DAY, -8, GETDATE())),
+('CUST019', 'STALL001', 'Waiting Time', 'The lunch queue took more than twenty minutes.', 'in progress', DATEADD(DAY, -15, GETDATE())),
+('CUST020', 'STALL001', 'Cleanliness', 'The collection counter needed wiping.', 'resolved', DATEADD(DAY, -24, GETDATE())),
+('CUST021', 'STALL001', 'Others', 'The takeaway bag was missing cutlery.', 'pending', DATEADD(MONTH, -1, GETDATE())),
+('CUST022', 'STALL001', 'Food Quality', 'The rice was too dry.', 'resolved', DATEADD(MONTH, -2, GETDATE())),
+('CUST023', 'STALL001', 'Service Quality', 'The order instructions were not followed.', 'in progress', DATEADD(MONTH, -3, GETDATE())),
+('CUST024', 'STALL001', 'Waiting Time', 'Evening collection was delayed.', 'resolved', DATEADD(MONTH, -4, GETDATE())),
+('CUST025', 'STALL001', 'Cleanliness', 'The tray return area was untidy.', 'resolved', DATEADD(MONTH, -5, GETDATE())),
+('CUST026', 'STALL001', 'Food Quality', 'The soup tasted too salty.', 'pending', DATEADD(MONTH, -7, GETDATE())),
+('CUST027', 'STALL001', 'Service Quality', 'Staff could explain sold-out items more clearly.', 'resolved', DATEADD(MONTH, -10, GETDATE())),
+('CUST028', 'STALL002', 'Others', 'This complaint belongs to another vendor.', 'pending', DATEADD(DAY, -5, GETDATE()));
+
+-- ---------------------------------------------------------
 -- SA2-48 sample-data verification queries
 -- Expected popular item: Steamed Chicken Rice, 7 sold, $38.50 revenue.
 -- Expected peak hour: 12:00, 5 orders, $39.00 sales.
