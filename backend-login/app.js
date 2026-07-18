@@ -14,6 +14,7 @@ const salesAnalyticsRoutes = require("./salesAnalyticsRoutes");
 const menuItemRoutes = require("./menuItemRoutes");
 const vendorSatisfactionRoutes = require("./vendorSatisfactionRoutes");
 const vendorRentalAgreementRoutes = require("./vendorRentalAgreementRoutes");
+const vendorInspectionHistoryRoutes = require("./vendorInspectionHistoryRoutes");
 
 const app = express();
 const port = 3000;
@@ -42,6 +43,7 @@ app.use("/sales-analytics", salesAnalyticsRoutes);
 app.use("/menu-items", menuItemRoutes);
 app.use("/vendor-satisfaction", vendorSatisfactionRoutes);
 app.use("/vendor-rental-agreements", vendorRentalAgreementRoutes);
+app.use("/vendor-inspection-history", vendorInspectionHistoryRoutes);
 
 // --- Start server ---
 if (require.main === module) {

@@ -255,6 +255,29 @@ VALUES
 ('RA003', 'VEND002', 'Monthly rent', 'S$1,580.00', 'S$1,630.00', 'Annual rental rate adjustment', DATEADD(DAY, -30, GETDATE()));
 
 -- ---------------------------------------------------------
+-- Inspection trends and hygiene-grade history for SA2-37.
+-- Relative dates support the 3, 6, 12, and all-history filters.
+-- STALL002 verifies that VEND001 cannot retrieve another vendor's records.
+-- ---------------------------------------------------------
+INSERT INTO Inspections
+  (StallID, InspectorID, InspectionDate, CleanlinessScore, FoodHandlingScore, Remarks, Grade)
+VALUES
+('STALL001', 'INSP002', CAST(DATEADD(MONTH, -15, DATEADD(DAY, -5, GETDATE())) AS DATE), 71, 73, 'Older baseline inspection retained in the full history.', 'C'),
+('STALL001', 'INSP001', CAST(DATEADD(DAY, -12, GETDATE()) AS DATE), 92, 94, 'Work areas were clean and food was stored correctly.', 'A'),
+('STALL001', 'INSP002', CAST(DATEADD(DAY, -48, GETDATE()) AS DATE), 88, 90, 'Good hygiene controls with minor labelling improvements noted.', 'A'),
+('STALL001', 'INSP001', CAST(DATEADD(DAY, -82, GETDATE()) AS DATE), 83, 86, 'Hand-washing and temperature records were complete.', 'B'),
+('STALL001', 'INSP003', CAST(DATEADD(MONTH, -3, DATEADD(DAY, -8, GETDATE())) AS DATE), 78, 82, 'Cleaning schedule was followed; storage layout can improve.', 'B'),
+('STALL001', 'INSP002', CAST(DATEADD(MONTH, -4, DATEADD(DAY, -5, GETDATE())) AS DATE), 58, 72, 'Grease was found near the cooking area and required immediate cleaning.', 'C'),
+('STALL001', 'INSP001', CAST(DATEADD(MONTH, -5, DATEADD(DAY, -9, GETDATE())) AS DATE), 76, 79, 'Acceptable result after the previous corrective action.', 'B'),
+('STALL001', 'INSP004', CAST(DATEADD(MONTH, -6, DATEADD(DAY, -7, GETDATE())) AS DATE), 70, 74, 'Improve separation between raw and cooked food preparation.', 'C'),
+('STALL001', 'INSP003', CAST(DATEADD(MONTH, -7, DATEADD(DAY, -11, GETDATE())) AS DATE), 81, 80, 'Routine inspection passed with minor housekeeping notes.', 'B'),
+('STALL001', 'INSP002', CAST(DATEADD(MONTH, -8, DATEADD(DAY, -4, GETDATE())) AS DATE), 68, 70, 'Cold-storage labels needed clearer dates.', 'C'),
+('STALL001', 'INSP001', CAST(DATEADD(MONTH, -9, DATEADD(DAY, -6, GETDATE())) AS DATE), 52, 55, 'Failed inspection due to unsafe food temperatures and poor cleaning.', 'D'),
+('STALL001', 'INSP004', CAST(DATEADD(MONTH, -10, DATEADD(DAY, -10, GETDATE())) AS DATE), 64, 67, 'Corrective cleaning and retraining were required.', 'C'),
+('STALL001', 'INSP003', CAST(DATEADD(MONTH, -11, DATEADD(DAY, -3, GETDATE())) AS DATE), 74, 76, 'General hygiene was satisfactory with follow-up items.', 'C'),
+('STALL002', 'INSP001', CAST(DATEADD(DAY, -18, GETDATE()) AS DATE), 45, 50, 'This inspection belongs to another vendor.', 'D');
+
+-- ---------------------------------------------------------
 -- SA2-48 sample-data verification queries
 -- Expected popular item: Steamed Chicken Rice, 7 sold, $38.50 revenue.
 -- Expected peak hour: 12:00, 5 orders, $39.00 sales.
