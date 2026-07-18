@@ -12,6 +12,7 @@ const inspectorRoutes = require("./inspectorRoutes");
 const vendorPerformanceRoutes = require("./vendorPerformanceRoutes");
 const salesAnalyticsRoutes = require("./salesAnalyticsRoutes");
 const menuItemRoutes = require("./menuItemRoutes");
+const vendorSatisfactionRoutes = require("./vendorSatisfactionRoutes");
 
 const app = express();
 const port = 3000;
@@ -37,6 +38,7 @@ app.use("/inspectors", inspectorRoutes);
 app.use("/vendor-performance", vendorPerformanceRoutes);
 app.use("/sales-analytics", salesAnalyticsRoutes);
 app.use("/menu-items", menuItemRoutes);
+app.use("/vendor-satisfaction", vendorSatisfactionRoutes);
 
 // --- Start server ---
 if (require.main === module) {

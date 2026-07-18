@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles/vendor_nav.css">
+    <link rel="stylesheet" href="./styles/vendor_dashboard.css">
+    <link rel="stylesheet" href="./styles/vendor_satisfaction.css">
+    <title>Vendor Customer Satisfaction Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+</head>
+<body class="vendor-satisfaction-page">
+    <div id="nav-container"></div>
+
+    <main class="vendor-page satisfaction-shell">
+        <!-- PAGE HEADER -->
+        <header class="satisfaction-header">
+            <div class="satisfaction-heading">
+                <div>
+                    <h2>Customer satisfaction</h2>
+                    <p class="page-description">Monitor ratings, feedback, and complaints for your stalls.</p>
+                </div>
+
+                <div class="satisfaction-context" aria-label="Dashboard context">
+                    <span class="stall-badge" id="stallNameBadge">Loading stall...</span>
+                    <span class="period-label" id="periodLabel">Last 6 months</span>
+                </div>
+            </div>
+
+            <p class="page-message" id="satisfactionMessage" role="status" aria-live="polite">
+                Loading customer satisfaction data...
+            </p>
+        </header>
+
+        <!-- FILTERS -->
+        <section class="satisfaction-filter-panel" aria-labelledby="satisfactionFilterTitle">
+            <div class="filter-copy">
+                <h3 id="satisfactionFilterTitle">Dashboard filters</h3>
+                <p>The date updates all results. Category applies to complaint results.</p>
+            </div>
+
+            <div class="date-range-buttons" role="group" aria-label="Select dashboard period">
+                <button class="range-button" type="button" data-months="1" aria-pressed="false">1 month</button>
+                <button class="range-button" type="button" data-months="3" aria-pressed="false">3 months</button>
+                <button class="range-button active" type="button" data-months="6" aria-pressed="true">6 months</button>
+                <button class="range-button" type="button" data-months="12" aria-pressed="false">12 months</button>
+            </div>
+
+            <div class="category-filter">
+                <label for="complaintCategory">Complaint category</label>
+                <select id="complaintCategory">
+                    <option value="">All categories</option>
+                    <option value="Cleanliness">Cleanliness</option>
+                    <option value="Food Quality">Food Quality</option>
+                    <option value="Service Quality">Service Quality</option>
+                    <option value="Waiting Time">Waiting Time</option>
+                    <option value="Others">Others</option>
+                </select>
+            </div>
+
+            <p class="filter-message" id="filterMessage" role="status" aria-live="polite">
+                Showing the last 6 months.
+            </p>
+        </section>
+
+        <!-- SUMMARY -->
+        <section class="satisfaction-metrics" aria-label="Customer satisfaction summary">
+            <article class="metric-block metric-block-primary">
+                <p class="metric-label">Average rating</p>
+                <p class="metric-value" id="averageRating">--</p>
+                <p class="metric-note">Out of 5 from selected feedback</p>
+            </article>
+
+            <article class="metric-block">
+                <p class="metric-label">Feedback received</p>
+                <p class="metric-value" id="totalFeedback">--</p>
+                <p class="metric-note">Ratings in the selected period</p>
+            </article>
+
+            <article class="metric-block">
+                <p class="metric-label">Complaints</p>
+                <p class="metric-value" id="totalComplaints">--</p>
+                <p class="metric-note">Matches the category filter</p>
+            </article>
+
+            <article class="metric-block">
+                <p class="metric-label">Needs attention</p>
+                <p class="metric-value" id="openComplaints">--</p>
+                <p class="metric-note">Pending or in progress</p>
+            </article>
+        </section>
+
+        <!-- TREND AND CATEGORY BREAKDOWN -->
+        <section class="satisfaction-analytics-grid" aria-label="Satisfaction trends and complaint categories">
+            <article class="analytics-panel rating-trend-panel">
+                <div class="panel-header">
+                    <div>
+                        <h3>Average rating trend</h3>
+                        <p id="ratingTrendSubtitle">Customer rating by month</p>
+                    </div>
+                </div>
+
+                <div class="rating-chart-container">
+                    <canvas id="ratingTrendChart" role="img" aria-label="Monthly average customer rating line chart"></canvas>
+                    <p class="panel-empty" id="ratingTrendEmpty" hidden>No feedback was found for this period.</p>
+                </div>
+            </article>
+
+            <article class="analytics-panel category-panel">
+                <div class="panel-header">
+                    <div>
+                        <h3>Complaint categories</h3>
+                        <p>Issues grouped by customer concern</p>
+                    </div>
+                </div>
+
+                <div class="category-list" id="complaintCategoryList">
+                    <p class="panel-empty">Loading complaint categories...</p>
+                </div>
+            </article>
+        </section>
+
+        <!-- RECENT FEEDBACK -->
+        <section class="recent-feedback-panel" aria-labelledby="recentFeedbackTitle">
+            <div class="panel-header feedback-panel-header">
+                <div>
+                    <h3 id="recentFeedbackTitle">Recent customer feedback</h3>
+                    <p>Newest ratings with written comments</p>
+                </div>
+            </div>
+
+            <div class="feedback-list" id="recentFeedbackList">
+                <p class="panel-empty">Loading recent feedback...</p>
+            </div>
+        </section>
+
+        <!-- RECENT COMPLAINTS -->
+        <section class="complaint-table-panel" aria-labelledby="recentComplaintsTitle">
+            <div class="panel-header complaint-table-header">
+                <div>
+                    <h3 id="recentComplaintsTitle">Recent complaints</h3>
+                    <p>Newest complaint records for operational follow-up</p>
+                </div>
+                <span class="table-summary">Newest first</span>
+            </div>
+
+            <div class="table-scroll">
+                <table class="complaint-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Customer</th>
+                            <th scope="col">Stall</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Complaint</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentComplaintsBody">
+                        <tr>
+                            <td colspan="6" class="table-empty">Loading recent complaints...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="./scripts/vendor/vendor_nav.js"></script>
+    <script src="./scripts/vendor/vendor_satisfaction.js"></script>
+</body>
+</html>
