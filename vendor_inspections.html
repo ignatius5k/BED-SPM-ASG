@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles/vendor_nav.css">
+    <link rel="stylesheet" href="./styles/vendor_dashboard.css">
+    <link rel="stylesheet" href="./styles/vendor_inspections.css">
+    <title>Vendor Inspection and Hygiene History</title>
+</head>
+<body class="vendor-inspection-page">
+    <div id="nav-container"></div>
+
+    <main class="vendor-page inspection-shell">
+        <!-- PAGE HEADER -->
+        <header class="inspection-header">
+            <div>
+                <p class="section-eyebrow">Compliance overview</p>
+                <h2>Inspection and hygiene history</h2>
+                <p class="page-description">
+                    Review official inspection results, hygiene grades, and issues that need attention.
+                </p>
+            </div>
+
+            <div class="inspection-context" aria-label="Inspection dashboard context">
+                <span class="stall-badge" id="stallNameBadge">Loading stall...</span>
+                <span class="period-label" id="periodLabel">Last 12 months</span>
+            </div>
+        </header>
+
+        <p class="page-message" id="inspectionMessage" role="status" aria-live="polite">
+            Loading inspection records...
+        </p>
+
+        <!-- FILTERS -->
+        <section class="inspection-filter-panel" aria-labelledby="inspectionFilterTitle">
+            <div class="filter-copy">
+                <h3 id="inspectionFilterTitle">History filters</h3>
+                <p>Choose a stall and how much inspection history to display.</p>
+            </div>
+
+            <div class="stall-filter">
+                <label for="stallFilter">Vendor stall</label>
+                <select id="stallFilter" disabled>
+                    <option value="">Loading stalls...</option>
+                </select>
+            </div>
+
+            <div class="period-buttons" role="group" aria-label="Select inspection period">
+                <button class="period-button" type="button" data-months="3" aria-pressed="false">3 months</button>
+                <button class="period-button" type="button" data-months="6" aria-pressed="false">6 months</button>
+                <button class="period-button active" type="button" data-months="12" aria-pressed="true">12 months</button>
+                <button class="period-button" type="button" data-months="0" aria-pressed="false">All</button>
+            </div>
+        </section>
+
+        <!-- SUMMARY CARDS -->
+        <section class="inspection-metrics" aria-label="Inspection summary">
+            <article class="metric-block metric-block-primary">
+                <p class="metric-label">Latest hygiene grade</p>
+                <p class="metric-value grade-value" id="latestGrade">--</p>
+                <p class="metric-note" id="latestInspectionDate">No inspection loaded</p>
+            </article>
+
+            <article class="metric-block">
+                <p class="metric-label">Average cleanliness</p>
+                <p class="metric-value" id="averageCleanliness">--</p>
+                <p class="metric-note">Out of 100</p>
+            </article>
+
+            <article class="metric-block">
+                <p class="metric-label">Average food handling</p>
+                <p class="metric-value" id="averageFoodHandling">--</p>
+                <p class="metric-note">Out of 100</p>
+            </article>
+
+            <article class="metric-block">
+                <p class="metric-label">Inspections</p>
+                <p class="metric-value" id="totalInspections">--</p>
+                <p class="metric-note">Within the selected period</p>
+            </article>
+
+            <article class="metric-block issue-metric">
+                <p class="metric-label">Major issues</p>
+                <p class="metric-value" id="majorIssueCount">--</p>
+                <p class="metric-note">Grade D or either score below 60</p>
+            </article>
+        </section>
+
+        <!-- MAJOR ISSUES -->
+        <section class="issue-panel" id="issuePanel" aria-labelledby="issuePanelTitle">
+            <div class="issue-icon" aria-hidden="true">!</div>
+            <div>
+                <h3 id="issuePanelTitle">Major hygiene issues</h3>
+                <p id="issueSummary">Checking the selected inspection records...</p>
+                <ul class="issue-list" id="issueList"></ul>
+            </div>
+        </section>
+
+        <!-- GRADE TREND -->
+        <section class="inspection-panel trend-panel" aria-labelledby="gradeTrendTitle">
+            <div class="panel-header">
+                <div>
+                    <h3 id="gradeTrendTitle">Hygiene grade trend</h3>
+                    <p>Straight lines connect official grades in inspection-date order.</p>
+                </div>
+                <div class="grade-key" aria-label="Grade scale">
+                    <span>A is highest</span>
+                    <span>D is lowest</span>
+                </div>
+            </div>
+
+            <div class="grade-chart-scroll">
+                <div class="grade-chart" id="gradeTrendChart" role="img" aria-label="Hygiene grade history line chart">
+                    <p class="panel-empty">Loading hygiene-grade trend...</p>
+                </div>
+            </div>
+            <p class="chart-note" id="chartNote"></p>
+        </section>
+
+        <!-- EXACT HISTORY TABLE -->
+        <section class="inspection-panel history-panel" aria-labelledby="inspectionHistoryTitle">
+            <div class="panel-header">
+                <div>
+                    <h3 id="inspectionHistoryTitle">Inspection history</h3>
+                    <p>Exact scores and inspector remarks, newest first.</p>
+                </div>
+                <span class="table-summary" id="tableSummary">0 records</span>
+            </div>
+
+            <div class="table-scroll">
+                <table class="inspection-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Grade</th>
+                            <th scope="col">Cleanliness</th>
+                            <th scope="col">Food handling</th>
+                            <th scope="col">Inspector</th>
+                            <th scope="col">Remarks</th>
+                            <th scope="col">Result</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inspectionHistoryBody">
+                        <tr>
+                            <td colspan="7" class="table-empty">Loading inspection history...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="./scripts/vendor/vendor_nav.js"></script>
+    <script src="./scripts/vendor/vendor_inspections.js"></script>
+</body>
+</html>
