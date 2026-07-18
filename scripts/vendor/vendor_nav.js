@@ -80,8 +80,8 @@ fetch('./vendor_nav.html')
         // Clear any session data
         localStorage.clear();
         sessionStorage.clear();
-        // Redirect to login page
-        window.location.href = '/hawkers-app-ignatius/login-vendor.html';
+        // Redirect to the SQL/JWT login page that exists in this project.
+        window.location.href = '/login.html';
       });
     }
   })
