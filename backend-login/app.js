@@ -13,13 +13,14 @@ const vendorPerformanceRoutes = require("./vendorPerformanceRoutes");
 const salesAnalyticsRoutes = require("./salesAnalyticsRoutes");
 const menuItemRoutes = require("./menuItemRoutes");
 const vendorSatisfactionRoutes = require("./vendorSatisfactionRoutes");
+const vendorRentalAgreementRoutes = require("./vendorRentalAgreementRoutes");
 
 const app = express();
 const port = 3000;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); 
+app.use(express.urlencoded({ extended: true }));
 
 // --- User / Auth routes ---
 app.post("/users/register", validateRegister, userController.register);
@@ -40,6 +41,7 @@ app.use("/vendor-performance", vendorPerformanceRoutes);
 app.use("/sales-analytics", salesAnalyticsRoutes);
 app.use("/menu-items", menuItemRoutes);
 app.use("/vendor-satisfaction", vendorSatisfactionRoutes);
+app.use("/vendor-rental-agreements", vendorRentalAgreementRoutes);
 
 // --- Start server ---
 if (require.main === module) {

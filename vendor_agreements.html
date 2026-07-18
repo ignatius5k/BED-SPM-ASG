@@ -5,47 +5,217 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./styles/vendor_agreements.css">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./styles/vendor_nav.css">
   <link rel="stylesheet" href="./styles/vendor_dashboard.css">
-  <title>Documents & Agreements</title>
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="./styles/vendor_rental_agreements.css">
+  <title>Rental Agreements | Hawkers</title>
 </head>
 <body>
   <div id="nav-container"></div>
-  <main class="container vendor-page">
-    <div class="header">
-  <div>
-    <h2>Documents & Agreements</h2>
-    <p>Manage your licenses, certificates, and legal documents</p>
-  </div>
-  <button class="btn btn-primary" onclick="addNewAgreement()">
-    <i data-lucide="plus" class="icon"></i>
-    Add Agreement
-  </button>
-</div>
 
-    <div class="grid" id="documents-grid"></div>
+  <main class="vendor-page rental-page">
+    <header class="header rental-header">
+      <div>
+        <h2>Rental agreements</h2>
+        <p>Track rental periods, renewal dates, payments, and recorded changes.</p>
+      </div>
+      <div class="stall-badge" id="stallBadge">Loading stall</div>
+    </header>
 
-    <div class="alert-card">
-      <div class="alert-content">
-        <i data-lucide="alert-circle" class="icon icon-alert"></i>
+    <p class="page-message" id="pageMessage" role="status" aria-live="polite">
+      Loading rental agreements...
+    </p>
+
+    <section class="mock-demo-controls" id="mockDemoControls" aria-labelledby="mockDemoTitle" hidden>
+      <div class="mock-demo-copy">
+        <span class="mock-demo-label">Interactive demo</span>
+        <h3 id="mockDemoTitle">Try different rental agreement scenarios</h3>
+        <p>These controls use fictional data only. Live vendors cannot switch accounts.</p>
+      </div>
+
+      <div class="mock-demo-actions">
+        <div class="mock-scenario-field">
+          <label for="mockVendorScenario">Demo scenario</label>
+          <select id="mockVendorScenario">
+            <option value="renewalDue">Ben's Chicken Rice — renewal due</option>
+            <option value="active">Lim Ah Cheng Stall — active agreement</option>
+            <option value="empty">Teoh Brothers Noodle — no records</option>
+          </select>
+        </div>
+        <button class="btn btn-outline" id="resetMockDemo" type="button">Reset scenario</button>
+      </div>
+
+      <ol class="mock-demo-guide" aria-label="How to try the demo">
+        <li>Choose a fictional vendor scenario.</li>
+        <li>Select and edit an agreement.</li>
+        <li>Save it and watch the history update.</li>
+      </ol>
+    </section>
+
+    <section class="renewal-alert" id="renewalAlert" aria-live="polite" hidden>
+      <div>
+        <h3 id="renewalAlertTitle">Renewal reminder</h3>
+        <p id="renewalAlertText"></p>
+      </div>
+      <button class="btn btn-outline" id="reviewRenewalButton" type="button">Review agreement</button>
+    </section>
+
+    <section class="rental-summary" aria-label="Rental agreement summary">
+      <article class="summary-item">
+        <span class="summary-label">Current agreements</span>
+        <strong id="currentAgreementCount">0</strong>
+      </article>
+      <article class="summary-item">
+        <span class="summary-label">Next renewal</span>
+        <strong id="nextRenewalDate">Not scheduled</strong>
+      </article>
+      <article class="summary-item">
+        <span class="summary-label">Current monthly rent</span>
+        <strong id="currentMonthlyRent">S$0.00</strong>
+      </article>
+      <article class="summary-item">
+        <span class="summary-label">Changes recorded</span>
+        <strong id="changeCount">0</strong>
+      </article>
+    </section>
+
+    <section class="agreement-workspace" aria-label="Rental agreement records">
+      <aside class="agreement-list-panel">
+        <div class="panel-heading">
+          <div>
+            <h3>Agreement records</h3>
+            <p>Select a record to view its details.</p>
+          </div>
+        </div>
+        <div class="agreement-list" id="agreementList"></div>
+        <p class="empty-state" id="agreementEmpty" hidden>No rental agreements were found.</p>
+      </aside>
+
+      <article class="agreement-detail-panel" id="agreementDetail" hidden>
+        <div class="detail-heading">
+          <div>
+            <span class="detail-reference" id="agreementReference"></span>
+            <h3 id="agreementStallName"></h3>
+          </div>
+          <div class="detail-actions">
+            <span class="status-badge" id="agreementStatus"></span>
+            <button class="btn btn-primary" id="editAgreementButton" type="button">Edit agreement</button>
+          </div>
+        </div>
+
+        <dl class="agreement-facts">
+          <div>
+            <dt>Rental period</dt>
+            <dd id="rentalPeriod"></dd>
+          </div>
+          <div>
+            <dt>Monthly rent</dt>
+            <dd id="monthlyRent"></dd>
+          </div>
+          <div>
+            <dt>Renewal date</dt>
+            <dd id="renewalDate"></dd>
+          </div>
+          <div>
+            <dt>Last updated</dt>
+            <dd id="updatedAt"></dd>
+          </div>
+        </dl>
+
+        <section class="terms-section">
+          <h4>Terms summary</h4>
+          <p id="termsSummary"></p>
+        </section>
+      </article>
+    </section>
+
+    <section class="history-panel" id="historyPanel" hidden>
+      <div class="panel-heading">
         <div>
-          <h3 class="alert-title">Document Compliance Reminder</h3>
-          <p class="alert-description">
-            Ensure all documents are valid and up-to-date to maintain your operating license. 
-            Documents expiring within 30 days will be flagged for renewal.
-          </p>
+          <h3>Agreement change history</h3>
+          <p>Every saved change records the old value, new value, reason, and user.</p>
         </div>
       </div>
-    </div>
+
+      <div class="history-table-wrap">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th scope="col">Changed</th>
+              <th scope="col">Field</th>
+              <th scope="col">Previous value</th>
+              <th scope="col">New value</th>
+              <th scope="col">Reason</th>
+              <th scope="col">Changed by</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody"></tbody>
+        </table>
+      </div>
+      <p class="empty-state" id="historyEmpty" hidden>No changes have been recorded for this agreement.</p>
+    </section>
   </main>
 
-  <script type="module" src="./scripts/vendor/vendor_agreements.js"></script>
-  <script src="./scripts/vendor/vendor_nav.js"></script>
-  <script>
-  lucide.createIcons();
-</script>
+  <div class="rental-modal" id="agreementModal" role="dialog" aria-modal="true" aria-labelledby="agreementModalTitle" hidden>
+    <div class="rental-modal-card">
+      <div class="modal-heading">
+        <div>
+          <h3 id="agreementModalTitle">Edit rental agreement</h3>
+          <p id="modalAgreementReference"></p>
+        </div>
+        <button class="modal-close" id="closeAgreementModal" type="button" aria-label="Close edit form">Close</button>
+      </div>
+
+      <form id="agreementForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="editStartDate">Rental start date</label>
+            <input id="editStartDate" name="startDate" type="date" required>
+          </div>
+          <div class="form-group">
+            <label for="editEndDate">Rental end date</label>
+            <input id="editEndDate" name="endDate" type="date" required>
+          </div>
+          <div class="form-group">
+            <label for="editMonthlyRent">Monthly rent (S$)</label>
+            <input id="editMonthlyRent" name="monthlyRent" type="number" min="0" step="0.01" required>
+          </div>
+          <div class="form-group">
+            <label for="editRenewalDate">Renewal date</label>
+            <input id="editRenewalDate" name="renewalDate" type="date" required>
+          </div>
+          <div class="form-group form-group-full">
+            <label for="editStatus">Agreement status</label>
+            <select id="editStatus" name="status" required>
+              <option value="active">Active</option>
+              <option value="renewal due">Renewal due</option>
+              <option value="renewed">Renewed</option>
+              <option value="expired">Expired</option>
+            </select>
+          </div>
+          <div class="form-group form-group-full">
+            <label for="editTermsSummary">Terms summary</label>
+            <textarea id="editTermsSummary" name="termsSummary" rows="4" maxlength="500"></textarea>
+          </div>
+          <div class="form-group form-group-full">
+            <label for="editChangeReason">Reason for change</label>
+            <textarea id="editChangeReason" name="changeReason" rows="3" maxlength="250" required></textarea>
+            <small>Saved changes are added to the agreement history.</small>
+          </div>
+        </div>
+
+        <p class="form-message" id="formMessage" role="status" aria-live="polite"></p>
+
+        <div class="modal-actions">
+          <button class="btn btn-outline" id="cancelAgreementEdit" type="button">Cancel</button>
+          <button class="btn btn-primary" id="saveAgreementButton" type="submit">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="./scripts/vendor/vendor_rental_agreements.js" defer></script>
+  <script src="./scripts/vendor/vendor_nav.js" defer></script>
 </body>
 </html>
