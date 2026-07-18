@@ -197,6 +197,63 @@ async function getPublicMenuItems(filters) {
   }
 }
 
+// SA2-44: Rank the top five menu items for one customer-facing stall.
+async function getBestSellingMenuItems(filters) {
+  let connection;
+
+  try {
+    connection = await sql.connect(dbConfig);
+    const request = connection.request();
+    request.input("centreId", sql.VarChar(10), filters.centreId);
+    request.input(
+      "customerStallId",
+      sql.VarChar(20),
+      filters.customerStallId
+    );
+
+    const result = await request.query(`
+      SELECT TOP (5)
+        mi.MenuItemID AS menuItemId,
+        mi.ItemName AS itemName,
+        mi.Category AS category,
+        mi.Price AS price,
+        SUM(CASE
+          WHEN o.Status IN ('paid', 'completed') THEN oi.Quantity
+          ELSE 0
+        END) AS quantitySold
+      FROM Stalls s
+      INNER JOIN MenuItems mi ON s.StallID = mi.StallID
+      LEFT JOIN OrderItems oi ON mi.MenuItemID = oi.MenuItemID
+      LEFT JOIN Orders o
+        ON oi.OrderID = o.OrderID
+        AND o.StallID = s.StallID
+      WHERE s.HawkerCentreID = @centreId
+        AND s.CustomerStallID = @customerStallId
+        AND mi.IsAvailable = 1
+        AND mi.IsDeleted = 0
+      GROUP BY
+        mi.MenuItemID,
+        mi.ItemName,
+        mi.Category,
+        mi.Price
+      HAVING SUM(CASE
+        WHEN o.Status IN ('paid', 'completed') THEN oi.Quantity
+        ELSE 0
+      END) > 0
+      ORDER BY quantitySold DESC, mi.ItemName;
+    `);
+
+    return result.recordset;
+  } catch (error) {
+    console.error("Database error in getBestSellingMenuItems:", error);
+    throw error;
+  } finally {
+    if (connection) {
+      await connection.close();
+    }
+  }
+}
+
 async function getValidCuisineRows(transaction, cuisineNames) {
   const request = new sql.Request(transaction);
   const parameterNames = [];
@@ -431,6 +488,7 @@ module.exports = {
   getCuisines,
   getVendorMenuItems,
   getPublicMenuItems,
+  getBestSellingMenuItems,
   createMenuItem,
   updateMenuItem,
   deleteMenuItem,

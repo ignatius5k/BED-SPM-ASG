@@ -36,6 +36,64 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+const BEST_SELLERS_API = "http://localhost:3000/menu-items/best-sellers";
+
+// Mock data keeps the Live Server preview independent from Firebase and MSSQL.
+const MOCK_CENTER = {
+  name: "Maxwell Food Centre",
+  imagePath: "user_pages/hawker.jpg"
+};
+
+const MOCK_STALL = {
+  name: "Ben's Chicken Rice",
+  imagePath: "food_stall/maxwell _food_center/chicken rice stall.jpg"
+};
+
+const MOCK_PRODUCTS = [
+  {
+    id: "MENU001",
+    name: "Steamed Chicken Rice",
+    basePrice: 5.50,
+    likes: 128,
+    imagePath: "food_stall/maxwell _food_center/chicken rice stall.jpg"
+  },
+  {
+    id: "MENU002",
+    name: "Roasted Chicken Rice",
+    basePrice: 6.00,
+    likes: 96,
+    imagePath: "food_stall/maxwell _food_center/chicken rice stall.jpg"
+  },
+  {
+    id: "MENU003",
+    name: "Chicken Soup",
+    basePrice: 3.00,
+    likes: 42,
+    imagePath: "food_stall/maxwell _food_center/chicken rice stall.jpg"
+  },
+  {
+    id: "MENU004",
+    name: "Fried Rice",
+    basePrice: 5.00,
+    likes: 71,
+    imagePath: "food_stall/maxwell _food_center/chicken rice stall.jpg"
+  },
+  {
+    id: "MENU005",
+    name: "Lime Juice",
+    basePrice: 2.00,
+    likes: 58,
+    imagePath: "food_stall/maxwell _food_center/chicken rice stall.jpg"
+  }
+];
+
+const MOCK_BEST_SELLERS = [
+  { itemName: "Steamed Chicken Rice", category: "Main", price: 5.50, quantitySold: 7 },
+  { itemName: "Lime Juice", category: "Drink", price: 2.00, quantitySold: 5 },
+  { itemName: "Roasted Chicken Rice", category: "Main", price: 6.00, quantitySold: 4 },
+  { itemName: "Fried Rice", category: "Main", price: 5.00, quantitySold: 3 },
+  { itemName: "Chicken Soup", category: "Side", price: 3.00, quantitySold: 2 }
+];
 
 function waitForAuthReady() {
   return new Promise((resolve) => {
@@ -50,9 +108,10 @@ function waitForAuthReady() {
    URL PARAMS
 ========================= */
 const params = new URLSearchParams(window.location.search);
+const mockMode = params.get("mock") === "true";
 
-let centerId = params.get("centerId");
-let stallId = params.get("stallId");
+let centerId = params.get("centerId") || (mockMode ? "069184" : "");
+let stallId = params.get("stallId") || (mockMode ? "01-01" : "");
 document.querySelector('#breadcrumbs ul li:nth-child(2) a').href = `/food_stalls.html?centerId=${centerId}`;
 
 if (!centerId || !stallId) {
@@ -63,20 +122,30 @@ if (!centerId || !stallId) {
 /* =========================
    Load hawker centre + stall info
 ========================= */
-const centerRef = doc(db, "hawker-centers", centerId);
-const stallRef = doc(centerRef, "food-stalls", stallId);
+let centerRef;
+let stallRef;
+let center;
+let stall;
 
-const [centerSnap, stallSnap] = await Promise.all([
-  getDoc(centerRef),
-  getDoc(stallRef)
-]);
+if (mockMode) {
+  center = MOCK_CENTER;
+  stall = MOCK_STALL;
+} else {
+  centerRef = doc(db, "hawker-centers", centerId);
+  stallRef = doc(centerRef, "food-stalls", stallId);
 
-if (!centerSnap.exists() || !stallSnap.exists()) {
-  throw new Error("❌ Hawker centre or stall not found");
+  const [centerSnap, stallSnap] = await Promise.all([
+    getDoc(centerRef),
+    getDoc(stallRef)
+  ]);
+
+  if (!centerSnap.exists() || !stallSnap.exists()) {
+    throw new Error("Hawker centre or stall not found");
+  }
+
+  center = centerSnap.data();
+  stall = stallSnap.data();
 }
-
-const center = centerSnap.data();
-const stall = stallSnap.data();
 
 /* =========================
    Inject into HTML
@@ -103,13 +172,105 @@ document.getElementById("back-btn").href =
 /* =========================
    Load products from Firestore  ✅ FIXED
 ========================= */
-const productsRef = collection(stallRef, "products");
-const productsSnap = await getDocs(productsRef);
+let productsRef;
+let allProducts;
 
-const allProducts = productsSnap.docs.map(docSnap => ({
-  id: docSnap.id,
-  ...docSnap.data()
-}));
+if (mockMode) {
+  allProducts = MOCK_PRODUCTS;
+} else {
+  productsRef = collection(stallRef, "products");
+  const productsSnap = await getDocs(productsRef);
+
+  allProducts = productsSnap.docs.map(docSnap => ({
+    id: docSnap.id,
+    ...docSnap.data()
+  }));
+}
+
+/* =========================
+   SA2-44: Load SQL best sellers
+========================= */
+function formatPrice(value) {
+  return `$${Number(value || 0).toFixed(2)}`;
+}
+
+function createBestSellerRow(item, index) {
+  const row = document.createElement("tr");
+
+  const rankCell = document.createElement("td");
+  rankCell.className = "best-seller-rank";
+  rankCell.textContent = index + 1;
+
+  const nameCell = document.createElement("td");
+  nameCell.className = "best-seller-name";
+  nameCell.textContent = item.itemName;
+
+  const categoryCell = document.createElement("td");
+  categoryCell.textContent = item.category || "Uncategorised";
+
+  const priceCell = document.createElement("td");
+  priceCell.className = "best-seller-price";
+  priceCell.textContent = formatPrice(item.price);
+
+  const quantityCell = document.createElement("td");
+  quantityCell.className = "best-seller-quantity";
+  quantityCell.textContent = Number(item.quantitySold || 0).toLocaleString();
+
+  row.appendChild(rankCell);
+  row.appendChild(nameCell);
+  row.appendChild(categoryCell);
+  row.appendChild(priceCell);
+  row.appendChild(quantityCell);
+
+  return row;
+}
+
+function displayBestSellers(items, message) {
+  const list = document.getElementById("best-sellers-list");
+  list.innerHTML = "";
+
+  if (items.length === 0) {
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+    cell.colSpan = 5;
+    cell.className = "best-sellers-message";
+    cell.textContent = message || "No completed sales were found for this stall.";
+    row.appendChild(cell);
+    list.appendChild(row);
+    return;
+  }
+
+  for (let i = 0; i < items.length; i += 1) {
+    list.appendChild(createBestSellerRow(items[i], i));
+  }
+}
+
+async function loadBestSellers() {
+  if (mockMode) {
+    displayBestSellers(MOCK_BEST_SELLERS);
+    return;
+  }
+
+  try {
+    const query = new URLSearchParams({
+      centreId: centerId,
+      customerStallId: stallId
+    });
+    const response = await fetch(`${BEST_SELLERS_API}?${query.toString()}`);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Unable to load best sellers");
+    }
+
+    displayBestSellers(data.items);
+  } catch (error) {
+    console.error("Best sellers error:", error);
+    displayBestSellers([], "Best-selling items are temporarily unavailable.");
+  }
+}
+
+await loadBestSellers();
 
 /* =========================
    Render products
@@ -171,72 +332,70 @@ function renderProducts(products, isSearch = false) {
       const likeIcon = card.querySelector(".like-icon");
       const likeCount = card.querySelector(".like-count");
 
-      const productRef = doc(productsRef, product.id);
-      const userId = auth.currentUser?.uid;
-
-      if (userId) {
-        const likeRef = doc(productRef, "likes", userId);
-        const likeDoc = await getDoc(likeRef);
-
-        // 🛑 stop if render changed while awaiting
-        if (currentToken !== renderToken) return;
-
-        likeIcon.src = likeDoc.exists()
-          ? "icons/order/unlike.svg"
-          : "icons/order/like.svg";
-      }
-
-      likeBtn.addEventListener("click", async (e) => {
-        e.stopPropagation();
-
+      if (mockMode) {
+        likeBtn.disabled = true;
+        likeBtn.title = "Like actions are disabled in the mock preview";
+      } else {
+        const productRef = doc(productsRef, product.id);
         const userId = auth.currentUser?.uid;
-        if (!userId) {
-          alert("You must be signed in to like!");
-          return;
+
+        if (userId) {
+          const likeRef = doc(productRef, "likes", userId);
+          const likeDoc = await getDoc(likeRef);
+
+          // Stop if a new render started while awaiting.
+          if (currentToken !== renderToken) return;
+
+          likeIcon.src = likeDoc.exists()
+            ? "icons/order/unlike.svg"
+            : "icons/order/like.svg";
         }
 
-        const likeRef = doc(productRef, "likes", userId);
+        likeBtn.addEventListener("click", async (e) => {
+          e.stopPropagation();
 
-        try {
-          await runTransaction(db, async (transaction) => {
-            const likeDoc = await transaction.get(likeRef);
+          const userId = auth.currentUser?.uid;
+          if (!userId) {
+            alert("You must be signed in to like!");
+            return;
+          }
 
-            if (!likeDoc.exists()) {
-              transaction.set(likeRef, { userId, timestamp: serverTimestamp() });
-              transaction.update(productRef, { likes: increment(1) });
+          const likeRef = doc(productRef, "likes", userId);
 
-              // update UI
-              likeCount.textContent = Number(likeCount.textContent) + 1;
-              likeIcon.src = "icons/order/unlike.svg";
+          try {
+            await runTransaction(db, async (transaction) => {
+              const likeDoc = await transaction.get(likeRef);
 
-              // ⭐ FIX: update local cache
-              const p = allProducts.find(p => p.id === product.id);
-              if (p) p.likes = (p.likes ?? 0) + 1;
+              if (!likeDoc.exists()) {
+                transaction.set(likeRef, { userId, timestamp: serverTimestamp() });
+                transaction.update(productRef, { likes: increment(1) });
 
-            } else {
-              transaction.delete(likeRef);
-              transaction.update(productRef, { likes: increment(-1) });
+                likeCount.textContent = Number(likeCount.textContent) + 1;
+                likeIcon.src = "icons/order/unlike.svg";
 
-              // update UI
-              likeCount.textContent = Number(likeCount.textContent) - 1;
-              likeIcon.src = "icons/order/like.svg";
+                const p = allProducts.find(p => p.id === product.id);
+                if (p) p.likes = (p.likes ?? 0) + 1;
+              } else {
+                transaction.delete(likeRef);
+                transaction.update(productRef, { likes: increment(-1) });
 
-              // ⭐ FIX: update local cache
-              const p = allProducts.find(p => p.id === product.id);
-              if (p) p.likes = Math.max((p.likes ?? 0) - 1, 0);
-            }
+                likeCount.textContent = Number(likeCount.textContent) - 1;
+                likeIcon.src = "icons/order/like.svg";
 
+                const p = allProducts.find(p => p.id === product.id);
+                if (p) p.likes = Math.max((p.likes ?? 0) - 1, 0);
+              }
+            });
+          } catch (error) {
+            console.error("Transaction failed:", error);
+          }
+        });
 
-          });
-        } catch (e) {
-          console.error("Transaction failed: ", e);
-        }
-      });
-
-      card.addEventListener("click", () => {
-        window.location.href =
-          `addtocart.html?centerId=${centerId}&stallId=${stallId}&productId=${product.id}`;
-      });
+        card.addEventListener("click", () => {
+          window.location.href =
+            `addtocart.html?centerId=${centerId}&stallId=${stallId}&productId=${product.id}`;
+        });
+      }
 
       grid.appendChild(card);
     }
@@ -244,7 +403,9 @@ function renderProducts(products, isSearch = false) {
 }
 
 /* Initial render */
-await waitForAuthReady();
+if (!mockMode) {
+  await waitForAuthReady();
+}
 renderProducts(allProducts);
 
 /* SEARCH */

@@ -56,6 +56,31 @@ async function getPublicMenuItems(req, res) {
   }
 }
 
+// SA2-44: Return the best-selling items for one customer-facing stall.
+async function getBestSellingMenuItems(req, res) {
+  const filters = {
+    centreId: String(req.query.centreId || "").trim(),
+    customerStallId: String(req.query.customerStallId || "").trim(),
+  };
+
+  if (!filters.centreId || !filters.customerStallId) {
+    return res.status(400).json({
+      message: "Hawker centre and stall filters are required",
+    });
+  }
+
+  if (filters.centreId.length > 10 || filters.customerStallId.length > 20) {
+    return res.status(400).json({ message: "Invalid hawker stall filter" });
+  }
+
+  try {
+    const items = await menuItemModel.getBestSellingMenuItems(filters);
+    res.json({ items: items });
+  } catch (error) {
+    sendModelError(error, res, "Error retrieving best-selling menu items");
+  }
+}
+
 async function getVendorMenuItems(req, res) {
   if (!isVendor(req, res)) {
     return;
@@ -138,6 +163,7 @@ async function deleteMenuItem(req, res) {
 module.exports = {
   getCuisines,
   getPublicMenuItems,
+  getBestSellingMenuItems,
   getVendorMenuItems,
   createMenuItem,
   updateMenuItem,
