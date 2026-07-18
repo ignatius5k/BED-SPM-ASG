@@ -26,6 +26,13 @@ function isSignupPage(){
    REDIRECTS
 ========================= */
 function getRedirect(backendRole, fromSignupPage){
+  const requestedPage = new URLSearchParams(window.location.search).get("redirect");
+
+  // Only accept the known vendor page needed by the Stores login flow.
+  if (backendRole === "vendor" && requestedPage === "vendor_stores.html") {
+    return "../vendor_stores.html";
+  }
+
   if (backendRole === "customer") return fromSignupPage ? "../home.html" : "home.html".replace("home.html", "../home.html");
   if (backendRole === "vendor")   return fromSignupPage ? "../vendor_menu.html" : "../vendor_menu.html";
   if (backendRole === "inspector")return fromSignupPage ? "../inspector_dashboard.html" : "../inspector_dashboard.html";

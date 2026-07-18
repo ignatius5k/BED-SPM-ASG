@@ -94,6 +94,22 @@ async function getAllUsers(req, res) {
   }
 }
 
+// Return the user from the verified JWT instead of trusting an ID from the browser.
+async function getCurrentUser(req, res) {
+  try {
+    const user = await userModel.getUserById(req.userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json(user);
+  } catch (error) {
+    console.error("Controller error in getCurrentUser:", error);
+    res.status(500).json({ error: "Error retrieving current user" });
+  }
+}
+
 async function getUserById(req, res) {
   try {
     const user = await userModel.getUserById(req.params.id);
@@ -137,4 +153,13 @@ async function deleteUser(req, res) {
   }
 }
 
-module.exports = { register, login, changePassword, getAllUsers, getUserById, updateUser, deleteUser };
+module.exports = {
+  register,
+  login,
+  changePassword,
+  getAllUsers,
+  getCurrentUser,
+  getUserById,
+  updateUser,
+  deleteUser
+};
