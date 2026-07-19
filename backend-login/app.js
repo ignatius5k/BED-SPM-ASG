@@ -5,6 +5,14 @@ const cors = require("cors");
 const userController = require("./controllers/userController");
 const { validateRegister, validateLogin } = require("./middleware/userValidation");
 const { requireAuth } = require("./middleware/authMiddleware");
+const inspectionRoutes = require("./inspectionRoutes");
+const stallRoutes = require("./stallRoutes");
+const scheduleRoutes = require("./scheduleRoutes");
+const inspectorRoutes = require("./inspectorRoutes");
+const vendorPerformanceRoutes = require("./vendorPerformanceRoutes");
+const salesAnalyticsRoutes = require("./salesAnalyticsRoutes");
+const menuItemRoutes = require("./menuItemRoutes");
+const vendorSatisfactionRoutes = require("./vendorSatisfactionRoutes");
 
 // --- Notifications ---
 const notificationRoutes = require("../backend-notifications/routes/notificationRoutes");
@@ -14,12 +22,13 @@ const port = 3000;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true })); 
 
 // --- User / Auth routes ---
 app.post("/users/register", validateRegister, userController.register);
 app.post("/users/login", validateLogin, userController.login);
 app.put("/users/change-password", requireAuth, userController.changePassword);
+app.get("/users/me", requireAuth, userController.getCurrentUser);
 app.get("/users", userController.getAllUsers);
 app.get("/users/:id", requireAuth, userController.getUserById);
 app.put("/users/:id", requireAuth, userController.updateUser);
@@ -38,3 +47,5 @@ process.on("SIGINT", async () => {
   console.log("Database connections closed");
   process.exit(0);
 });
+
+module.exports = app;

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Hawkers | User Signup</title>
+  <title>Hawkers | Signup</title>
   
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,17 +29,38 @@
         </div>
 
         <h2 class="form-title">Join Us!</h2>
-        <p class="brand-subtitle">Create an account as a customer to earn exclusive voucher deals!</p>
+        <p class="brand-subtitle">Create an account to get started.</p>
 
-        <form class="form" data-role="user">
+        <div id="formMessage" class="form-message"></div>
+
+        <form class="form" data-role="signup">
+          <label for="accountRole">Account Type</label>
+          <select id="accountRole" class="input" required>
+            <option value="">Select account type</option>
+            <option value="customer">Customer</option>
+            <option value="vendor">Vendor</option>
+            <option value="inspector">Inspector</option>
+          </select>
+
           <label for="name">Name</label>
           <input id="name" class="input" type="text" placeholder="Enter your name" autocomplete="name" required>
 
           <label for="email">Email Address</label>
           <input id="email" class="input" type="email" placeholder="Enter your email address" autocomplete="email" required>
 
+          <div id="badgeField" style="display:none;">
+            <label for="badgeNumber">Badge Number</label>
+            <input id="badgeNumber" class="input" type="text" placeholder="e.g. NEA-0008">
+          </div>
+
           <label for="password">Password</label>
           <input id="password" class="input" type="password" placeholder="Enter your password" autocomplete="new-password" required>
+          <ul class="password-checklist" id="passwordChecklist">
+          <li id="checkLength" data-label="At least 8 characters">At least 8 characters</li>
+          <li id="checkUpper" data-label="One uppercase letter">One uppercase letter</li>
+          <li id="checkLower" data-label="One lowercase letter">One lowercase letter</li>
+          <li id="checkNumber" data-label="One number">One number</li>
+        </ul>
 
           <label class="checkline">
             <input id="terms" type="checkbox" required>
@@ -48,9 +69,12 @@
 
           <button id="btnPrimary" class="btn" type="button">Sign Up</button>
 
+          <button id="btnGuest" class="btn btn-outline" type="button" onclick="window.location.href='../home.html'">
+            Continue as Guest
+          </button>
+
           <div class="links">
-            <div>Have an account? <a href="hawkers-app-ignatius/login-user.html">Sign In</a></div>
-            <div><a href="hawkers-app-ignatius/login-vendor.html">Vendor Sign In</a></div>
+            <div>Have an account? <a href="login.html">Sign In</a></div>
           </div>
         </form>
       </section>
@@ -68,4 +92,5 @@
 
   <script type="module" src="scripts/js-login/page-auth-bindings.js"></script>
   <script type="module" src="scripts/js-login/navigation.js"></script>
+</body>
 </html>

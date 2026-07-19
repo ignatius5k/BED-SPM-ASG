@@ -196,65 +196,81 @@ document.getElementById("qty-minus").onclick = () => {
 
 calculateTotal();
 
-document.getElementById("add-to-cart").onclick = async () => {
+const addBtn = document.getElementById("add-to-cart");
 
-  const cartItemsRef = collection(db, "carts", CURRENT_USER_ID, "items");
-  const cartSnap = await getDocs(cartItemsRef);
+if (!addBtn) {
+  console.error("❌ Could not find button with id='add-to-cart'");
+} else {
 
-  const centersInCart = new Set();
+  addBtn.addEventListener("click", async () => {
 
-  cartSnap.forEach(docSnap => {
-    const data = docSnap.data();
-    if (data.centerId) centersInCart.add(data.centerId);
+    console.log("Button clicked");
+
+    const user = auth.currentUser;
+
+    if (!user) {
+      alert("Please log in first.");
+      window.location.href = "login.html";
+      return;
+    }
+
+    CURRENT_USER_ID = user.uid;
+
+    try {
+
+      const cartItemsRef = collection(db, "carts", CURRENT_USER_ID, "items");
+      const cartSnap = await getDocs(cartItemsRef);
+
+      const centersInCart = new Set();
+
+      cartSnap.forEach(docSnap => {
+        const data = docSnap.data();
+        if (data.centerId) centersInCart.add(data.centerId);
+      });
+
+      if (centersInCart.size > 0 && !centersInCart.has(centerId)) {
+        alert("You can only order from ONE hawker centre at a time.");
+        return;
+      }
+
+      const itemRef = doc(db, "carts", CURRENT_USER_ID, "items", productId);
+      const itemSnap = await getDoc(itemRef);
+
+      if (itemSnap.exists()) {
+
+        const existing = itemSnap.data();
+
+        await setDoc(itemRef, {
+          quantity: existing.quantity + quantity,
+          unitPrice: existing.unitPrice ?? basePrice,
+          addons: selectedAddons
+        }, { merge: true });
+
+      } else {
+
+        await setDoc(itemRef, {
+          productId,
+          name: product.name,
+          imagePath: productImagePath,
+          unitPrice: basePrice + selectedAddons.reduce((s, a) => s + a.price, 0),
+          quantity,
+          addons: selectedAddons,
+          centerId,
+          stallId,
+          centerName: centerData.name ?? "Unknown Centre",
+          centreLocation: centerData.location ?? "Unknown Location",
+          stallName: stallData.name ?? "Unknown Stall"
+        });
+
+      }
+
+      alert("✅ Added to cart!");
+
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+    }
+
   });
 
-  // ❌ BLOCK if different hawker centre
-  if (centersInCart.size > 0 && !centersInCart.has(centerId)) {
-    alert("You can only order from ONE hawker centre at a time. Please clear your cart first.");
-    return;
-  }
-
-  // =============================
-  // ORIGINAL ADD-TO-CART LOGIC
-  // =============================
-  const itemRef = doc(db, "carts", CURRENT_USER_ID, "items", productId);
-  const itemSnap = await getDoc(itemRef);
-
-  if (itemSnap.exists()) {
-    const existing = itemSnap.data();
-
-    await setDoc(
-      itemRef,
-      {
-        quantity: existing.quantity + quantity,
-        unitPrice: existing.unitPrice ?? basePrice,
-        addons: selectedAddons,
-      },
-      { merge: true }
-    );
-
-  } else {
-
-    await setDoc(itemRef, {
-      productId,
-      name: product.name,
-      imagePath: productImagePath,
-      unitPrice: basePrice + selectedAddons.reduce((s, a) => s + a.price, 0),
-      quantity,
-      addons: selectedAddons,
-
-      centerId,
-      stallId,
-
-      centerName: centerData.name ?? "Unknown Centre",
-      centreLocation: centerData.location ?? "Unknown Location",
-      stallName: stallData.name ?? "Unknown Stall"
-    });
-  }
-
-  alert("Added to cart!");
-};
-
-
-
-
+}

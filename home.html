@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./template/template.css">
     <link rel="stylesheet" href="./styles/home.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     <title>Home</title>
 </head>
 <body>
@@ -58,6 +59,53 @@
             <h2>Feast On Local Delights</h2>
             <p>Discover delectable local cuisine across a range of cultures from our hawker centers</p>
             <a href="./hawker_centers.html">Order Now</a>
+        </section>
+
+        <!-- SA2-35: Customer sales analytics -->
+        <section id="sales-analytics" aria-labelledby="analytics-title">
+            <div class="analytics-heading">
+                <div>
+                    <p class="section-label">Live sales trends</p>
+                    <h3 id="analytics-title">Plan Your Next Hawker Meal</h3>
+                    <p>See what diners are ordering and when the hawker stalls are busiest.</p>
+                </div>
+                <a href="./hawker_centers.html">Explore all stalls</a>
+            </div>
+
+            <p id="analyticsMessage" class="analytics-message" role="status">Loading sales trends...</p>
+
+            <div class="analytics-layout">
+                <article class="analytics-panel popular-panel">
+                    <div class="panel-heading">
+                        <div>
+                            <p class="panel-label">Most ordered</p>
+                            <h4>Popular With Diners</h4>
+                        </div>
+                        <span>Top 5</span>
+                    </div>
+                    <div id="popularItems" class="popular-items"></div>
+                </article>
+
+                <article class="analytics-panel busy-panel">
+                    <div class="panel-heading">
+                        <div>
+                            <p class="panel-label">Visit planning</p>
+                            <h4>When It Gets Busy</h4>
+                        </div>
+                    </div>
+
+                    <div class="busy-summary">
+                        <p>Busiest time</p>
+                        <strong id="busiestHour">--</strong>
+                        <span id="busiestOrderCount">Waiting for order data</span>
+                    </div>
+
+                    <div class="chart-wrap">
+                        <canvas id="peakHoursChart" role="img" aria-label="Orders grouped by hour of day"></canvas>
+                    </div>
+                    <p class="chart-note">Based on paid and completed orders.</p>
+                </article>
+            </div>
         </section>
 
         <section id="local-highlights">
@@ -138,5 +186,6 @@
 
     <!-- Template Script -->
     <script src="./template/template.js"></script>
+    <script src="./scripts/sales_analytics.js"></script>
 </body>
 </html>

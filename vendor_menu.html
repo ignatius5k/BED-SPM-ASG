@@ -1,23 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="stylesheet" href="styles/vendor_menu.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles/vendor_menu.css">
+  <link rel="stylesheet" href="./styles/vendor_nav.css">
+  <link rel="stylesheet" href="./styles/vendor_dashboard.css">
   <title>Menu Management</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
 </head>
 <body>
   <div id="nav-container"></div>
   <div id="menu"></div>
-  <div class="container">
+  <main class="container vendor-page">
     <!-- Header -->
     <div class="header">
       <div>
         <h2>Menu Management</h2>
         <p>Manage your menu items, pricing, and availability</p>
       </div>
-      <button class="btn btn-primary">
+      <button id="addMenuButton" class="btn btn-primary" type="button">
         <i data-lucide="plus" class="icon"></i>
         Add Menu Item
       </button>
@@ -28,14 +33,38 @@
       <div class="card-content">
         <div class="banner-content">
           <div class="banner-icon">
-            <i data-lucide="utensils-crossed" class="icon-lg icon-white"></i>
+            <img src="./icons/home/main-dish.svg" alt="">
           </div>
           <div>
-            <h3 class="banner-title">Maxwell Hainanese Chicken Rice</h3>
-            <p class="banner-subtitle">Maxwell Food Centre • Chinese Cuisine • Open</p>
+            <h3 id="vendorStallName" class="banner-title">Your vendor menu</h3>
+            <p id="vendorStallDetails" class="banner-subtitle">Loading stall information...</p>
           </div>
         </div>
       </div>
+    </div>
+
+    <p id="menuMessage" class="menu-message" role="status">Loading menu items...</p>
+
+    <!-- Search and filters follow the existing vendor dashboard pattern. -->
+    <div class="menu-toolbar" aria-label="Menu filters">
+      <label class="toolbar-field toolbar-search">
+        <span>Search menu</span>
+        <input id="menuSearch" type="search" placeholder="Search by item name or category">
+      </label>
+
+      <label class="toolbar-field">
+        <span>Stall</span>
+        <select id="stallFilter">
+          <option value="all">All stalls</option>
+        </select>
+      </label>
+
+      <label class="toolbar-field">
+        <span>Cuisine</span>
+        <select id="cuisineFilter">
+          <option value="all">All cuisines</option>
+        </select>
+      </label>
     </div>
 
     <!-- Menu Items by Category -->
@@ -43,7 +72,7 @@
 
     <!-- Quick Stats -->
     <div class="grid-stats" id="stats-grid"></div>
-  </div>
+  </main>
 
   <script type="module" src="scripts/vendor_js/vendor_menu.js"></script>
   <script src="scripts/vendor_js/vendor_nav.js"></script>

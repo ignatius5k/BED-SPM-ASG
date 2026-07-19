@@ -76,6 +76,41 @@
 
     </section>
 
+    <!-- SA2-44: Customer view of this stall's SQL best sellers. -->
+    <section class="best-sellers-section" aria-labelledby="best-sellers-title">
+        <div class="best-sellers-header">
+            <div>
+                <h2 id="best-sellers-title">Best-selling menu items</h2>
+                <p>Top five items from paid and completed orders</p>
+            </div>
+            <p class="best-sellers-order">Most ordered first</p>
+        </div>
+
+        <div class="best-sellers-table-scroll">
+            <table class="best-sellers-table">
+                <caption class="visually-hidden">
+                    Best-selling menu items for this stall
+                </caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Rank</th>
+                        <th scope="col">Menu item</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Items sold</th>
+                    </tr>
+                </thead>
+                <tbody id="best-sellers-list">
+                    <tr>
+                        <td colspan="5" class="best-sellers-message">
+                            Loading best-selling menu items...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
     <!-- Products Section -->
     <section class="products-section">
         <h2>Products</h2>
