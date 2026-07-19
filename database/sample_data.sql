@@ -1,7 +1,7 @@
 
 INSERT INTO Users (id, username, email, password, role) VALUES
 ('CUST001', 'alicetan',      'alicetan@example.com',        '$2b$10$F8W4aC8xV1BzrpaHcw0zL.43mX5SjbJktOsb0dNuVPBr36F1De.Fi', 'customer'),
-('CUST002', 'davidlim',      'davidlim01@example.com',      '$2b$10$placeholderhash0000000000000000000000000000000002', 'customer'),
+('CUST002', 'davidlim',      'davidlim01@example.com',      '$2b$10$ICBgUr11P1o59hTGUDSIhOB7dqgGgvfsKDljUxqE1u7S.GmrZrguC', 'customer'),
 ('CUST003', 'emilyong',      'emilyong02@example.com',      '$2b$10$placeholderhash0000000000000000000000000000000003', 'customer'),
 ('CUST004', 'faridhassan',   'farid.hassan03@example.com',  '$2b$10$placeholderhash0000000000000000000000000000000004', 'customer'),
 ('CUST005', 'graceyeo',      'graceyeo04@example.com',      '$2b$10$placeholderhash0000000000000000000000000000000005', 'customer'),
@@ -38,7 +38,7 @@ INSERT INTO Users (id, username, email, password, role) VALUES
 
 INSERT INTO Users (id, username, email, password, role) VALUES
 ('VEND001', 'bensvendor',         'bensvendor@example.com',         '$2b$10$JjUS/F23qMKB9ZkWKnj/y.n.Hhl/xCiK6AIuLVAR1mOd/H.EuPdEq', 'vendor'),
-('VEND002', 'limahchengstall',    'limahchengstall@example.com',    '$2b$10$placeholderhash0000000000000000000000000000000035', 'vendor'),
+('VEND002', 'limahchengstall',    'limahchengstall@example.com',    '$2b$10$ICBgUr11P1o59hTGUDSIhOB7dqgGgvfsKDljUxqE1u7S.GmrZrguC', 'vendor'),
 ('VEND003', 'teohbrothersnoodle', 'teohbrothers@example.com',       '$2b$10$placeholderhash0000000000000000000000000000000036', 'vendor'),
 ('VEND004', 'nasilemakcorner',    'nasilemakcorner@example.com',    '$2b$10$placeholderhash0000000000000000000000000000000037', 'vendor'),
 ('VEND005', 'sgsatayhouse',       'sgsatayhouse@example.com',       '$2b$10$placeholderhash0000000000000000000000000000000038', 'vendor'),
@@ -85,6 +85,19 @@ INSERT INTO Stalls (StallID, OwnerID, StallName, Cuisine, Description) VALUES
 ('STALL008', 'VEND008', 'Fish Soup Uncle',       'Chinese',   'Fresh sliced fish soup'),
 ('STALL009', 'VEND009', 'Wanton Noodle King',    'Chinese',   'Springy noodles with wanton dumplings'),
 ('STALL010', 'VEND010', 'Curry Fish Head Stall', 'Indian',    'Spicy curry fish head with rice');
+
+-- Sample notification data
+INSERT INTO Notifications (NotificationID, VendorID, OrderID, Message, IsRead, CreatedAt)
+VALUES
+('N001', 'VEND001', 'ORD1001', '[NEW ORDER] OrderID: O1001', 'False', GETDATE()),
+('N002', 'VEND002', 'ORD1002', '[NEW ORDER] OrderID: O1002', 'False', GETDATE()),
+('N003', 'VEND003', 'ORD1003', '[NEW ORDER] OrderID: O1003', 'False', GETDATE()),
+('N004', 'VEND001', 'ORD1004', '[NEW ORDER] OrderID: O1004', 'False', GETDATE()),
+('N005', 'VEND004', 'ORD1005', '[NEW ORDER] OrderID: O1005', 'False', GETDATE()),
+('N007', 'VEND002', 'ORD1006', '[NEW ORDER] OrderID: O1006', 'False', GETDATE()),
+('N009', 'VEND001', 'ORD1007', '[NEW ORDER] OrderID: O1007', 'False', GETDATE()),
+('N010', 'VEND004', 'ORD1008', '[NEW ORDER] OrderID: O1008', 'False', GETDATE());
+
 
 -- Link the first SQL stall to its matching customer-side Firestore location.
 UPDATE Stalls

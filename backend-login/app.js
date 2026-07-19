@@ -14,6 +14,9 @@ const salesAnalyticsRoutes = require("./salesAnalyticsRoutes");
 const menuItemRoutes = require("./menuItemRoutes");
 const vendorSatisfactionRoutes = require("./vendorSatisfactionRoutes");
 
+// --- Notifications ---
+const notificationRoutes = require("../backend-notifications/routes/notificationRoutes");
+
 const app = express();
 const port = 3000;
 
@@ -31,22 +34,12 @@ app.get("/users/:id", requireAuth, userController.getUserById);
 app.put("/users/:id", requireAuth, userController.updateUser);
 app.delete("/users/:id", requireAuth, userController.deleteUser);
 
-// --- Feature routes ---
-app.use("/inspections", inspectionRoutes);
-app.use("/stalls", stallRoutes);
-app.use("/schedule", scheduleRoutes);
-app.use("/inspectors", inspectorRoutes);
-app.use("/vendor-performance", vendorPerformanceRoutes);
-app.use("/sales-analytics", salesAnalyticsRoutes);
-app.use("/menu-items", menuItemRoutes);
-app.use("/vendor-satisfaction", vendorSatisfactionRoutes);
+// --- Notifications routes ---
+app.use("/notifications", notificationRoutes);
 
-// --- Start server ---
-if (require.main === module) {
-  app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-  });
-}
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
 
 process.on("SIGINT", async () => {
   console.log("Server is gracefully shutting down");
