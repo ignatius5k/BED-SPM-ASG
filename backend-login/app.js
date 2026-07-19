@@ -48,4 +48,17 @@ process.on("SIGINT", async () => {
   process.exit(0);
 });
 
+// --- Inspection Routes ---
+const inspectionRoutes = require("./inspectionRoutes");
+app.use("/inspections",inspectionRoutes);
+
+const stallRoutes = require("./stallRoutes");
+app.use("/stalls", stallRoutes);
+
+const scheduleRoutes = require("./scheduleRoutes");
+app.use("/schedule", scheduleRoutes);
+
+const inspectorRoutes = require("./inspectorRoutes");
+app.use("/inspectors", inspectorRoutes);
+
 module.exports = app;
