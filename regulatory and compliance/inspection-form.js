@@ -1,7 +1,7 @@
 
 
     document.addEventListener("DOMContentLoaded", () => {
-    const submitBtn = document.getElementById("submitBtn");
+    const submitBtn = document.getElementById("submitInspection");
 
     submitBtn.addEventListener("click", function (e) {
         e.preventDefault();
@@ -9,7 +9,7 @@
         alert("Inspection form submitted successfully!");
 
         // Redirect after the user clicks OK
-        window.location.href = "inspector-dashboard.html";
+        window.location.href = "inspection-dashboard.html";
     });
 });
 
@@ -32,3 +32,19 @@ function updateStallOptions() {
 
     stallSelect.innerHTML = options;
 }
+
+const response = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify(inspection)
+});
+
+if (!response.ok) {
+    throw new Error("Failed to submit inspection.");
+}
+
+alert("✅ Inspection submitted successfully!");
+
+document.getElementById("inspectionForm").reset();
