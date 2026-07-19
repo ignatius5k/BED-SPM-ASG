@@ -27,8 +27,21 @@ async function deleteNotification(req, res) {
     }
 }
 
+async function createNotification(req, res) {
+    try {
+        const notification = await notificationModel.createNotification(req.body);
+        res.json(notification);
+    } catch(err) {
+        console.error(err);
+        res.status(500).json({
+            error:"Failed to create notification"
+        });
+    }
+}
+
 module.exports = {
     getNotifications,
     markAsRead,
-    deleteNotification
+    deleteNotification,
+    createNotification
 };

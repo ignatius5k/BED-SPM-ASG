@@ -37,16 +37,14 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 let CURRENT_USER_ID = null;
 
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    console.error("❌ User not logged in");
-    window.location.href = "hawkers-app-ignatius/login-user.html";
-    return;
-  }
+const userId = localStorage.getItem("userId");
 
-  CURRENT_USER_ID = user.uid;
-  console.log("✅ Logged in as:", CURRENT_USER_ID);
-});
+if (!userId) {
+    window.location.href = "login-user.html";
+    throw new Error("No logged in user");
+}
+
+console.log("Logged in as:", userId);
 
 /* =========================
    URL PARAMS (NEW)

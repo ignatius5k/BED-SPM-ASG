@@ -16,7 +16,7 @@ async function loadNotifications() {
     notifications.forEach(notification => {
 
         container.innerHTML += `
-            <div class="notification ${notification.IsRead ? "read" : "unread"}">
+            <div class="notification ${notification.IsRead === "True" ? "read" : "unread"}">
 
                 <h4>${notification.Message}</h4>
 
@@ -27,14 +27,14 @@ async function loadNotifications() {
                 <br><br>
 
                 ${
-                    notification.IsRead
+                    notification.IsRead === "True"
                     ? ""
-                    : `<button onclick="markRead('${notification.NotificationID}')">
+                    :  `<button class="read-btn" data-id="${notification.NotificationID}">
                             Mark as Read
-                       </button>`
+                        </button>`
                 }
 
-                <button onclick="deleteNotification('${notification.NotificationID}')">
+                <button class="delete-btn" data-id="${notification.NotificationID}">
                     Delete
                 </button>
 
@@ -61,4 +61,21 @@ async function deleteNotification(id) {
     loadNotifications();
 }
 
+document.addEventListener("click", (e) => {
+
+    if (e.target.classList.contains("read-btn")) {
+        markRead(e.target.dataset.id);
+    }
+
+    if (e.target.classList.contains("delete-btn")) {
+        deleteNotification(e.target.dataset.id);
+    }
+
+});
+
+// Load immediately when page opens
 loadNotifications();
+
+
+// Automatically check for new notifications every 2 seconds
+setInterval(loadNotifications, 2000);

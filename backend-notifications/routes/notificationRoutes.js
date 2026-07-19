@@ -14,4 +14,7 @@ router.put("/:id/read", notificationController.markAsRead);
 // Delete a notification
 router.delete("/:id", notificationController.deleteNotification);
 
+// Create a notification
+router.post("/", notificationController.createNotification);
+
 module.exports = router;
