@@ -5,6 +5,8 @@ const cors = require("cors");
 const userController = require("./controllers/userController");
 const { validateRegister, validateLogin } = require("./middleware/userValidation");
 const { requireAuth } = require("./middleware/authMiddleware");
+
+// Routes
 const inspectionRoutes = require("./inspectionRoutes");
 const stallRoutes = require("./stallRoutes");
 const scheduleRoutes = require("./scheduleRoutes");
@@ -24,6 +26,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); 
 
+
 // --- User / Auth routes ---
 app.post("/users/register", validateRegister, userController.register);
 app.post("/users/login", validateLogin, userController.login);
@@ -37,10 +40,24 @@ app.delete("/users/:id", requireAuth, userController.deleteUser);
 // --- Notifications routes ---
 app.use("/notifications", notificationRoutes);
 
+// ---------------- Regulatory Routes ----------------
+app.use("/inspections", inspectionRoutes);
+app.use("/stalls", stallRoutes);
+app.use("/schedule", scheduleRoutes);
+app.use("/inspectors", inspectorRoutes);
+
+// ---------------- Other Routes ----------------
+app.use("/vendor-performance", vendorPerformanceRoutes);
+app.use("/sales-analytics", salesAnalyticsRoutes);
+app.use("/menu-items", menuItemRoutes);
+app.use("/vendor-satisfaction", vendorSatisfactionRoutes);
+
+// ---------------- Start Server ----------------
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
 
+// ---------------- Graceful Shutdown ----------------
 process.on("SIGINT", async () => {
   console.log("Server is gracefully shutting down");
   await sql.close();
@@ -48,17 +65,6 @@ process.on("SIGINT", async () => {
   process.exit(0);
 });
 
-// --- Inspection Routes ---
-const inspectionRoutes = require("./inspectionRoutes");
-app.use("/inspections",inspectionRoutes);
 
-const stallRoutes = require("./stallRoutes");
-app.use("/stalls", stallRoutes);
-
-const scheduleRoutes = require("./scheduleRoutes");
-app.use("/schedule", scheduleRoutes);
-
-const inspectorRoutes = require("./inspectorRoutes");
-app.use("/inspectors", inspectorRoutes);
 
 module.exports = app;
