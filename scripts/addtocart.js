@@ -37,14 +37,8 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 let CURRENT_USER_ID = null;
 
-const userId = localStorage.getItem("userId");
-
-if (!userId) {
-    window.location.href = "login-user.html";
-    throw new Error("No logged in user");
-}
-
-console.log("Logged in as:", userId);
+// Demo user
+CURRENT_USER_ID = "demo-user";
 
 /* =========================
    URL PARAMS (NEW)
@@ -206,15 +200,13 @@ if (!addBtn) {
 
     console.log("Button clicked");
 
-    const user = auth.currentUser;
-
-    if (!user) {
-      alert("Please log in first.");
-      window.location.href = "login.html";
-      return;
-    }
-
-    CURRENT_USER_ID = user.uid;
+    CURRENT_USER_ID = "demo-user";
+    
+if (!CURRENT_USER_ID) {
+    alert("Please log in first.");
+    window.location.href = "login-user.html";
+    return;
+}
 
     try {
 

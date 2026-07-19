@@ -47,12 +47,7 @@ const paymentButtons = document.querySelectorAll(".payments button");
 let selectedPaymentMethod = null;
 let orderCounter = Number(localStorage.getItem("orderCounter")) || 1008;
 
-const userId = localStorage.getItem("userId");
-
-if (!userId) {
-    window.location.href = "login-user.html";
-    throw new Error("No logged in user");
-}
+const userId = "demo-user";
 
 console.log("Logged in as:", userId);
 
