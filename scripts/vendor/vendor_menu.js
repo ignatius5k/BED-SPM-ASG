@@ -2,8 +2,7 @@ const MENU_API_URL = "http://localhost:3000/menu-items";
 
 // =========================================================
 // MOCK PREVIEW DATA
-// Used automatically on Live Server, or when the URL includes ?mock=true.
-// Add ?mock=false to test the real login/API flow.
+// Only used when the page URL ends with ?mock=true.
 // Normal use requires a vendor JWT and MSSQL.
 // =========================================================
 const MOCK_CUISINES = [
@@ -590,9 +589,7 @@ async function removeMenuItem(menuItemId) {
 // =========================================================
 async function loadVendorMenu() {
   const query = new URLSearchParams(window.location.search);
-  const mockPreference = query.get("mock");
-  const isLiveServerPreview = ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
-  mockMode = mockPreference === "true" || (mockPreference !== "false" && isLiveServerPreview);
+  mockMode = query.get("mock") === "true";
 
   if (mockMode) {
     stalls = MOCK_VENDOR_MENU.stalls.map((stall) => ({ ...stall }));

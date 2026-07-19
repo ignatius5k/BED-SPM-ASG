@@ -2,8 +2,7 @@ const API_URL = "http://localhost:3000/vendor-performance";
 
 // =========================================================
 // MOCK PREVIEW DATA
-// Used automatically on Live Server, or when the URL includes ?mock=true.
-// Add ?mock=false to test the real login/API flow.
+// Only used when the page URL ends with ?mock=true.
 // The normal dashboard still requests data from MSSQL.
 // =========================================================
 const MOCK_PERFORMANCE = {
@@ -519,9 +518,7 @@ function displayItems(items) {
 // =========================================================
 async function loadPerformance(dateRange) {
   const query = new URLSearchParams(window.location.search);
-  const mockPreference = query.get("mock");
-  const isLiveServerPreview = ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
-  mockMode = mockPreference === "true" || (mockPreference !== "false" && isLiveServerPreview);
+  mockMode = query.get("mock") === "true";
 
   if (mockMode) {
     const trendData = fillMissingWeeklyData(getMockTrendData(dateRange), dateRange);

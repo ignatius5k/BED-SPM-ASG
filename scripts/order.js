@@ -95,56 +95,6 @@ const MOCK_BEST_SELLERS = [
   { itemName: "Chicken Soup", category: "Side", price: 3.00, quantitySold: 2 }
 ];
 
-const PRESENTATION_CENTERS = {
-  "069184": "Maxwell Food Centre",
-  "390051": "Old Airport Road Food Centre",
-  "168898": "Tiong Bahru Market",
-  "050335": "Chinatown Complex Market"
-};
-
-const PRESENTATION_STALLS = {
-  "01-01": ["Ben's Chicken Rice", ["Steamed Chicken Rice", "Roasted Chicken Rice", "Chicken Soup"]],
-  "01-02": ["Zhen Zhen Porridge", ["Sliced Fish Porridge", "Chicken Porridge", "Century Egg Porridge"]],
-  "01-03": ["Maxwell Fuzhou Oyster Cake", ["Oyster Cake", "Prawn Oyster Cake", "Fuzhou Fishball Soup"]],
-  "01-04": ["Taste Fusion Hainanese Chicken Chop", ["Hainanese Chicken Chop", "Black Pepper Chicken", "Crispy Chicken Cutlet"]],
-  "02-01": ["Nam Sing Hokkien Mee", ["Signature Hokkien Mee", "Large Hokkien Mee", "Oyster Omelette"]],
-  "02-02": ["Xin Mei Xiang Lor Mee", ["Signature Lor Mee", "Fish Flake Lor Mee", "Braised Egg Lor Mee"]],
-  "02-03": ["Super Shiok Nasi Lemak", ["Chicken Wing Nasi Lemak", "Otah Nasi Lemak", "Crispy Fish Nasi Lemak"]],
-  "02-04": ["Wang Wang Crispy Curry Puff", ["Chicken Curry Puff", "Sardine Curry Puff", "Yam Puff"]],
-  "03-01": ["Jian Bo Shui Kueh", ["Chwee Kueh Set", "Yam Cake", "Chee Cheong Fun"]],
-  "03-02": ["Lor Mee 178", ["Shark Meat Lor Mee", "Crispy Fish Lor Mee", "Traditional Lor Mee"]],
-  "03-03": ["Tiong Bahru Fried Kway Teow", ["Cockles Char Kway Teow", "Large Char Kway Teow", "No-Cockles Char Kway Teow"]],
-  "03-04": ["Western Stall", ["Chicken Chop", "Fish and Chips", "Grilled Chicken Rice"]],
-  "04-01": ["Chang Ji Gourmet", ["Economic Bee Hoon", "Fried Mee", "Curry Vegetables Rice"]],
-  "04-02": ["Lian He Ben Ji Claypot", ["Claypot Chicken Rice", "Chinese Sausage Claypot Rice", "Salted Fish Claypot Rice"]],
-  "04-03": ["Shin Okaya", ["Salmon Don", "Chicken Teriyaki Don", "Saba Shioyaki"]],
-  "04-04": ["Woo Ji Cooked Food", ["Fishball Noodles", "Bak Chor Mee", "Laksa"]]
-};
-
-function getPresentationStall(stallIdentifier) {
-  const entry = PRESENTATION_STALLS[stallIdentifier] || PRESENTATION_STALLS["01-01"];
-  const prices = [5.50, 4.80, 3.50];
-  const quantities = [42, 31, 18];
-  const products = entry[1].map((name, index) => ({
-    id: `DEMO-${stallIdentifier}-${index + 1}`,
-    name,
-    basePrice: prices[index],
-    likes: quantities[index] * 2,
-    imagePath: null
-  }));
-
-  return {
-    stall: { name: entry[0], imagePath: null },
-    products,
-    bestSellers: products.map((product, index) => ({
-      itemName: product.name,
-      category: index === 2 ? "Side" : "Main",
-      price: product.basePrice,
-      quantitySold: quantities[index]
-    }))
-  };
-}
-
 function waitForAuthReady() {
   return new Promise((resolve) => {
     const unsubscribe = onAuthStateChanged(auth, () => {
@@ -158,9 +108,7 @@ function waitForAuthReady() {
    URL PARAMS
 ========================= */
 const params = new URLSearchParams(window.location.search);
-const mockPreference = params.get("mock");
-const isLiveServerPreview = ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
-const mockMode = mockPreference === "true" || (mockPreference !== "false" && isLiveServerPreview);
+const mockMode = params.get("mock") === "true";
 
 let centerId = params.get("centerId") || (mockMode ? "069184" : "");
 let stallId = params.get("stallId") || (mockMode ? "01-01" : "");
@@ -180,11 +128,8 @@ let center;
 let stall;
 
 if (mockMode) {
-  center = {
-    name: PRESENTATION_CENTERS[centerId] || MOCK_CENTER.name,
-    imagePath: MOCK_CENTER.imagePath
-  };
-  stall = getPresentationStall(stallId).stall;
+  center = MOCK_CENTER;
+  stall = MOCK_STALL;
 } else {
   centerRef = doc(db, "hawker-centers", centerId);
   stallRef = doc(centerRef, "food-stalls", stallId);
@@ -231,7 +176,7 @@ let productsRef;
 let allProducts;
 
 if (mockMode) {
-  allProducts = getPresentationStall(stallId).products;
+  allProducts = MOCK_PRODUCTS;
 } else {
   productsRef = collection(stallRef, "products");
   const productsSnap = await getDocs(productsRef);
@@ -302,7 +247,7 @@ function displayBestSellers(items, message) {
 
 async function loadBestSellers() {
   if (mockMode) {
-    displayBestSellers(getPresentationStall(stallId).bestSellers);
+    displayBestSellers(MOCK_BEST_SELLERS);
     return;
   }
 
