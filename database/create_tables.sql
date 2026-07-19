@@ -96,3 +96,26 @@ CREATE TABLE InspectionSchedule (
     FOREIGN KEY (InspectorID)
         REFERENCES Users(id)
 );
+
+CREATE TABLE Feedback (
+    feedback_id INT IDENTITY(1,1) PRIMARY KEY,
+    customer_id INT NOT NULL,
+    stall_id INT NOT NULL,
+    rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    comments VARCHAR(500),
+    created_at DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (customer_id) REFERENCES Customer(customer_id),
+    FOREIGN KEY (stall_id) REFERENCES Stall(stall_id)
+);
+
+CREATE TABLE Complaint (
+    complaint_id INT IDENTITY(1,1) PRIMARY KEY,
+    customer_id INT NOT NULL,
+    stall_id INT NOT NULL,
+    complaint_type VARCHAR(50) NOT NULL,
+    description VARCHAR(500) NOT NULL,
+    status VARCHAR(20) DEFAULT 'Pending',
+    created_at DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (customer_id) REFERENCES Customer(customer_id),
+    FOREIGN KEY (stall_id) REFERENCES Stall(stall_id)
+);
