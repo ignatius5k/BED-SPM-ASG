@@ -2,8 +2,8 @@ const SALES_ANALYTICS_API = "http://localhost:3000/sales-analytics";
 
 // =========================================================
 // MOCK PREVIEW DATA
-// Only used when the page URL ends with ?mockAnalytics=true.
-// The normal home page still requests data from MSSQL.
+// Used automatically on Live Server, or when the URL includes ?mock=true.
+// Add ?mock=false to test the real MSSQL flow.
 // =========================================================
 const MOCK_SALES_ANALYTICS = {
   popularItems: [
@@ -216,14 +216,22 @@ function displayPeakHoursChart(peakHours) {
 // =========================================================
 async function loadSalesAnalytics() {
   const query = new URLSearchParams(window.location.search);
+  const mockPreference = query.get("mock");
+  const isLiveServerPreview = ["localhost", "127.0.0.1", "::1"].includes(
+    window.location.hostname
+  );
+  const mockMode =
+    mockPreference === "true" ||
+    query.get("mockAnalytics") === "true" ||
+    (mockPreference !== "false" && isLiveServerPreview);
 
-  if (query.get("mockAnalytics") === "true") {
+  if (mockMode) {
     displayPopularItems(MOCK_SALES_ANALYTICS.popularItems);
     displayBusiestHour(MOCK_SALES_ANALYTICS.busiestHour);
     const chartLoaded = displayPeakHoursChart(MOCK_SALES_ANALYTICS.peakHours);
 
     if (chartLoaded) {
-      showAnalyticsMessage("Mock preview data. Connect MSSQL for live trends.");
+      showAnalyticsMessage("Presentation data from the current sample dataset.");
     }
 
     return;

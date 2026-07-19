@@ -2,7 +2,8 @@ const API_URL = "http://localhost:3000/vendor-satisfaction";
 
 // =========================================================
 // MOCK PREVIEW DATA
-// Only used when the page URL ends with ?mock=true.
+// Used automatically on Live Server, or when the URL includes ?mock=true.
+// Add ?mock=false to test the real login/API flow.
 // All cards, charts, category counts, and lists are calculated
 // from these same rows so the displayed numbers always tally.
 // =========================================================
@@ -563,7 +564,9 @@ async function loadSatisfaction(dateRange) {
   currentDateRange = dateRange;
   const category = document.getElementById("complaintCategory").value;
   const query = new URLSearchParams(window.location.search);
-  mockMode = query.get("mock") === "true";
+  const mockPreference = query.get("mock");
+  const isLiveServerPreview = ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
+  mockMode = mockPreference === "true" || (mockPreference !== "false" && isLiveServerPreview);
 
   setFiltersLoading(true);
   showMessage("Loading customer satisfaction data...");

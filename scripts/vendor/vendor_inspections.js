@@ -6,7 +6,8 @@ let mockMode = false;
 
 // =========================================================
 // MOCK PREVIEW DATA
-// Only used when the page URL contains ?mock=true.
+// Used automatically on Live Server, or when the URL includes ?mock=true.
+// Add ?mock=false to test the real login/API flow.
 // All cards, warnings, chart points, and table rows are calculated
 // from these same records so every value tallies.
 // =========================================================
@@ -440,7 +441,9 @@ function selectPeriod(event) {
 
 document.addEventListener("DOMContentLoaded", () => {
   const query = new URLSearchParams(window.location.search);
-  mockMode = query.get("mock") === "true";
+  const mockPreference = query.get("mock");
+  const isLiveServerPreview = ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
+  mockMode = mockPreference === "true" || (mockPreference !== "false" && isLiveServerPreview);
 
   document.querySelectorAll(".period-button").forEach((button) => {
     button.addEventListener("click", selectPeriod);

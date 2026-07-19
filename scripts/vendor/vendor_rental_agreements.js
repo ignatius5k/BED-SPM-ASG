@@ -2,7 +2,8 @@ const API_URL = "http://localhost:3000/vendor-rental-agreements";
 
 // =========================================================
 // MOCK PREVIEW DATA
-// Used only when the page URL includes ?mock=true.
+// Used automatically on Live Server (localhost/127.0.0.1), or when the page
+// URL includes ?mock=true. Add ?mock=false to test the real login/API flow.
 // Every rental field and history field has a sample value.
 // =========================================================
 function createRelativeDate(daysFromToday) {
@@ -619,7 +620,9 @@ function displayDashboard() {
 
 async function loadRentalAgreements() {
   const query = new URLSearchParams(window.location.search);
-  mockMode = query.get("mock") === "true";
+  const mockPreference = query.get("mock");
+  const isLiveServerPreview = ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
+  mockMode = mockPreference === "true" || (mockPreference !== "false" && isLiveServerPreview);
 
   if (mockMode) {
     document.getElementById("mockDemoControls").hidden = false;
@@ -627,7 +630,7 @@ async function loadRentalAgreements() {
     rentalData = cloneMockScenario(currentMockScenario);
     selectedAgreementId = null;
     displayDashboard();
-    showPageMessage("Showing a complete fictional rental agreement demo. Changes stay in this browser preview only.");
+    showPageMessage("Presentation demo is ready with fictional rental data. Changes stay in this browser preview only.");
     return;
   }
 
