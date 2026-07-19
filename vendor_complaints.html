@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles/vendor_dashboard.css">
+    <link rel="stylesheet" href="./styles/vendor_complaints.css">
+    <link rel="stylesheet" href="./styles/vendor_nav.css">
+    <title>Complaints</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
+    </head>
+
+    <body>
+
+        <div id="nav-container"></div>
+        <div class="complaints-container">
+            
+            <div class="header">
+                <div>
+                    <h2>Complaint Tracking</h2>
+                    <p>Monitor and respond to customer complaints.</p>
+                </div>
+
+                <div class="filter-section">
+
+                    <label for="statusFilter">Filter:</label>
+
+                    <select id="statusFilter">
+
+                        <option value="all">All</option>
+                        <option value="pending">Pending</option>
+                        <option value="in progress">In Progress</option>
+                        <option value="resolved">Resolved</option>
+                    </select>
+                </div>
+            </div>
+        
+            <div id="complaints"></div>
+
+            <div id="empty-message" style="display:none;">
+                No complaints found.
+            </div>
+        </div>
+
+        <script type="module" src="scripts/vendor_js/vendor_complaints.js"></script>
+        <script src="scripts/vendor_js/vendor_nav.js"></script>
+
+        <script>
+            if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+            } else {
+            console.error('Lucide not loaded!');
+            }
+        </script>
+    </body>
+</html>

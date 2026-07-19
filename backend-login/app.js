@@ -17,6 +17,10 @@ const vendorSatisfactionRoutes = require("./vendorSatisfactionRoutes");
 // --- Notifications ---
 const notificationRoutes = require("../backend-declan/routes/notificationRoutes");
 
+// --- Vendor Complaint Display ---
+const vendorComplaintRoutes = require("../backend-declan/routes/vendorComplaintRoutes");
+const vendorBadgeRoutes = require("../backend-declan/routes/vendorBadgeRoutes")
+
 const app = express();
 const port = 3000;
 
@@ -36,6 +40,9 @@ app.delete("/users/:id", requireAuth, userController.deleteUser);
 
 // --- Notifications routes ---
 app.use("/notifications", notificationRoutes);
+
+// --- Vendor Complaint Display routes ---
+app.use("/vendorComplaints", vendorComplaintRoutes);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

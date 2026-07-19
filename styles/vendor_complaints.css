@@ -1,0 +1,241 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+.complaints-container{
+    max-width:1280px;
+    margin:0 auto;
+    padding:2rem 1.5rem;
+}
+
+/* Header */
+
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:2rem;
+    margin-bottom:2rem;
+}
+
+.header h2{
+    font-size:1.8rem;
+    font-weight:600;
+    color:#1f2937;
+}
+
+.header p{
+    margin-top:.35rem;
+    color:#6b7280;
+}
+
+/* Filter */
+
+.filter-section{
+    display:flex;
+    align-items:center;
+    gap:.75rem;
+}
+
+.filter-section label{
+    font-weight:500;
+}
+
+.filter-section select{
+    padding:.65rem 1rem;
+    border:1px solid #d1d5db;
+    border-radius:8px;
+    background:white;
+}
+
+/* Complaint card */
+
+.complaint-card{
+
+    background:white;
+
+    border-radius:.6rem;
+
+    padding:1.5rem;
+
+    margin-bottom:1rem;
+
+    border-left:5px solid #dc2626;
+
+    box-shadow:0 1px 3px rgba(0,0,0,.1);
+
+    transition:.2s;
+}
+
+.complaint-card:hover{
+
+    transform:translateY(-2px);
+
+    background:#f9fafb;
+}
+
+.complaint-card h3{
+
+    color:#1f2937;
+
+    font-size:1.15rem;
+
+    margin-bottom:.75rem;
+}
+
+.complaint-card p{
+
+    margin-bottom:.45rem;
+
+    color:#4b5563;
+}
+
+/* Meta */
+
+.meta{
+
+    margin:1rem 0;
+
+    display:flex;
+
+    gap:2rem;
+
+    flex-wrap:wrap;
+
+    color:#6b7280;
+
+    font-size:.92rem;
+}
+
+/* Status badge */
+
+.badge{
+
+    display:inline-block;
+
+    padding:.35rem .75rem;
+
+    border-radius:999px;
+
+    font-size:.8rem;
+
+    font-weight:600;
+
+    margin-top:.8rem;
+}
+
+.badge.pending{
+
+    background:#FEF3C7;
+
+    color:#92400E;
+}
+
+.badge.in-progress{
+
+    background:#DBEAFE;
+
+    color:#1D4ED8;
+}
+
+.badge.resolved{
+
+    background:#DCFCE7;
+
+    color:#166534;
+}
+
+/* Bottom row */
+
+.actions{
+
+    margin-top:1.25rem;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:1rem;
+
+    flex-wrap:wrap;
+}
+
+.actions select{
+
+    padding:.55rem .9rem;
+
+    border:1px solid #d1d5db;
+
+    border-radius:6px;
+
+    background:white;
+}
+
+.actions button{
+
+    padding:.6rem 1.2rem;
+
+    border:none;
+
+    border-radius:6px;
+
+    background:#ea580c;
+
+    color:white;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.actions button:hover{
+
+    opacity:.9;
+}
+
+/* Empty */
+
+#empty-message{
+
+    margin-top:3rem;
+
+    text-align:center;
+
+    color:#9ca3af;
+}
+
+/* Mobile */
+
+@media(max-width:768px){
+
+.header{
+
+    flex-direction:column;
+
+    align-items:flex-start;
+}
+
+.actions{
+
+    flex-direction:column;
+
+    align-items:stretch;
+}
+
+.actions button{
+
+    width:100%;
+}
+
+.actions select{
+
+    width:100%;
+}
+
+}

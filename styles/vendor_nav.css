@@ -157,6 +157,40 @@
     display: none;
 }
 
+.nav-tab {
+    font-family: "DM Sans", sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    position: relative
+}
+
+.nav-badge {
+    display: none;
+
+    margin-left: 6px;
+
+    min-width: 18px;
+    height: 18px;
+
+    padding: 0 5px;
+
+    border-radius: 999px;
+
+    background: #ad343e;
+    color: white;
+
+    font-size: 0.7rem;
+    font-weight: 700;
+
+    align-items: center;
+    justify-content: center;
+}
+
+
+.nav-badge.show {
+    display: inline-flex;
+}
+
 .mobile-menu {
     display: none;
     max-height: 0;

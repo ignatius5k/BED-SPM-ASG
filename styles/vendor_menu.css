@@ -140,9 +140,10 @@
 }
 
 .menu-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(250px, 350px));
+    justify-content: start;
+    gap: 1rem;
 }
 
 .menu-item-card {
@@ -420,6 +421,13 @@
 .icon-lg {
   width: 1.45rem;
   height: 1.45rem;
+}
+
+.banner-card,
+.menu-toolbar,
+.category-section,
+.grid-stats {
+    max-width: 1150px;
 }
 
 @media (max-width: 960px) {
