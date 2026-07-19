@@ -15,7 +15,6 @@
     <link rel="stylesheet" href="../css/style.css">
     
 </head>
-<script src="inspection-form.js"></script>
 <script src="../template/template.js"></script>
 
 
@@ -49,7 +48,7 @@
             </div>
     </header>
 
-    <main></main>
+  
 
     
 
@@ -61,7 +60,7 @@
         <form id="inspectionForm" class="main-card">
 
         <div style="width:100%; max-width:320px; margin: 0 auto 24px auto;">
-            <select id="hawkerCentre" required onchange="updateStallOptions() "
+            <select id="hawkerCentre" required>
                 style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd; margin-bottom:12px; background:#fff;">
                 <option value="">Select Hawker Centre</option>
                 <option value="Maxwell Food Centre">Maxwell Food Centre</option>
@@ -72,6 +71,13 @@
                 <option value="Old Airport Road Food Centre">Old Airport Road Food Centre</option>
             </select>
             
+        </div>
+
+        <div style="width:100%; max-width:320px; margin:0 auto 24px auto;">
+    <select id="stall" required
+        style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd;">
+        <option value="">Select Stall</option>
+    </select>
         </div>
 
             <h2 style="margin-bottom:32px;">Inspection Details</h2>

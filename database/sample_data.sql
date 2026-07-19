@@ -251,3 +251,21 @@ FROM Orders
 WHERE Status IN ('paid', 'completed')
 GROUP BY DATEPART(HOUR, OrderDate)
 ORDER BY TotalOrders DESC, HourOfDay;
+
+//Feedback sample data
+INSERT INTO Customer (name, email) VALUES
+('Tan Wei Ming', 'weiming@gmail.com'),
+('Nur Aisyah', 'aisyah@gmail.com');
+
+INSERT INTO Stall (stall_name, cuisine_type) VALUES
+('Ah Hock Chicken Rice', 'Chinese'),
+('Roti Prata Corner', 'Indian');
+
+INSERT INTO Feedback (customer_id, stall_id, rating, comments) VALUES
+(1, 1, 5, 'Delicious chicken rice, generous portion!'),
+(2, 2, 4, 'Good prata but service was a bit slow.');
+
+//Complaint sample data
+INSERT INTO Complaint (customer_id, stall_id, complaint_type, description) VALUES
+(1, 1, 'Hygiene', 'Table was not wiped down before I sat, found leftover food scraps.'),
+(2, 2, 'Service', 'Waited over 20 minutes despite the stall not being busy.');

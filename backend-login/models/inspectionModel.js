@@ -34,6 +34,52 @@ async function getAllInspections() {
 }
 
 
+async function createInspection(inspection) {
+
+    const pool = await sql.connect(dbConfig);
+
+    await pool.request()
+
+        .input("stallID", sql.VarChar(10), inspection.StallID)
+
+        .input("inspectorID", sql.VarChar(10), inspection.InspectorID)
+
+        .input("inspectionDate", sql.Date, inspection.InspectionDate)
+
+        .input("cleanlinessScore", sql.Int, inspection.CleanlinessScore)
+
+        .input("foodHandlingScore", sql.Int, inspection.FoodHandlingScore)
+
+        .input("remarks", sql.VarChar(500), inspection.Remarks)
+
+        .input("grade", sql.Char(1), inspection.Grade)
+
+        .query(`
+            INSERT INTO Inspections
+            (
+                StallID,
+                InspectorID,
+                InspectionDate,
+                CleanlinessScore,
+                FoodHandlingScore,
+                Remarks,
+                Grade
+            )
+
+            VALUES
+            (
+                @stallID,
+                @inspectorID,
+                @inspectionDate,
+                @cleanlinessScore,
+                @foodHandlingScore,
+                @remarks,
+                @grade
+            )
+        `);
+
+}
+
 async function deleteInspection(id) {
 
     const pool = await sql.connect(dbConfig);
@@ -50,5 +96,6 @@ async function deleteInspection(id) {
 
 module.exports = {
     getAllInspections,
+    createInspection,
     deleteInspection
 };

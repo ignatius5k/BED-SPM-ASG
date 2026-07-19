@@ -24,7 +24,31 @@ async function getAllInspections(req,res){
 }
 
 
-//delete
+// CREATE
+async function createInspection(req, res) {
+
+    try {
+
+        await inspectionModel.createInspection(req.body);
+
+        res.status(201).json({
+            message: "Inspection submitted successfully"
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            error: err.message
+        });
+
+    }
+
+}
+
+
+//DELETE
 async function deleteInspection(req, res) {
     try {
         const id = req.params.id;
@@ -51,6 +75,7 @@ async function deleteInspection(req, res) {
 }
 module.exports={
     getAllInspections,
+    createInspection,
     deleteInspection
 };
 

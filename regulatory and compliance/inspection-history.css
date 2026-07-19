@@ -2,10 +2,14 @@ body{
 background:#f5f6fa;
 }
 
+footer {
+    margin-top: 450;
+}
+
 .history-container{
 max-width:1200px;
 margin:auto;
-padding:40px;
+padding:80px;
 }
 
 .back-btn{
