@@ -5,10 +5,16 @@ box-sizing:border-box;
 
 }
 
+footer {
+    margin-top: 450px;
+}
+
 body{
 background:#f5f7f9;
 color:#333;
+height: 100%;
 }
+
 
 .container{
 max-width:1200px;
@@ -29,6 +35,8 @@ justify-content:flex-end;
 gap:15px;
 margin-bottom:25px;
 }
+
+
 
 .top-buttons button{
 padding:12px 24px;
@@ -144,3 +152,4 @@ white-space:nowrap;
 }
 
 }
+
