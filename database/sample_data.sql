@@ -227,6 +227,47 @@ VALUES
 ('CUST028', 'STALL002', 'Others', 'This complaint belongs to another vendor.', 'pending', DATEADD(DAY, -5, GETDATE()));
 
 -- ---------------------------------------------------------
+-- Rental agreements and change history for SA2-27.
+-- One other-vendor row is included to verify vendor isolation.
+-- ---------------------------------------------------------
+INSERT INTO RentalAgreements
+  (AgreementID, StallID, AgreementReference, StartDate, EndDate, MonthlyRent, RenewalDate, Status, TermsSummary, UpdatedAt)
+VALUES
+('RA001', 'STALL001', 'HCR-STALL001-CURRENT',
+ CAST(DATEADD(MONTH, -10, GETDATE()) AS DATE),
+ CAST(DATEADD(MONTH, 2, GETDATE()) AS DATE),
+ 1850.00,
+ CAST(DATEADD(DAY, 21, GETDATE()) AS DATE),
+ 'renewal due',
+ 'Monthly rent includes common-area cleaning and waste collection. Utilities are billed separately.',
+ DATEADD(DAY, -12, GETDATE())),
+('RA002', 'STALL001', 'HCR-STALL001-PREVIOUS',
+ CAST(DATEADD(MONTH, -22, GETDATE()) AS DATE),
+ CAST(DATEADD(MONTH, -10, GETDATE()) AS DATE),
+ 1720.00,
+ CAST(DATEADD(MONTH, -11, GETDATE()) AS DATE),
+ 'renewed',
+ 'Previous twelve-month rental term for the same stall.',
+ DATEADD(MONTH, -10, GETDATE())),
+('RA003', 'STALL002', 'HCR-STALL002-CURRENT',
+ CAST(DATEADD(MONTH, -4, GETDATE()) AS DATE),
+ CAST(DATEADD(MONTH, 8, GETDATE()) AS DATE),
+ 1630.00,
+ CAST(DATEADD(MONTH, 7, GETDATE()) AS DATE),
+ 'active',
+ 'This agreement belongs to another vendor and must not appear for VEND001.',
+ GETDATE());
+
+INSERT INTO RentalAgreementChanges
+  (AgreementID, ChangedBy, FieldChanged, PreviousValue, NewValue, ChangeReason, ChangedAt)
+VALUES
+('RA001', 'VEND001', 'Monthly rent', 'S$1,800.00', 'S$1,850.00', 'Annual rental rate adjustment', DATEADD(DAY, -12, GETDATE())),
+('RA001', 'VEND001', 'Renewal date', '30 days before expiry', '21 days from today', 'Updated after landlord confirmation', DATEADD(DAY, -12, GETDATE())),
+('RA001', 'VEND001', 'Terms summary', 'Cleaning included', 'Cleaning and waste collection included', 'Clarified included services', DATEADD(DAY, -20, GETDATE())),
+('RA002', 'VEND001', 'Status', 'active', 'renewed', 'Renewal completed for the next term', DATEADD(MONTH, -10, GETDATE())),
+('RA003', 'VEND002', 'Monthly rent', 'S$1,580.00', 'S$1,630.00', 'Annual rental rate adjustment', DATEADD(DAY, -30, GETDATE()));
+
+-- ---------------------------------------------------------
 -- SA2-48 sample-data verification queries
 -- Expected popular item: Steamed Chicken Rice, 7 sold, $38.50 revenue.
 -- Expected peak hour: 12:00, 5 orders, $39.00 sales.
