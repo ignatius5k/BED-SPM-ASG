@@ -69,6 +69,79 @@ fetch('./vendor_nav.html')
       });
     });
 
+    async function loadNavBadges() {
+
+    const vendorId = localStorage.getItem("userId");
+
+    if (!vendorId) return;
+
+
+    try {
+
+        const notificationRes = await fetch(
+            `http://localhost:3000/vendorNotifications/unread/${vendorId}`
+        );
+
+        const notifications = await notificationRes.json();
+
+
+        const complaintRes = await fetch(
+            `http://localhost:3000/vendorComplaints/pending/${vendorId}`
+        );
+
+        const complaints = await complaintRes.json();
+
+
+
+        // Notifications badge
+
+        if (notifications.length > 0) {
+
+            document.getElementById("notificationBadge").textContent =
+                notifications.length;
+
+            document.getElementById("notificationBadge")
+                .classList.add("show");
+
+
+            document.getElementById("mobileNotificationBadge").textContent =
+                notifications.length;
+
+            document.getElementById("mobileNotificationBadge")
+                .classList.add("show");
+        }
+
+
+
+        // Complaints badge
+
+        if (complaints.length > 0) {
+
+            document.getElementById("complaintBadge").textContent =
+                complaints.length;
+
+            document.getElementById("complaintBadge")
+                .classList.add("show");
+
+
+            document.getElementById("mobileComplaintBadge").textContent =
+                complaints.length;
+
+            document.getElementById("mobileComplaintBadge")
+                .classList.add("show");
+        }
+
+
+        } catch(err) {
+
+            console.error(
+                "Failed loading nav badges:",
+                err
+            );
+
+        }
+    }
+
     /* =========================
        Logout button
     ========================= */
@@ -84,5 +157,7 @@ fetch('./vendor_nav.html')
         window.location.href = '/hawkers-app-ignatius/login-vendor.html';
       });
     }
+
+    loadNavBadges();
   })
   .catch(err => console.error('Failed to load nav:', err));

@@ -200,13 +200,13 @@ if (!addBtn) {
 
     console.log("Button clicked");
 
-    CURRENT_USER_ID = "demo-user";
-    
-if (!CURRENT_USER_ID) {
-    alert("Please log in first.");
-    window.location.href = "login-user.html";
-    return;
-}
+    if (!userId) {
+      alert("Please log in first.");
+      window.location.href = "login.html";
+      return;
+    }
+
+    CURRENT_USER_ID = userId;
 
     try {
 

@@ -41,9 +41,6 @@ CREATE TABLE Notifications (
     IsRead TEXT DEFAULT 'False',
     CreatedAt DATETIME DEFAULT GETDATE(),
 );
-  IsAvailable BIT NOT NULL DEFAULT 1,
-  IsDeleted BIT NOT NULL DEFAULT 0
-);
 
 -- Cuisine creation - A menu item can belong to more than one cuisine.
 CREATE TABLE Cuisines (

@@ -37,9 +37,10 @@ textarea {
 
 .vendor-page,
 body > .container {
-    width: min(1280px, 100%);
+    width: min(1150px, 100%);
     margin: 0 auto;
-    padding: 2.5rem 1.5rem 4rem;
+    padding: 2rem 1.25rem 3rem;
+    box-sizing: border-box;
 }
 
 .header {
