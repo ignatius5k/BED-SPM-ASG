@@ -30,6 +30,17 @@ CREATE TABLE MenuItems (
   Description VARCHAR(500),
   Price DECIMAL(6,2) NOT NULL,
   Category VARCHAR(50),
+  IsAvailable BIT DEFAULT 1
+);
+
+CREATE TABLE Notifications (
+    NotificationID VARCHAR(20) PRIMARY KEY,
+    VendorID VARCHAR(10) NOT NULL FOREIGN KEY REFERENCES Users(id),
+    OrderID VARCHAR(20),
+    Message TEXT NOT NULL,
+    IsRead TEXT DEFAULT 'False',
+    CreatedAt DATETIME DEFAULT GETDATE(),
+);
   IsAvailable BIT NOT NULL DEFAULT 1,
   IsDeleted BIT NOT NULL DEFAULT 0
 );
@@ -64,6 +75,29 @@ CREATE TABLE OrderItems (
   MenuItemID VARCHAR(10) NOT NULL FOREIGN KEY REFERENCES MenuItems(MenuItemID),
   Quantity INT NOT NULL CHECK (Quantity > 0),
   UnitPrice DECIMAL(6,2) NOT NULL CHECK (UnitPrice >= 0)
+);
+
+-- Customer satisfaction tables - used by the vendor feedback and complaints dashboard.
+-- The Feedback column names match the existing Feedback CRUD feature.
+CREATE TABLE Feedback (
+  feedback_id INT IDENTITY(1,1) PRIMARY KEY,
+  customer_id VARCHAR(10) NOT NULL FOREIGN KEY REFERENCES Users(id),
+  stall_id VARCHAR(10) NOT NULL FOREIGN KEY REFERENCES Stalls(StallID),
+  rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+  comments VARCHAR(500),
+  created_at DATETIME2 NOT NULL DEFAULT GETDATE()
+);
+
+CREATE TABLE Complaints (
+  complaint_id INT IDENTITY(1,1) PRIMARY KEY,
+  customer_id VARCHAR(10) NOT NULL FOREIGN KEY REFERENCES Users(id),
+  stall_id VARCHAR(10) NOT NULL FOREIGN KEY REFERENCES Stalls(StallID),
+  category VARCHAR(50) NOT NULL
+    CHECK (category IN ('Cleanliness', 'Food Quality', 'Service Quality', 'Waiting Time', 'Others')),
+  description VARCHAR(500) NOT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT 'pending'
+    CHECK (status IN ('pending', 'in progress', 'resolved')),
+  complaint_date DATETIME2 NOT NULL DEFAULT GETDATE()
 );
 
 CREATE TABLE Inspections (

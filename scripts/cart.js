@@ -42,55 +42,92 @@ const auth = getAuth(app);
 const container = document.getElementById("cart-items");
 const subtotalEl = document.getElementById("subtotal");
 const totalEl = document.getElementById("total");
+const payNowBtn = document.getElementById("pay-now");
+const paymentButtons = document.querySelectorAll(".payments button");
+let selectedPaymentMethod = null;
+let orderCounter = Number(localStorage.getItem("orderCounter")) || 1008;
 
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    window.location.href = "hawkers-app-ignatius/login.html";
-    return;
+const userId = localStorage.getItem("userId");
+
+if (!userId) {
+    window.location.href = "login-user.html";
+    throw new Error("No logged in user");
+}
+
+console.log("Logged in as:", userId);
+
+// const itemsRef = collection(db, "carts", userId, "items");
+
+// const snap = await getDocs(itemsRef);
+// DEMO FAKE CART DATA
+const snap = {
+  forEach(callback) {
+    const fakeItems = [
+      {
+        id: "demo001",
+        data() {
+          return {
+            name: "Chicken Katsu Curry",
+            description: "Crispy chicken cutlet with rich Japanese curry and rice.",
+            unitPrice: 7.50,
+            quantity: 2,
+            imagePath: "Background/background.png"
+          };
+        }
+      },
+      {
+        id: "demo002",
+        data() {
+          return {
+            name: "Ebi Tempura Don",
+            description: "Golden prawn tempura drizzled with sweet tendon sauce on rice.",
+            unitPrice: 7.80,
+            quantity: 1,
+            imagePath: "Background/background.png"
+          };
+        }
+      }
+    ];
+
+    fakeItems.forEach(callback);
   }
+};
 
-  const userId = user.uid;
-  console.log("Logged in as:", userId);
+let subtotal = 0;
+container.innerHTML = "";
 
-  const itemsRef = collection(db, "carts", userId, "items");
+let hasItems = false;
 
-  const snap = await getDocs(itemsRef);
+snap.forEach(docSnap => {
+  hasItems = true;
+  const item = docSnap.data();
+  subtotal += (item.unitPrice ?? item.price ?? 0) * item.quantity;
 
-  let subtotal = 0;
-  container.innerHTML = "";
+  const div = document.createElement("div");
+  div.className = "cart-item";
+  const itemImagePath = normalizeImagePath(item.imagePath, "Background/background.png");
 
-  let hasItems = false;
+  div.innerHTML = `
+    <img class="cart-item-image" src="${itemImagePath}" alt="${item.name}">
+    <div class="cart-info">
+      <h4>${item.quantity}x ${item.name}</h4>
+      <p>${item.description ?? ""}</p>
+      <span class="cart-price">$${Number(item.unitPrice ?? item.price ?? 0).toFixed(2)}</span>
+      <div class="remove">Remove</div>
+    </div>
+  `;
 
-  snap.forEach(docSnap => {
-    hasItems = true;
-    const item = docSnap.data();
-    subtotal += (item.unitPrice ?? item.price ?? 0) * item.quantity;
+  setImageSrc(div.querySelector(".cart-item-image"), itemImagePath);
 
-    const div = document.createElement("div");
-    div.className = "cart-item";
-    const itemImagePath = normalizeImagePath(item.imagePath, "Background/background.png");
+  div.querySelector(".remove").onclick = async () => {
+    await deleteDoc(doc(itemsRef, docSnap.id));
+    location.reload();
+  };
 
-    div.innerHTML = `
-      <img class="cart-item-image" src="${itemImagePath}" alt="${item.name}">
-      <div class="cart-info">
-        <h4>${item.quantity}x ${item.name}</h4>
-        <p>${item.description ?? ""}</p>
-        <span class="cart-price">$${Number(item.unitPrice ?? item.price ?? 0).toFixed(2)}</span>
-        <div class="remove">Remove</div>
-      </div>
-    `;
+  container.appendChild(div);
+});
 
-    setImageSrc(div.querySelector(".cart-item-image"), itemImagePath);
-
-    div.querySelector(".remove").onclick = async () => {
-      await deleteDoc(doc(itemsRef, docSnap.id));
-      location.reload();
-    };
-
-    container.appendChild(div);
-  });
-
-  // 🔒 Block payment if cart empty
+// 🔒 Block payment if cart empty
 
 if (!hasItems) {
   paymentButtons.forEach(btn => {
@@ -232,14 +269,9 @@ updateTotal(subtotal);
     alert("✅ Promo code redeemed successfully!");
     promoCode.reset();
   });
-});
-
 /* =========================
    PAYMENT METHOD UI
 ========================= */
-
-const paymentButtons = document.querySelectorAll(".payments button");
-let selectedPaymentMethod = null;
 
 paymentButtons.forEach(btn => {
   btn.addEventListener("click", () => {
@@ -256,17 +288,49 @@ paymentButtons.forEach(btn => {
   });
 });
 
+
+async function createVendorNotification() {
+
+  orderCounter++;
+
+  localStorage.setItem("orderCounter", orderCounter);
+
+  console.log(orderCounter);
+  const message = `[NEW ORDER] Order ID: ORD${orderCounter}`;
+
+  try {
+    const res = await fetch("http://localhost:3000/notifications", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        VendorID: "VEND002",
+        Message: message,
+        IsRead: "False",
+        OrderID: "ORD" + orderCounter
+      })
+    });
+
+    const data = await res.json();
+    console.log("Notification created:", data);
+
+  } catch (err) {
+    console.error("Notification failed:", err);
+  }
+}
+
 /* =========================
    PAY NOW BUTTON
 ========================= */
-const payNowBtn = document.getElementById("pay-now");
+
 
 payNowBtn.addEventListener("click", async () => {
   if (!selectedPaymentMethod) {
     alert("Please select a payment method");
     return;
   }
-
+  await createVendorNotification();
   const user = auth.currentUser;
   const fulfillmentType = sessionStorage.getItem("fulfillmentType") ?? "takeout";
 

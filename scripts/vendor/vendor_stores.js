@@ -1,11 +1,10 @@
-import { db, auth } from './kiki_firebase.js';
+import { db } from './kiki_firebase.js';
 import { 
   collection, 
   getDocs, 
   addDoc, 
   updateDoc, 
-  doc,
-  onAuthStateChanged
+  doc
 } from './kiki_firebase.js';
 // Import these directly from Firebase instead of from kiki_firebase.js
 import { 
@@ -13,6 +12,8 @@ import {
   query,
   where
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+const API_URL = "http://localhost:3000";
 
 document.addEventListener("DOMContentLoaded", () => {
   const storesGrid = document.getElementById("storesGrid");
@@ -24,15 +25,56 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentUserUID = null;
   let allStores = [];
 
-  // Auth state listener
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      currentUserUID = user.uid;
-      loadStores();
-    } else {
-      window.location.href = 'hawkers-app-ignatius/login-vendor.html';
+  // Use the verified SQL/JWT vendor identity used by the other vendor pages.
+  async function startStoresPage() {
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+
+    if (!token || role !== "vendor") {
+      window.location.href = "./login.html?redirect=vendor_stores.html";
+      return;
     }
-  });
+
+    try {
+      const response = await fetch(`${API_URL}/users/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 401 || response.status === 403) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("role");
+        window.location.href = "./login.html?redirect=vendor_stores.html";
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error("Unable to verify the vendor login");
+      }
+
+      const vendor = await response.json();
+
+      if (vendor.role !== "vendor") {
+        window.location.href = "./login.html?redirect=vendor_stores.html";
+        return;
+      }
+
+      currentUserUID = vendor.id;
+      loadStores();
+    } catch (error) {
+      console.error("Vendor login verification error:", error);
+      storesGrid.innerHTML = `
+        <div class="stores-error" style="grid-column: 1/-1; text-align: center; padding: 40px;">
+          <h3>Stores could not be loaded</h3>
+          <p>Start the backend server, then refresh this page.</p>
+        </div>
+      `;
+    }
+  }
+
+  startStoresPage();
 
   const gradeClass = (grade) => `badge-${grade.toLowerCase()}`;
 

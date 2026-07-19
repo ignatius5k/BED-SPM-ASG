@@ -12,6 +12,10 @@ const inspectorRoutes = require("./inspectorRoutes");
 const vendorPerformanceRoutes = require("./vendorPerformanceRoutes");
 const salesAnalyticsRoutes = require("./salesAnalyticsRoutes");
 const menuItemRoutes = require("./menuItemRoutes");
+const vendorSatisfactionRoutes = require("./vendorSatisfactionRoutes");
+
+// --- Notifications ---
+const notificationRoutes = require("../backend-notifications/routes/notificationRoutes");
 
 const app = express();
 const port = 3000;
@@ -24,26 +28,18 @@ app.use(express.urlencoded({ extended: true }));
 app.post("/users/register", validateRegister, userController.register);
 app.post("/users/login", validateLogin, userController.login);
 app.put("/users/change-password", requireAuth, userController.changePassword);
+app.get("/users/me", requireAuth, userController.getCurrentUser);
 app.get("/users", userController.getAllUsers);
 app.get("/users/:id", requireAuth, userController.getUserById);
 app.put("/users/:id", requireAuth, userController.updateUser);
 app.delete("/users/:id", requireAuth, userController.deleteUser);
 
-// --- Feature routes ---
-app.use("/inspections", inspectionRoutes);
-app.use("/stalls", stallRoutes);
-app.use("/schedule", scheduleRoutes);
-app.use("/inspectors", inspectorRoutes);
-app.use("/vendor-performance", vendorPerformanceRoutes);
-app.use("/sales-analytics", salesAnalyticsRoutes);
-app.use("/menu-items", menuItemRoutes);
+// --- Notifications routes ---
+app.use("/notifications", notificationRoutes);
 
-// --- Start server ---
-if (require.main === module) {
-  app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-  });
-}
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
 
 process.on("SIGINT", async () => {
   console.log("Server is gracefully shutting down");

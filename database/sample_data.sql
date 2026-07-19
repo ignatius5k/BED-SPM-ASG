@@ -1,7 +1,7 @@
 
 INSERT INTO Users (id, username, email, password, role) VALUES
 ('CUST001', 'alicetan',      'alicetan@example.com',        '$2b$10$F8W4aC8xV1BzrpaHcw0zL.43mX5SjbJktOsb0dNuVPBr36F1De.Fi', 'customer'),
-('CUST002', 'davidlim',      'davidlim01@example.com',      '$2b$10$placeholderhash0000000000000000000000000000000002', 'customer'),
+('CUST002', 'davidlim',      'davidlim01@example.com',      '$2b$10$ICBgUr11P1o59hTGUDSIhOB7dqgGgvfsKDljUxqE1u7S.GmrZrguC', 'customer'),
 ('CUST003', 'emilyong',      'emilyong02@example.com',      '$2b$10$placeholderhash0000000000000000000000000000000003', 'customer'),
 ('CUST004', 'faridhassan',   'farid.hassan03@example.com',  '$2b$10$placeholderhash0000000000000000000000000000000004', 'customer'),
 ('CUST005', 'graceyeo',      'graceyeo04@example.com',      '$2b$10$placeholderhash0000000000000000000000000000000005', 'customer'),
@@ -38,7 +38,7 @@ INSERT INTO Users (id, username, email, password, role) VALUES
 
 INSERT INTO Users (id, username, email, password, role) VALUES
 ('VEND001', 'bensvendor',         'bensvendor@example.com',         '$2b$10$JjUS/F23qMKB9ZkWKnj/y.n.Hhl/xCiK6AIuLVAR1mOd/H.EuPdEq', 'vendor'),
-('VEND002', 'limahchengstall',    'limahchengstall@example.com',    '$2b$10$placeholderhash0000000000000000000000000000000035', 'vendor'),
+('VEND002', 'limahchengstall',    'limahchengstall@example.com',    '$2b$10$ICBgUr11P1o59hTGUDSIhOB7dqgGgvfsKDljUxqE1u7S.GmrZrguC', 'vendor'),
 ('VEND003', 'teohbrothersnoodle', 'teohbrothers@example.com',       '$2b$10$placeholderhash0000000000000000000000000000000036', 'vendor'),
 ('VEND004', 'nasilemakcorner',    'nasilemakcorner@example.com',    '$2b$10$placeholderhash0000000000000000000000000000000037', 'vendor'),
 ('VEND005', 'sgsatayhouse',       'sgsatayhouse@example.com',       '$2b$10$placeholderhash0000000000000000000000000000000038', 'vendor'),
@@ -85,6 +85,19 @@ INSERT INTO Stalls (StallID, OwnerID, StallName, Cuisine, Description) VALUES
 ('STALL008', 'VEND008', 'Fish Soup Uncle',       'Chinese',   'Fresh sliced fish soup'),
 ('STALL009', 'VEND009', 'Wanton Noodle King',    'Chinese',   'Springy noodles with wanton dumplings'),
 ('STALL010', 'VEND010', 'Curry Fish Head Stall', 'Indian',    'Spicy curry fish head with rice');
+
+-- Sample notification data
+INSERT INTO Notifications (NotificationID, VendorID, OrderID, Message, IsRead, CreatedAt)
+VALUES
+('N001', 'VEND001', 'ORD1001', '[NEW ORDER] OrderID: O1001', 'False', GETDATE()),
+('N002', 'VEND002', 'ORD1002', '[NEW ORDER] OrderID: O1002', 'False', GETDATE()),
+('N003', 'VEND003', 'ORD1003', '[NEW ORDER] OrderID: O1003', 'False', GETDATE()),
+('N004', 'VEND001', 'ORD1004', '[NEW ORDER] OrderID: O1004', 'False', GETDATE()),
+('N005', 'VEND004', 'ORD1005', '[NEW ORDER] OrderID: O1005', 'False', GETDATE()),
+('N007', 'VEND002', 'ORD1006', '[NEW ORDER] OrderID: O1006', 'False', GETDATE()),
+('N009', 'VEND001', 'ORD1007', '[NEW ORDER] OrderID: O1007', 'False', GETDATE()),
+('N010', 'VEND004', 'ORD1008', '[NEW ORDER] OrderID: O1008', 'False', GETDATE());
+
 
 -- Link the first SQL stall to its matching customer-side Firestore location.
 UPDATE Stalls
@@ -172,6 +185,46 @@ INSERT INTO OrderItems (OrderID, MenuItemID, Quantity, UnitPrice) VALUES
 ('ORD009', 'MENU002', 1, 6.00),
 ('ORD010', 'MENU005', 1, 2.00),
 ('ORD011', 'MENU004', 1, 5.00);
+
+-- ---------------------------------------------------------
+-- Customer satisfaction sample data for SA2-36.
+-- Relative dates support the 1, 3, 6, and 12 month dashboard filters.
+-- ---------------------------------------------------------
+INSERT INTO Feedback
+  (customer_id, stall_id, rating, comments, created_at)
+VALUES
+('CUST001', 'STALL001', 5, 'Chicken was tender and the rice was fragrant.', DATEADD(DAY, -2, GETDATE())),
+('CUST002', 'STALL001', 4, 'Good portion and quick collection.', DATEADD(DAY, -7, GETDATE())),
+('CUST003', 'STALL001', 5, 'Friendly service and excellent chilli.', DATEADD(DAY, -13, GETDATE())),
+('CUST004', 'STALL001', 3, 'Food was good but the queue moved slowly.', DATEADD(DAY, -20, GETDATE())),
+('CUST005', 'STALL001', 4, 'Roasted chicken was flavourful.', DATEADD(MONTH, -1, DATEADD(DAY, -3, GETDATE()))),
+('CUST006', 'STALL001', 5, 'Consistently tasty and well packed.', DATEADD(MONTH, -1, DATEADD(DAY, -12, GETDATE()))),
+('CUST007', 'STALL001', 4, 'Lime juice was fresh and not too sweet.', DATEADD(MONTH, -2, GETDATE())),
+('CUST008', 'STALL001', 2, 'Rice was slightly dry during the evening.', DATEADD(MONTH, -2, DATEADD(DAY, -9, GETDATE()))),
+('CUST009', 'STALL001', 5, 'Excellent value for the portion.', DATEADD(MONTH, -3, GETDATE())),
+('CUST010', 'STALL001', 4, 'Fast service during lunch.', DATEADD(MONTH, -4, GETDATE())),
+('CUST011', 'STALL001', 3, 'Soup could have been warmer.', DATEADD(MONTH, -5, GETDATE())),
+('CUST012', 'STALL001', 5, 'One of my favourite chicken rice stalls.', DATEADD(MONTH, -6, GETDATE())),
+('CUST013', 'STALL001', 4, 'Reliable meal and polite staff.', DATEADD(MONTH, -8, GETDATE())),
+('CUST014', 'STALL001', 3, 'Waiting time was longer than expected.', DATEADD(MONTH, -10, GETDATE())),
+('CUST015', 'STALL001', 5, 'The roasted chicken was excellent.', DATEADD(MONTH, -11, GETDATE())),
+('CUST016', 'STALL002', 1, 'This belongs to a different vendor.', DATEADD(DAY, -4, GETDATE()));
+
+INSERT INTO Complaints
+  (customer_id, stall_id, category, description, status, complaint_date)
+VALUES
+('CUST017', 'STALL001', 'Food Quality', 'The chicken was colder than expected.', 'pending', DATEADD(DAY, -3, GETDATE())),
+('CUST018', 'STALL001', 'Service Quality', 'My collection number was skipped.', 'resolved', DATEADD(DAY, -8, GETDATE())),
+('CUST019', 'STALL001', 'Waiting Time', 'The lunch queue took more than twenty minutes.', 'in progress', DATEADD(DAY, -15, GETDATE())),
+('CUST020', 'STALL001', 'Cleanliness', 'The collection counter needed wiping.', 'resolved', DATEADD(DAY, -24, GETDATE())),
+('CUST021', 'STALL001', 'Others', 'The takeaway bag was missing cutlery.', 'pending', DATEADD(MONTH, -1, GETDATE())),
+('CUST022', 'STALL001', 'Food Quality', 'The rice was too dry.', 'resolved', DATEADD(MONTH, -2, GETDATE())),
+('CUST023', 'STALL001', 'Service Quality', 'The order instructions were not followed.', 'in progress', DATEADD(MONTH, -3, GETDATE())),
+('CUST024', 'STALL001', 'Waiting Time', 'Evening collection was delayed.', 'resolved', DATEADD(MONTH, -4, GETDATE())),
+('CUST025', 'STALL001', 'Cleanliness', 'The tray return area was untidy.', 'resolved', DATEADD(MONTH, -5, GETDATE())),
+('CUST026', 'STALL001', 'Food Quality', 'The soup tasted too salty.', 'pending', DATEADD(MONTH, -7, GETDATE())),
+('CUST027', 'STALL001', 'Service Quality', 'Staff could explain sold-out items more clearly.', 'resolved', DATEADD(MONTH, -10, GETDATE())),
+('CUST028', 'STALL002', 'Others', 'This complaint belongs to another vendor.', 'pending', DATEADD(DAY, -5, GETDATE()));
 
 -- ---------------------------------------------------------
 -- SA2-48 sample-data verification queries
