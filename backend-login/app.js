@@ -15,7 +15,7 @@ const menuItemRoutes = require("./menuItemRoutes");
 const vendorSatisfactionRoutes = require("./vendorSatisfactionRoutes");
 
 // --- Notifications ---
-const notificationRoutes = require("../backend-notifications/routes/notificationRoutes");
+const notificationRoutes = require("../backend-declan/routes/notificationRoutes");
 
 const app = express();
 const port = 3000;

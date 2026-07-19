@@ -9,6 +9,8 @@ async function loadNotifications() {
     const res = await fetch(`${API}/notifications/${vendorId}`);
     const notifications = await res.json();
 
+    console.log("API response:", notifications);
+
     const container = document.getElementById("notifications");
 
     container.innerHTML = "";

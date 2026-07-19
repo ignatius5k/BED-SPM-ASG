@@ -206,15 +206,13 @@ if (!addBtn) {
 
     console.log("Button clicked");
 
-    const user = auth.currentUser;
-
-    if (!user) {
+    if (!userId) {
       alert("Please log in first.");
       window.location.href = "login.html";
       return;
     }
 
-    CURRENT_USER_ID = user.uid;
+    CURRENT_USER_ID = userId;
 
     try {
 

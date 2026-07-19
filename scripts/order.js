@@ -39,61 +39,61 @@ const auth = getAuth(app);
 const BEST_SELLERS_API = "http://localhost:3000/menu-items/best-sellers";
 
 // Mock data keeps the Live Server preview independent from Firebase and MSSQL.
-const MOCK_CENTER = {
-  name: "Maxwell Food Centre",
-  imagePath: "user_pages/hawker.jpg"
-};
+// const MOCK_CENTER = {
+//   name: "Maxwell Food Centre",
+//   imagePath: "user_pages/hawker.jpg"
+// };
 
-const MOCK_STALL = {
-  name: "Ben's Chicken Rice",
-  imagePath: "food_stall/maxwell _food_center/chicken rice stall.jpg"
-};
+// const MOCK_STALL = {
+//   name: "Ben's Chicken Rice",
+//   imagePath: "food_stall/maxwell _food_center/chicken rice stall.jpg"
+// };
 
-const MOCK_PRODUCTS = [
-  {
-    id: "MENU001",
-    name: "Steamed Chicken Rice",
-    basePrice: 5.50,
-    likes: 128,
-    imagePath: "food_stall/maxwell _food_center/chicken rice stall.jpg"
-  },
-  {
-    id: "MENU002",
-    name: "Roasted Chicken Rice",
-    basePrice: 6.00,
-    likes: 96,
-    imagePath: "food_stall/maxwell _food_center/chicken rice stall.jpg"
-  },
-  {
-    id: "MENU003",
-    name: "Chicken Soup",
-    basePrice: 3.00,
-    likes: 42,
-    imagePath: "food_stall/maxwell _food_center/chicken rice stall.jpg"
-  },
-  {
-    id: "MENU004",
-    name: "Fried Rice",
-    basePrice: 5.00,
-    likes: 71,
-    imagePath: "food_stall/maxwell _food_center/chicken rice stall.jpg"
-  },
-  {
-    id: "MENU005",
-    name: "Lime Juice",
-    basePrice: 2.00,
-    likes: 58,
-    imagePath: "food_stall/maxwell _food_center/chicken rice stall.jpg"
-  }
-];
+// const MOCK_PRODUCTS = [
+//   {
+//     id: "MENU001",
+//     name: "Steamed Chicken Rice",
+//     basePrice: 5.50,
+//     likes: 128,
+//     imagePath: "food_stall/maxwell _food_center/chicken rice stall.jpg"
+//   },
+//   {
+//     id: "MENU002",
+//     name: "Roasted Chicken Rice",
+//     basePrice: 6.00,
+//     likes: 96,
+//     imagePath: "food_stall/maxwell _food_center/chicken rice stall.jpg"
+//   },
+//   {
+//     id: "MENU003",
+//     name: "Chicken Soup",
+//     basePrice: 3.00,
+//     likes: 42,
+//     imagePath: "food_stall/maxwell _food_center/chicken rice stall.jpg"
+//   },
+//   {
+//     id: "MENU004",
+//     name: "Fried Rice",
+//     basePrice: 5.00,
+//     likes: 71,
+//     imagePath: "food_stall/maxwell _food_center/chicken rice stall.jpg"
+//   },
+//   {
+//     id: "MENU005",
+//     name: "Lime Juice",
+//     basePrice: 2.00,
+//     likes: 58,
+//     imagePath: "food_stall/maxwell _food_center/chicken rice stall.jpg"
+//   }
+// ];
 
-const MOCK_BEST_SELLERS = [
-  { itemName: "Steamed Chicken Rice", category: "Main", price: 5.50, quantitySold: 7 },
-  { itemName: "Lime Juice", category: "Drink", price: 2.00, quantitySold: 5 },
-  { itemName: "Roasted Chicken Rice", category: "Main", price: 6.00, quantitySold: 4 },
-  { itemName: "Fried Rice", category: "Main", price: 5.00, quantitySold: 3 },
-  { itemName: "Chicken Soup", category: "Side", price: 3.00, quantitySold: 2 }
-];
+// const MOCK_BEST_SELLERS = [
+//   { itemName: "Steamed Chicken Rice", category: "Main", price: 5.50, quantitySold: 7 },
+//   { itemName: "Lime Juice", category: "Drink", price: 2.00, quantitySold: 5 },
+//   { itemName: "Roasted Chicken Rice", category: "Main", price: 6.00, quantitySold: 4 },
+//   { itemName: "Fried Rice", category: "Main", price: 5.00, quantitySold: 3 },
+//   { itemName: "Chicken Soup", category: "Side", price: 3.00, quantitySold: 2 }
+// ];
 
 function waitForAuthReady() {
   return new Promise((resolve) => {
