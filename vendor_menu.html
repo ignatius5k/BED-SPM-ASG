@@ -10,7 +10,6 @@
   <link rel="stylesheet" href="./styles/vendor_nav.css">
   <link rel="stylesheet" href="./styles/vendor_dashboard.css">
   <title>Menu Management</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
 </head>
 <body>
   <div id="nav-container"></div>
@@ -23,7 +22,9 @@
         <p>Manage your menu items, pricing, and availability</p>
       </div>
       <button id="addMenuButton" class="btn btn-primary" type="button">
-        <i data-lucide="plus" class="icon"></i>
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14M5 12h14"></path>
+        </svg>
         Add Menu Item
       </button>
     </div>
@@ -74,15 +75,7 @@
     <div class="grid-stats" id="stats-grid"></div>
   </main>
 
-  <script type="module" src="scripts/vendor_js/vendor_menu.js"></script>
-  <script src="scripts/vendor_js/vendor_nav.js"></script>
-
-  <script>
-    if (typeof lucide !== 'undefined') {
-      lucide.createIcons();
-    } else {
-      console.error('Lucide not loaded!');
-    }
-  </script>
+  <script src="./scripts/vendor/vendor_menu.js" defer></script>
+  <script src="./scripts/vendor/vendor_nav.js" defer></script>
 </body>
 </html>
