@@ -3,6 +3,7 @@ const sql = require("mssql");
 const cors = require("cors");
 
 const userController = require("./controllers/userController");
+const orderController = require("./controllers/orderController");
 const { validateRegister, validateLogin } = require("./middleware/userValidation");
 const { requireAuth } = require("./middleware/authMiddleware");
 
@@ -35,11 +36,15 @@ app.use(express.urlencoded({ extended: true }));
 app.post("/users/register", validateRegister, userController.register);
 app.post("/users/login", validateLogin, userController.login);
 app.put("/users/change-password", requireAuth, userController.changePassword);
-app.get("/users/me", requireAuth, userController.getCurrentUser);
 app.get("/users", userController.getAllUsers);
 app.get("/users/:id", requireAuth, userController.getUserById);
 app.put("/users/:id", requireAuth, userController.updateUser);
 app.delete("/users/:id", requireAuth, userController.deleteUser);
+
+// --- Order History routes ---
+app.post("/orders", requireAuth, orderController.createOrder);
+app.get("/orders", requireAuth, orderController.getMyOrders);
+app.get("/orders/:id", requireAuth, orderController.getOrderById);
 
 // --- Notifications routes ---
 app.use("/notifications", notificationRoutes);
