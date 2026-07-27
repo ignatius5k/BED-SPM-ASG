@@ -1,19 +1,30 @@
-const API = "http://localhost:3000";
+const API = `${window.location.protocol}//${window.location.hostname}:3000`;
 
 const vendorId = localStorage.getItem("userId");
 
 console.log("Current vendor:", vendorId);
 
 async function loadNotifications() {
+    const container = document.getElementById("notifications");
+    const emptyMessage = document.getElementById("empty-message");
 
-    const res = await fetch(`${API}/notifications/${vendorId}`);
-    const notifications = await res.json();
+    if (!vendorId) {
+        container.innerHTML = "";
+        emptyMessage.style.display = "block";
+        emptyMessage.querySelector("p").textContent = "Sign in as a vendor to view notifications.";
+        return;
+    }
+
+    const res = await fetch(`${API}/notifications/${encodeURIComponent(vendorId)}`);
+    const notifications = await res.json().catch(() => []);
+    if (!res.ok) {
+        throw new Error("Unable to load notifications.");
+    }
 
     console.log("API response:", notifications);
 
-    const container = document.getElementById("notifications");
-
     container.innerHTML = "";
+    emptyMessage.style.display = notifications.length === 0 ? "block" : "none";
 
     notifications.forEach(notification => {
 
@@ -75,9 +86,12 @@ document.addEventListener("click", (e) => {
 
 });
 
-// Load immediately when page opens
-loadNotifications();
+loadNotifications().catch((error) => {
+    console.warn(error.message);
+});
 
-
-// Automatically check for new notifications every 2 seconds
-setInterval(loadNotifications, 2000);
+if (vendorId) {
+    setInterval(() => {
+        loadNotifications().catch((error) => console.warn(error.message));
+    }, 15000);
+}

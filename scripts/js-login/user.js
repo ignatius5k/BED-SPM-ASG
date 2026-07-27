@@ -84,12 +84,12 @@ cachedData = snap.data();
     els.address.textContent = "Not set";
   }
 
-  if (cachedData.payment) {
+  if (els.payment && cachedData.payment) {
     els.payment.textContent =
       cachedData.payment.method === "Card"
         ? `Card •••• ${cachedData.payment.last4}`
         : cachedData.payment.method;
-  } else {
+  } else if (els.payment) {
     els.payment.textContent = "Not set";
   }
 
@@ -215,7 +215,7 @@ async function saveEdit(user) {
 /* =========================
    PAYMENT SAVE
 ========================= */
-document.getElementById("savePaymentBtn").onclick = async () => {
+document.getElementById("savePaymentBtn")?.addEventListener("click", async () => {
   try {
     const method = els.paymentMethod.value;
     const last4 = els.cardLast4.value.trim();
@@ -247,7 +247,7 @@ document.getElementById("savePaymentBtn").onclick = async () => {
     console.error(err);
     alert("Payment update failed");
   }
-};
+});
 
 /* =========================
    LOGOUT
