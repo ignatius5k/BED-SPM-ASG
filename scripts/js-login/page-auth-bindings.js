@@ -150,7 +150,7 @@ async function handleLogin(){
 
 function handleGuest(){
   continueAsGuest();
-  window.location.href = "../home.html";
+  window.location.href = "home.html";
 }
 
 /* =========================
