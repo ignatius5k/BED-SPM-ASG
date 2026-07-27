@@ -3,6 +3,7 @@ const sql = require("mssql");
 const cors = require("cors");
 
 const userController = require("./controllers/userController");
+const orderController = require("./controllers/orderController");
 const { validateRegister, validateLogin } = require("./middleware/userValidation");
 const { requireAuth } = require("./middleware/authMiddleware");
 
@@ -54,6 +55,11 @@ app.use("/menu-items", menuItemRoutes);
 app.use("/vendor-satisfaction", vendorSatisfactionRoutes);
 app.use("/vendor-rental-agreements", vendorRentalAgreementRoutes);
 app.use("/vendor-inspection-history", vendorInspectionHistoryRoutes);
+
+// --- Order History routes ---
+app.post("/orders", requireAuth, orderController.createOrder);
+app.get("/orders", requireAuth, orderController.getMyOrders);
+app.get("/orders/:id", requireAuth, orderController.getOrderById);
 
 // --- Notifications routes ---
 app.use("/notifications", notificationRoutes);

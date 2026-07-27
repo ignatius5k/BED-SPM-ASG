@@ -27,16 +27,20 @@ function isSignupPage(){
 ========================= */
 function getRedirect(backendRole, fromSignupPage){
   const requestedPage = new URLSearchParams(window.location.search).get("redirect");
+  const allowedRedirects = {
+    customer: ["home.html", "history.html"],
+    vendor: ["vendor_menu.html", "vendor_stores.html"],
+    inspector: ["inspector_dashboard.html"]
+  };
 
-  // Only accept the known vendor page needed by the Stores login flow.
-  if (backendRole === "vendor" && requestedPage === "vendor_stores.html") {
-    return "../vendor_stores.html";
+  if (requestedPage && allowedRedirects[backendRole]?.includes(requestedPage)) {
+    return requestedPage;
   }
 
-  if (backendRole === "customer") return fromSignupPage ? "../home.html" : "home.html".replace("home.html", "../home.html");
-  if (backendRole === "vendor")   return fromSignupPage ? "../vendor_menu.html" : "../vendor_menu.html";
-  if (backendRole === "inspector")return fromSignupPage ? "../inspector_dashboard.html" : "../inspector_dashboard.html";
-  return fromSignupPage ? "../login.html" : "../signup.html";
+  if (backendRole === "customer") return "home.html";
+  if (backendRole === "vendor") return "vendor_menu.html";
+  if (backendRole === "inspector") return "inspector_dashboard.html";
+  return fromSignupPage ? "login.html" : "signup.html";
 }
 
 /* =========================
