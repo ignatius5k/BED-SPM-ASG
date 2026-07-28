@@ -326,3 +326,7 @@ INSERT INTO Feedback (customer_id, stall_id, rating, comments) VALUES
 INSERT INTO Complaint (customer_id, stall_id, complaint_type, description) VALUES
 ('CUST031', 'STALL001', 'Hygiene', 'Table was not wiped down before I sat.'),
 ('CUST032', 'STALL002', 'Service', 'Waited over 20 minutes despite the stall not being busy.');
+
+- Sample data for the promotion feature.
+INSERT INTO Promotion (stall_id, title, description, discount)
+VALUES (1, 'Lunch Special', 'Get a free drink with any main dish', '10% off');
