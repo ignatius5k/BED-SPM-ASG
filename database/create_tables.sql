@@ -168,3 +168,13 @@ CREATE TABLE Complaint (
     status VARCHAR(20) DEFAULT 'Pending',
     created_at DATETIME DEFAULT GETDATE()
 );
+
+CREATE TABLE Promotion (
+    promotion_id INT IDENTITY(1,1) PRIMARY KEY,
+    stall_id INT NOT NULL,
+    title VARCHAR(100) NOT NULL,
+    description VARCHAR(500) NOT NULL,
+    discount VARCHAR(50) NOT NULL,
+    FOREIGN KEY (stall_id) REFERENCES Stall(stall_id)
+);
+
