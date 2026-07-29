@@ -54,39 +54,6 @@ console.log("Logged in as:", userId);
 // const itemsRef = collection(db, "carts", userId, "items");
 
 // const snap = await getDocs(itemsRef);
-// DEMO FAKE CART DATA
-const snap = {
-  forEach(callback) {
-    const fakeItems = [
-      {
-        id: "demo001",
-        data() {
-          return {
-            name: "Chicken Katsu Curry",
-            description: "Crispy chicken cutlet with rich Japanese curry and rice.",
-            unitPrice: 7.50,
-            quantity: 2,
-            imagePath: "Background/background.png"
-          };
-        }
-      },
-      {
-        id: "demo002",
-        data() {
-          return {
-            name: "Ebi Tempura Don",
-            description: "Golden prawn tempura drizzled with sweet tendon sauce on rice.",
-            unitPrice: 7.80,
-            quantity: 1,
-            imagePath: "Background/background.png"
-          };
-        }
-      }
-    ];
-
-    fakeItems.forEach(callback);
-  }
-};
 
 let subtotal = 0;
 container.innerHTML = "";
