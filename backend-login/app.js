@@ -36,6 +36,7 @@ app.use(express.urlencoded({ extended: true }));
 app.post("/users/register", validateRegister, userController.register);
 app.post("/users/login", validateLogin, userController.login);
 app.put("/users/change-password", requireAuth, userController.changePassword);
+app.get("/users/me", requireAuth, userController.getCurrentUser);
 app.get("/users", userController.getAllUsers);
 app.get("/users/:id", requireAuth, userController.getUserById);
 app.put("/users/:id", requireAuth, userController.updateUser);

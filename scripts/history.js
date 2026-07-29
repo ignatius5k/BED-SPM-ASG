@@ -8,7 +8,7 @@ const statCompleted = document.getElementById("stat-completed");
 const statSpent = document.getElementById("stat-spent");
 
 async function loadHistory() {
-  // Not logged in and not browsing as guest -> send to login
+  // Neither signed in nor browsing as a guest, so send them to login
   if (!isLoggedIn() && !isGuest()) {
     window.location.href =
       `hawkers-app-ignatius/login.html?redirect=${encodeURIComponent("../history.html")}`;
@@ -19,7 +19,9 @@ async function loadHistory() {
 
   try {
     if (isGuest()) {
-      // Guest orders live entirely in localStorage
+      // Guest orders come from browser storage, not the database.
+      // They are reshaped to match the format used for registered users
+      // so the same display code works for both.
       orders = getGuestOrders().map(o => ({
         OrderID: o.id,
         StallName: "Guest Order",
@@ -33,18 +35,20 @@ async function loadHistory() {
         }))
       }));
     } else {
-      // Registered customer - fetch from backend
+      // Registered customer, fetched from the backend
       orders = await getMyOrders();
-      // Fetch full item details for each order (getMyOrders only returns summaries)
-      // If you want item-level detail per card, call getOrderById per order here.
     }
   } catch (err) {
-    listEl.innerHTML = `<p class="empty">Failed to load order history: ${err.message}</p>`;
+    listEl.innerHTML =
+      `<p class="empty">Failed to load order history: ${err.message}</p>`;
     return;
   }
 
   if (orders.length === 0) {
     listEl.innerHTML = `<p class="empty">No orders yet</p>`;
+    statTotal.textContent = "Total Order: 0";
+    statCompleted.textContent = "Completed: 0";
+    statSpent.textContent = "Total Spent: $0.00";
     return;
   }
 
@@ -55,11 +59,17 @@ async function loadHistory() {
   orders.forEach(order => {
     totalOrders++;
     if (order.Status === "completed" || order.Status === "paid") completedOrders++;
-    totalSpent += order.TotalAmount ?? 0;
+    totalSpent += Number(order.TotalAmount) || 0;
 
     const firstItemName = order.items?.[0]?.ItemName ?? "Order";
+    const dateText = order.OrderDate
+      ? new Date(order.OrderDate).toLocaleDateString()
+      : "";
     const timeText = order.OrderDate
-      ? new Date(order.OrderDate).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      ? new Date(order.OrderDate).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit"
+        })
       : "";
 
     const card = document.createElement("div");
@@ -72,25 +82,26 @@ async function loadHistory() {
         <div>
           <div class="title">${firstItemName}</div>
           <div class="meta">
-            <span>🕒 ${timeText}</span>
-            <span>📍 ${order.StallName ?? "Unknown Stall"}</span>
+            <span>${dateText} ${timeText}</span>
+            <span>${order.StallName ?? "Unknown Stall"}</span>
           </div>
         </div>
-        <div class="price">$${(order.TotalAmount ?? 0).toFixed(2)}</div>
+        <div class="price">$${(Number(order.TotalAmount) || 0).toFixed(2)}</div>
       </div>
 
       <div class="history-details" style="display:none;">
         ${(order.items || []).map(i => `
           <div class="detail-item">
-            ${i.Quantity}× ${i.ItemName} — $${(i.Quantity * i.UnitPrice).toFixed(2)}
+            ${i.Quantity} x ${i.ItemName} — $${(i.Quantity * i.UnitPrice).toFixed(2)}
           </div>
         `).join("")}
         <div class="detail-total">
-          Total: $${(order.TotalAmount ?? 0).toFixed(2)}
+          Total: $${(Number(order.TotalAmount) || 0).toFixed(2)}
         </div>
       </div>
     `;
 
+    // Clicking an order expands or collapses its item list
     card.querySelector(".main-row").onclick = () => {
       const details = card.querySelector(".history-details");
       details.style.display = details.style.display === "none" ? "block" : "none";
