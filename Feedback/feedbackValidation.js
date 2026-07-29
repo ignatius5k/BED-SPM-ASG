@@ -1,12 +1,12 @@
 const Joi = require("joi");
 
 const feedbackSchema = Joi.object({
-  customer_id: Joi.string().max(10).required().messages({
-    "string.base": "customer_id must be a string",
+   customer_id: Joi.number().integer().positive().required().messages({
+    "number.base": "customer_id must be a number",
     "any.required": "customer_id is required",
   }),
-  stall_id: Joi.string().max(10).required().messages({
-    "string.base": "stall_id must be a string",
+  stall_id: Joi.number().integer().positive().required().messages({
+    "number.base": "stall_id must be a number",
     "any.required": "stall_id is required",
   }),
   rating: Joi.number().integer().min(1).max(5).required().messages({
