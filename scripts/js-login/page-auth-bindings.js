@@ -71,22 +71,16 @@ function isSignupPage() {
    REDIRECTS
    Both login.html and signup.html sit at the project root.
 ========================= */
-function getRedirect(backendRole, fromSignupPage) {
-  const requestedPage = new URLSearchParams(window.location.search).get("redirect");
-  const allowedRedirects = {
-    customer: ["home.html", "history.html"],
-    vendor: ["vendor_menu.html", "vendor_stores.html"],
-    inspector: ["inspector_dashboard.html"]
-  };
-
-  if (requestedPage && allowedRedirects[backendRole]?.includes(requestedPage)) {
-    return requestedPage;
+function getRedirect(role) {
+  const requested = new URLSearchParams(window.location.search).get("redirect");
+  if (role === "vendor" && requested === "vendor_stores.html") {
+    return "vendor_stores.html";
   }
 
-  if (backendRole === "customer") return "home.html";
-  if (backendRole === "vendor") return "vendor_menu.html";
-  if (backendRole === "inspector") return "inspector_dashboard.html";
-  return fromSignupPage ? "login.html" : "signup.html";
+  if (role === "customer")  return "home.html";
+  if (role === "vendor")    return "vendor_menu.html";
+  if (role === "inspector") return "inspector-analysis.html";
+  return "home.html";
 }
 
 /* =========================
@@ -215,7 +209,7 @@ async function handleSignup() {
     );
 
     setTimeout(() => {
-      window.location.href = getRedirect(loginData.role, true);
+      window.location.href = getRedirect(loginData.role);
     }, 1200);
   } catch (err) {
     showMessage(err.message);
@@ -252,7 +246,7 @@ async function handleLogin() {
     showMessage(`Welcome back, ${data.username}!`, "success");
 
     setTimeout(() => {
-      window.location.href = getRedirect(data.role, false);
+      window.location.href = getRedirect(data.role);
     }, 800);
   } catch (err) {
     showMessage(err.message);
