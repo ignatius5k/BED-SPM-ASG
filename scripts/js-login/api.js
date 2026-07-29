@@ -1,51 +1,101 @@
 const API_BASE = "http://localhost:3000";
 
-export async function registerUser(username, email, password, role) {
-  const res = await fetch(`${API_BASE}/users/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, email, password, role })
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || "Registration failed");
+/**
+ * Central fetch wrapper for every backend call.
+ * Turns network failures and server errors into a friendly message
+ * so the user never sees a raw "Failed to fetch".
+ */
+async function request(url, options = {}) {
+  let res;
+  try {
+    res = await fetch(url, options);
+  } catch {
+    // Server not running, database unreachable, or no network
+    throw new Error("Unable to connect. Please try again later.");
+  }
+
+  let data;
+  try {
+    data = await res.json();
+  } catch {
+    throw new Error("Unable to connect. Please try again later.");
+  }
+
+  if (!res.ok) {
+    // 500 and above means something broke on the server side
+    if (res.status >= 500) {
+      throw new Error("Unable to connect. Please try again later.");
+    }
+    throw new Error(data.error || "Request failed");
+  }
+
   return data;
 }
 
+/* =========================
+   REGISTER
+========================= */
+export async function registerUser(username, email, password, role, badgeNumber) {
+  const body = { username, email, password, role };
+
+  // The backend only accepts badgeNumber for inspectors, so it is
+  // left out entirely for customers and vendors.
+  if (role === "inspector" && badgeNumber) {
+    body.badgeNumber = badgeNumber;
+  }
+
+  return await request(`${API_BASE}/users/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+}
+
+/* =========================
+   LOGIN
+========================= */
 export async function loginUser(email, password) {
-  const res = await fetch(`${API_BASE}/users/login`, {
+  const data = await request(`${API_BASE}/users/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password })
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || "Login failed");
 
+  // Store the token so later pages can prove who this user is.
   localStorage.setItem("token", data.token);
   localStorage.setItem("userId", data.id);
   localStorage.setItem("role", data.role);
-  localStorage.removeItem("guest"); // real login overrides any guest state
+  localStorage.setItem("username", data.username);
+  localStorage.removeItem("guest"); // a real login cancels guest mode
 
   return data;
 }
 
-// --- GUEST MODE ---
-// No backend call at all - per the brief, guest order history is stored
-// locally, not tied to a Users row. Only valid for the customer role.
+/* =========================
+   GUEST MODE
+   No backend call at all. Guest activity is kept in the browser
+   and is never linked to a Users record.
+========================= */
 export function continueAsGuest() {
   localStorage.setItem("guest", "true");
   localStorage.removeItem("token");
   localStorage.removeItem("userId");
   localStorage.removeItem("role");
+  localStorage.removeItem("username");
 }
 
 export function isGuest() {
   return localStorage.getItem("guest") === "true";
 }
 
+/* =========================
+   SESSION HELPERS
+========================= */
 export function logoutUser() {
   localStorage.removeItem("token");
   localStorage.removeItem("userId");
   localStorage.removeItem("role");
+  localStorage.removeItem("username");
   localStorage.removeItem("guest");
 }
 
@@ -57,29 +107,38 @@ export function isLoggedIn() {
   return !!getToken();
 }
 
-export async function getCurrentUser() {
-  const userId = localStorage.getItem("userId");
-  const token = getToken();
-  if (!userId || !token) return null;
-
-  const res = await fetch(`${API_BASE}/users/${userId}`, {
-    headers: { "Authorization": `Bearer ${token}` }
-  });
-  if (!res.ok) return null;
-  return await res.json();
+export function getRole() {
+  return localStorage.getItem("role");
 }
 
-export async function updateProfile(userId, updates) {
+/**
+ * Asks the server who the current user is, based on the token.
+ * The identity comes from the verified token, not from an ID
+ * sitting in the browser that a user could change.
+ */
+export async function getCurrentUser() {
   const token = getToken();
-  const res = await fetch(`${API_BASE}/users/${userId}`, {
+  if (!token) return null;
+
+  try {
+    return await request(`${API_BASE}/users/me`, {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+  } catch {
+    return null;
+  }
+}
+
+/* =========================
+   UPDATE PROFILE
+========================= */
+export async function updateProfile(userId, updates) {
+  return await request(`${API_BASE}/users/${userId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`
+      "Authorization": `Bearer ${getToken()}`
     },
     body: JSON.stringify(updates)
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || "Update failed");
-  return data;
 }
