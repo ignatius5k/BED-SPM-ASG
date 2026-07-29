@@ -1,7 +1,7 @@
 const Joi = require("joi");
 
 const feedbackSchema = Joi.object({
-  customer_id: Joi.number().integer().positive().required().messages({
+   customer_id: Joi.number().integer().positive().required().messages({
     "number.base": "customer_id must be a number",
     "any.required": "customer_id is required",
   }),

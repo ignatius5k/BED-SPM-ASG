@@ -15,15 +15,23 @@ export function renderSessionBanner() {
     banner.innerHTML = `
       <span>You are browsing as a <strong>Guest</strong>.
       Your order history is saved to this browser only.</span>
-      <a href="hawkers-app-ignatius/login.html">Sign in</a>
+      <a href="login.html">Sign in</a>
     `;
   } else if (isLoggedIn()) {
     const name = localStorage.getItem("username") || "there";
     banner.className = "session-banner user";
-    banner.innerHTML = `
-      <span>Signed in as <strong>${name}</strong></span>
-      <button id="bannerLogout" type="button">Log out</button>
-    `;
+    const label = document.createElement("span");
+    label.append("Signed in as ");
+    const strong = document.createElement("strong");
+    strong.textContent = name;
+    label.append(strong);
+
+    const logoutButton = document.createElement("button");
+    logoutButton.id = "bannerLogout";
+    logoutButton.type = "button";
+    logoutButton.textContent = "Log out";
+
+    banner.append(label, logoutButton);
   } else {
     return; // neither signed in nor a guest, show nothing
   }
@@ -32,7 +40,7 @@ export function renderSessionBanner() {
 
   document.getElementById("bannerLogout")?.addEventListener("click", () => {
     logoutUser();
-    window.location.href = "hawkers-app-ignatius/login.html";
+    window.location.href = "login.html";
   });
 }
 

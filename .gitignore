@@ -1,2 +1,5 @@
-node_modules/
+backend-declan/node_modules/
+backend-login/node_modules/
+Complaint/node_modules/
+feedback/node_modules/
 .env

@@ -1,109 +1,60 @@
-<!-- Navigation Bar -->
-<nav class="navbar">
+<nav class="navbar" aria-label="Vendor navigation">
     <div class="nav-container">
         <div class="nav-content">
-
             <div class="nav-left">
-                <div class="brand">
-                    <svg class="brand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-                    </svg>
-                    <h1>Hawker</h1>
-                </div>
+                <a class="brand" href="vendor_stores.html" aria-label="Hawkers vendor stores">
+                    <img class="brand-logo" src="./icons/template/hawkers.svg" alt="">
+                    <h1>Hawkers</h1>
+                </a>
 
-                <div class="nav-tabs desktop-nav">
-
-                    <a href="vendor_agreements.html" class="nav-tab">
-                        Agreements
-                    </a>
-
-                    <a href="vendor_stores.html" class="nav-tab">
-                        Stores
-                    </a>
-
-                    <a href="vendor_menu.html" class="nav-tab">
-                        Menu
-                    </a>
-
-                    <a href="vendor_performance.html" class="nav-tab">
-                        Performance
-                    </a>
-
+                <div class="nav-tabs desktop-nav" aria-label="Vendor pages">
+                    <a href="vendor_agreements.html" class="nav-tab">Agreements</a>
+                    <a href="vendor_stores.html" class="nav-tab">Stores</a>
+                    <a href="vendor_menu.html" class="nav-tab">Menu</a>
+                    <a href="vendor_performance.html" class="nav-tab">Performance</a>
+                    <a href="vendor_satisfaction.html" class="nav-tab">Satisfaction</a>
+                    <a href="vendor_inspections.html" class="nav-tab">Hygiene</a>
                     <a href="vendor_notifications.html" class="nav-tab">
                         Notifications
                         <span id="notification-badge" class="nav-badge"></span>
                     </a>
-
                     <a href="vendor_complaints.html" class="nav-tab">
                         Complaints
                         <span id="complaint-badge" class="nav-badge"></span>
                     </a>
-
                 </div>
             </div>
 
-
             <div class="nav-right">
-
-                <button class="hamburger-btn" type="button" aria-label="Toggle menu">
-                    <svg class="hamburger-icon" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor">
-                        <path stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M4 6h16M4 12h16M4 18h16"/>
+                <button class="hamburger-btn" type="button" aria-label="Toggle vendor menu">
+                    <svg class="hamburger-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
                 </button>
 
-
-                <a href="vendor_user.html" class="user-icon">
-                    <img src="./icons/template/user.svg" alt="User">
+                <a href="vendor_user.html" class="user-icon" aria-label="Open vendor profile">
+                    <img src="./icons/template/user.svg" alt="">
                 </a>
 
-
-                <button class="logout-btn">
-                    <svg class="icon" viewBox="0 0 24 24">
-                        <path stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                    </svg>
-                    Logout
-                </button>
-
+                <button class="logout-btn" type="button">Logout</button>
             </div>
-
         </div>
 
-
-        <!-- Mobile Menu -->
-        <div class="mobile-menu">
-
-            <a href="vendor_agreements.html" class="mobile-nav-tab">
-                Agreements
-            </a>
-
-            <a href="vendor_stores.html" class="mobile-nav-tab">
-                Stores
-            </a>
-
-            <a href="vendor_menu.html" class="mobile-nav-tab">
-                Menu
-            </a>
-
-            <a href="vendor_performance.html" class="mobile-nav-tab">
-                Performance
-            </a>
-
+        <div class="mobile-menu" aria-label="Mobile vendor pages">
+            <a href="vendor_agreements.html" class="mobile-nav-tab">Agreements</a>
+            <a href="vendor_stores.html" class="mobile-nav-tab">Stores</a>
+            <a href="vendor_menu.html" class="mobile-nav-tab">Menu</a>
+            <a href="vendor_performance.html" class="mobile-nav-tab">Performance</a>
+            <a href="vendor_satisfaction.html" class="mobile-nav-tab">Satisfaction</a>
+            <a href="vendor_inspections.html" class="mobile-nav-tab">Hygiene</a>
             <a href="vendor_notifications.html" class="mobile-nav-tab">
                 Notifications
+                <span id="mobile-notification-badge" class="nav-badge"></span>
             </a>
-
             <a href="vendor_complaints.html" class="mobile-nav-tab">
                 Complaints
+                <span id="mobile-complaint-badge" class="nav-badge"></span>
             </a>
-
         </div>
-
     </div>
 </nav>

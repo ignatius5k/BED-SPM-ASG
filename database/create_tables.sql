@@ -30,7 +30,8 @@ CREATE TABLE MenuItems (
   Description VARCHAR(500),
   Price DECIMAL(6,2) NOT NULL,
   Category VARCHAR(50),
-  IsAvailable BIT DEFAULT 1
+  IsAvailable BIT NOT NULL DEFAULT 1,
+  IsDeleted BIT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE Notifications (
@@ -39,7 +40,7 @@ CREATE TABLE Notifications (
     OrderID VARCHAR(20),
     Message TEXT NOT NULL,
     IsRead TEXT DEFAULT 'False',
-    CreatedAt DATETIME DEFAULT GETDATE(),
+    CreatedAt DATETIME DEFAULT GETDATE()
 );
 
 -- Cuisine creation - A menu item can belong to more than one cuisine.
@@ -97,6 +98,34 @@ CREATE TABLE Complaints (
   complaint_date DATETIME2 NOT NULL DEFAULT GETDATE()
 );
 
+-- Rental agreement tables - used by the vendor renewal and change tracker.
+CREATE TABLE RentalAgreements (
+  AgreementID VARCHAR(10) PRIMARY KEY,
+  StallID VARCHAR(10) NOT NULL FOREIGN KEY REFERENCES Stalls(StallID),
+  AgreementReference VARCHAR(40) NOT NULL UNIQUE,
+  StartDate DATE NOT NULL,
+  EndDate DATE NOT NULL,
+  MonthlyRent DECIMAL(10,2) NOT NULL CHECK (MonthlyRent >= 0),
+  RenewalDate DATE NOT NULL,
+  Status VARCHAR(20) NOT NULL DEFAULT 'active'
+    CHECK (Status IN ('active', 'renewal due', 'renewed', 'expired')),
+  TermsSummary VARCHAR(500),
+  UpdatedAt DATETIME2 NOT NULL DEFAULT GETDATE(),
+  CHECK (EndDate >= StartDate),
+  CHECK (RenewalDate >= StartDate AND RenewalDate <= EndDate)
+);
+
+CREATE TABLE RentalAgreementChanges (
+  ChangeID INT IDENTITY(1,1) PRIMARY KEY,
+  AgreementID VARCHAR(10) NOT NULL FOREIGN KEY REFERENCES RentalAgreements(AgreementID),
+  ChangedBy VARCHAR(10) NOT NULL FOREIGN KEY REFERENCES Users(id),
+  FieldChanged VARCHAR(50) NOT NULL,
+  PreviousValue VARCHAR(500),
+  NewValue VARCHAR(500),
+  ChangeReason VARCHAR(250) NOT NULL,
+  ChangedAt DATETIME2 NOT NULL DEFAULT GETDATE()
+);
+
 CREATE TABLE Inspections (
   InspectionID INT IDENTITY(1,1) PRIMARY KEY,
   StallID VARCHAR(10) NOT NULL,
@@ -128,25 +157,24 @@ CREATE TABLE InspectionSchedule (
         REFERENCES Users(id)
 );
 
-CREATE TABLE Feedback (
-    feedback_id INT IDENTITY(1,1) PRIMARY KEY,
-    customer_id INT NOT NULL,
-    stall_id INT NOT NULL,
-    rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
-    comments VARCHAR(500),
-    created_at DATETIME DEFAULT GETDATE(),
-    FOREIGN KEY (customer_id) REFERENCES Customer(customer_id),
-    FOREIGN KEY (stall_id) REFERENCES Stall(stall_id)
-);
-
+-- Legacy complaint CRUD uses a separate singular table. Its foreign keys
+-- are aligned with the shared Users and Stalls schema used by this project.
 CREATE TABLE Complaint (
     complaint_id INT IDENTITY(1,1) PRIMARY KEY,
-    customer_id INT NOT NULL,
-    stall_id INT NOT NULL,
+    customer_id VARCHAR(10) NOT NULL FOREIGN KEY REFERENCES Users(id),
+    stall_id VARCHAR(10) NOT NULL FOREIGN KEY REFERENCES Stalls(StallID),
     complaint_type VARCHAR(50) NOT NULL,
     description VARCHAR(500) NOT NULL,
     status VARCHAR(20) DEFAULT 'Pending',
-    created_at DATETIME DEFAULT GETDATE(),
-    FOREIGN KEY (customer_id) REFERENCES Customer(customer_id),
+    created_at DATETIME DEFAULT GETDATE()
+);
+
+CREATE TABLE Promotion (
+    promotion_id INT IDENTITY(1,1) PRIMARY KEY,
+    stall_id INT NOT NULL,
+    title VARCHAR(100) NOT NULL,
+    description VARCHAR(500) NOT NULL,
+    discount VARCHAR(50) NOT NULL,
     FOREIGN KEY (stall_id) REFERENCES Stall(stall_id)
 );
+

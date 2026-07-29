@@ -69,22 +69,24 @@ function isSignupPage() {
 
 /* =========================
    REDIRECTS
-   signup.html sits at the project root, so no prefix is needed.
-   login.html sits one folder deeper, so it needs "../".
+   Both login.html and signup.html sit at the project root.
 ========================= */
-function getRedirect(role, fromSignup) {
-  const prefix = fromSignup ? "" : "../";
+function getRedirect(backendRole, fromSignupPage) {
+  const requestedPage = new URLSearchParams(window.location.search).get("redirect");
+  const allowedRedirects = {
+    customer: ["home.html", "history.html"],
+    vendor: ["vendor_menu.html", "vendor_stores.html"],
+    inspector: ["inspector_dashboard.html"]
+  };
 
-  // Supports links like login.html?redirect=vendor_stores.html
-  const requested = new URLSearchParams(window.location.search).get("redirect");
-  if (role === "vendor" && requested === "vendor_stores.html") {
-    return `${prefix}vendor_stores.html`;
+  if (requestedPage && allowedRedirects[backendRole]?.includes(requestedPage)) {
+    return requestedPage;
   }
 
-  if (role === "customer")  return `${prefix}home.html`;
-  if (role === "vendor")    return `${prefix}vendor_menu.html`;
-  if (role === "inspector") return `${prefix}inspector_dashboard.html`;
-  return `${prefix}home.html`;
+  if (backendRole === "customer") return "home.html";
+  if (backendRole === "vendor") return "vendor_menu.html";
+  if (backendRole === "inspector") return "inspector_dashboard.html";
+  return fromSignupPage ? "login.html" : "signup.html";
 }
 
 /* =========================
@@ -267,7 +269,7 @@ async function handleLogin() {
 ========================= */
 function handleGuest() {
   continueAsGuest();
-  window.location.href = isSignupPage() ? "home.html" : "../home.html";
+  window.location.href = "home.html";
 }
 
 /* =========================

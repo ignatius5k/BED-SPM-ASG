@@ -1,20 +1,33 @@
-const API = "http://localhost:3000";
+const API = `${window.location.protocol}//${window.location.hostname}:3000`;
 
 const vendorId = localStorage.getItem("userId");
 
 let allComplaints = [];
 
 async function loadComplaints() {
+    const container = document.getElementById("complaints");
+    const emptyMessage = document.getElementById("empty-message");
 
-    const res = await fetch(`${API}/vendorComplaints/${vendorId}`);
+    if (!vendorId) {
+        container.innerHTML = "";
+        emptyMessage.style.display = "block";
+        emptyMessage.textContent = "Sign in as a vendor to view complaints.";
+        return;
+    }
+
+    const res = await fetch(`${API}/vendorComplaints/${encodeURIComponent(vendorId)}`);
 
     console.log("Response status:", res.status);
 
-    const data = await res.json();
+    const data = await res.json().catch(() => []);
+    if (!res.ok) {
+        throw new Error("Unable to load complaints.");
+    }
 
     console.log("Complaints received:", data);
 
     allComplaints = data;
+    emptyMessage.style.display = data.length === 0 ? "block" : "none";
 
     displayComplaints(allComplaints);
 }
@@ -91,4 +104,6 @@ document.getElementById("statusFilter").addEventListener("change", () => {
     }
 })
 
-loadComplaints();
+loadComplaints().catch((error) => {
+    console.warn(error.message);
+});
