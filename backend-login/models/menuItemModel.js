@@ -1,6 +1,11 @@
 const sql = require("mssql");
 const dbConfig = require("../dbConfig");
 
+async function openConnection() {
+  const connection = new sql.ConnectionPool(dbConfig);
+  return connection.connect();
+}
+
 function attachCuisines(menuItems, cuisineRows) {
   for (let i = 0; i < menuItems.length; i += 1) {
     menuItems[i].cuisines = [];
@@ -21,7 +26,20 @@ function attachCuisines(menuItems, cuisineRows) {
 }
 
 function addPublicFilters(request, filters) {
-  const conditions = ["mi.IsAvailable = 1", "mi.IsDeleted = 0"];
+  const conditions = [
+    "mi.IsAvailable = 1",
+    "mi.IsDeleted = 0",
+    `(
+      s.StallID LIKE 'FBS%'
+      OR NOT EXISTS (
+        SELECT 1
+        FROM Stalls firebaseMirrorStall
+        WHERE firebaseMirrorStall.StallID LIKE 'FBS%'
+          AND firebaseMirrorStall.HawkerCentreID = s.HawkerCentreID
+          AND firebaseMirrorStall.CustomerStallID = s.CustomerStallID
+      )
+    )`,
+  ];
 
   if (filters.centreId) {
     request.input("centreId", sql.VarChar(10), filters.centreId);
@@ -58,7 +76,7 @@ async function getCuisines() {
   let connection;
 
   try {
-    connection = await sql.connect(dbConfig);
+    connection = await openConnection();
     const result = await connection.request().query(`
       SELECT
         CuisineID AS cuisineId,
@@ -82,7 +100,7 @@ async function getVendorMenuItems(vendorId) {
   let connection;
 
   try {
-    connection = await sql.connect(dbConfig);
+    connection = await openConnection();
 
     const stallRequest = connection.request();
     stallRequest.input("vendorId", sql.VarChar(10), vendorId);
@@ -151,7 +169,7 @@ async function getPublicMenuItems(filters) {
   let connection;
 
   try {
-    connection = await sql.connect(dbConfig);
+    connection = await openConnection();
 
     const itemRequest = connection.request();
     const itemConditions = addPublicFilters(itemRequest, filters);
@@ -202,7 +220,7 @@ async function getBestSellingMenuItems(filters) {
   let connection;
 
   try {
-    connection = await sql.connect(dbConfig);
+    connection = await openConnection();
     const request = connection.request();
     request.input("centreId", sql.VarChar(10), filters.centreId);
     request.input(
@@ -231,6 +249,16 @@ async function getBestSellingMenuItems(filters) {
         AND s.CustomerStallID = @customerStallId
         AND mi.IsAvailable = 1
         AND mi.IsDeleted = 0
+        AND (
+          s.StallID LIKE 'FBS%'
+          OR NOT EXISTS (
+            SELECT 1
+            FROM Stalls firebaseMirrorStall
+            WHERE firebaseMirrorStall.StallID LIKE 'FBS%'
+              AND firebaseMirrorStall.HawkerCentreID = s.HawkerCentreID
+              AND firebaseMirrorStall.CustomerStallID = s.CustomerStallID
+          )
+        )
       GROUP BY
         mi.MenuItemID,
         mi.ItemName,
@@ -302,7 +330,7 @@ async function createMenuItem(vendorId, menuItem) {
   let connection;
 
   try {
-    connection = await sql.connect(dbConfig);
+    connection = await openConnection();
     const transaction = new sql.Transaction(connection);
     await transaction.begin();
 
@@ -381,7 +409,7 @@ async function updateMenuItem(vendorId, menuItemId, menuItem) {
   let connection;
 
   try {
-    connection = await sql.connect(dbConfig);
+    connection = await openConnection();
     const transaction = new sql.Transaction(connection);
     await transaction.begin();
 
@@ -458,7 +486,7 @@ async function deleteMenuItem(vendorId, menuItemId) {
   let connection;
 
   try {
-    connection = await sql.connect(dbConfig);
+    connection = await openConnection();
     const request = connection.request();
     request.input("vendorId", sql.VarChar(10), vendorId);
     request.input("menuItemId", sql.VarChar(10), menuItemId);
