@@ -9,6 +9,7 @@ async function getAllStalls() {
             StallID,
             StallName
         FROM Stalls
+        WHERE StallID NOT LIKE 'FBS%'
         ORDER BY StallName
     `);
 

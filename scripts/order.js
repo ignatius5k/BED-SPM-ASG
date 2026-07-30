@@ -341,14 +341,17 @@ function renderProducts(products, isSearch = false) {
 
         if (userId) {
           const likeRef = doc(productRef, "likes", userId);
-          const likeDoc = await getDoc(likeRef);
+          getDoc(likeRef)
+            .then((likeDoc) => {
+              if (currentToken !== renderToken) return;
 
-          // Stop if a new render started while awaiting.
-          if (currentToken !== renderToken) return;
-
-          likeIcon.src = likeDoc.exists()
-            ? "icons/order/unlike.svg"
-            : "icons/order/like.svg";
+              likeIcon.src = likeDoc.exists()
+                ? "icons/order/unlike.svg"
+                : "icons/order/like.svg";
+            })
+            .catch((error) => {
+              console.error("Could not load product like state:", error);
+            });
         }
 
         likeBtn.addEventListener("click", async (e) => {
