@@ -196,67 +196,171 @@ if (!addBtn) {
 
     CURRENT_USER_ID = localStorage.getItem("userId");
 
-if (!CURRENT_USER_ID) {
+const isGuest =
+    localStorage.getItem("guest") === "true";
+
+if (!CURRENT_USER_ID && !isGuest) {
     alert("Please log in first.");
     window.location.href = "login.html";
     return;
 }
 
-    try {
+try {
 
-      const cartItemsRef = collection(db, "carts", CURRENT_USER_ID, "items");
-      const cartSnap = await getDocs(cartItemsRef);
+    // =============================
+    // REGISTERED USER
+    // =============================
+    if (CURRENT_USER_ID) {
 
-      const centersInCart = new Set();
+        const cartItemsRef = collection(
+            db,
+            "carts",
+            CURRENT_USER_ID,
+            "items"
+        );
 
-      cartSnap.forEach(docSnap => {
-        const data = docSnap.data();
-        if (data.centerId) centersInCart.add(data.centerId);
-      });
+        const cartSnap = await getDocs(cartItemsRef);
 
-      if (centersInCart.size > 0 && !centersInCart.has(centerId)) {
-        alert("You can only order from ONE hawker centre at a time.");
-        return;
-      }
+        const centersInCart = new Set();
 
-      const itemRef = doc(db, "carts", CURRENT_USER_ID, "items", productId);
-      const itemSnap = await getDoc(itemRef);
+        cartSnap.forEach(docSnap => {
+            const data = docSnap.data();
 
-      if (itemSnap.exists()) {
-
-        const existing = itemSnap.data();
-
-        await setDoc(itemRef, {
-          quantity: existing.quantity + quantity,
-          unitPrice: existing.unitPrice ?? basePrice,
-          addons: selectedAddons
-        }, { merge: true });
-
-      } else {
-
-        await setDoc(itemRef, {
-          productId,
-          name: product.name,
-          imagePath: productImagePath,
-          unitPrice: basePrice + selectedAddons.reduce((s, a) => s + a.price, 0),
-          quantity,
-          addons: selectedAddons,
-          centerId,
-          stallId,
-          centerName: centerData.name ?? "Unknown Centre",
-          centreLocation: centerData.location ?? "Unknown Location",
-          stallName: stallData.name ?? "Unknown Stall"
+            if (data.centerId)
+                centersInCart.add(data.centerId);
         });
 
-      }
+        if (
+            centersInCart.size > 0 &&
+            !centersInCart.has(centerId)
+        ) {
+            alert("You can only order from ONE hawker centre at a time.");
+            return;
+        }
 
-      alert("✅ Added to cart!");
+        const itemRef = doc(
+            db,
+            "carts",
+            CURRENT_USER_ID,
+            "items",
+            productId
+        );
 
-    } catch (err) {
-      console.error(err);
-      alert(err.message);
+        const itemSnap = await getDoc(itemRef);
+
+        if (itemSnap.exists()) {
+
+            const existing = itemSnap.data();
+
+            await setDoc(itemRef, {
+
+                quantity:
+                    existing.quantity + quantity,
+
+                unitPrice:
+                    existing.unitPrice ?? basePrice,
+
+                addons:
+                    selectedAddons
+
+            }, { merge: true });
+
+        }
+        else {
+
+            await setDoc(itemRef, {
+
+                productId,
+                name: product.name,
+                imagePath: productImagePath,
+
+                unitPrice:
+                    basePrice +
+                    selectedAddons.reduce(
+                        (s, a) => s + a.price,
+                        0
+                    ),
+
+                quantity,
+                addons: selectedAddons,
+
+                centerId,
+                stallId,
+
+                centerName:
+                    centerData.name ?? "Unknown Centre",
+
+                centreLocation:
+                    centerData.location ?? "Unknown Location",
+
+                stallName:
+                    stallData.name ?? "Unknown Stall"
+
+            });
+
+        }
+
     }
+
+    // =============================
+    // GUEST USER
+    // =============================
+    else {
+
+        const guestCart =
+            JSON.parse(
+                localStorage.getItem("guestCart")
+            ) || [];
+
+        guestCart.push({
+
+            productId,
+
+            name: product.name,
+
+            imagePath: productImagePath,
+
+            unitPrice:
+                basePrice +
+                selectedAddons.reduce(
+                    (s, a) => s + a.price,
+                    0
+                ),
+
+            quantity,
+
+            addons: selectedAddons,
+
+            centerId,
+
+            stallId,
+
+            centerName:
+                centerData.name,
+
+            stallName:
+                stallData.name
+
+        });
+
+        localStorage.setItem(
+            "guestCart",
+            JSON.stringify(guestCart)
+        );
+
+    }
+
+        alert("✅ Added to cart!");
+
+}
+catch (err) {
+
+    console.error(err);
+    alert(err.message);
+
+}
 
   });
 
 }
+
