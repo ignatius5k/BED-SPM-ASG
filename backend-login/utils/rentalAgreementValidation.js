@@ -24,12 +24,50 @@ function isValidDate(dateValue) {
 }
 
 function validateAgreementValues(body) {
-  const startDate = String(body.startDate || "").trim();
-  const endDate = String(body.endDate || "").trim();
-  const renewalDate = String(body.renewalDate || "").trim();
-  const status = String(body.status || "").trim().toLowerCase();
-  const termsSummary = String(body.termsSummary || "").trim();
-  const changeReason = String(body.changeReason || "").trim();
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return { error: "The agreement request must be a JSON object" };
+  }
+
+  if (
+    typeof body.startDate !== "string" ||
+    typeof body.endDate !== "string" ||
+    typeof body.renewalDate !== "string"
+  ) {
+    return { error: "Agreement dates must be text values in YYYY-MM-DD format" };
+  }
+
+  if (typeof body.status !== "string") {
+    return { error: "The agreement status must be a text value" };
+  }
+
+  if (
+    body.termsSummary !== undefined &&
+    body.termsSummary !== null &&
+    typeof body.termsSummary !== "string"
+  ) {
+    return { error: "The terms summary must be a text value" };
+  }
+
+  if (typeof body.changeReason !== "string") {
+    return { error: "The change reason must be a text value" };
+  }
+
+  if (
+    typeof body.monthlyRent !== "number" &&
+    typeof body.monthlyRent !== "string"
+  ) {
+    return { error: "Monthly rent must be a number" };
+  }
+
+  const startDate = body.startDate.trim();
+  const endDate = body.endDate.trim();
+  const renewalDate = body.renewalDate.trim();
+  const status = body.status.trim().toLowerCase();
+  const termsSummary = typeof body.termsSummary === "string"
+    ? body.termsSummary.trim()
+    : "";
+  const changeReason = body.changeReason.trim();
+  const monthlyRentText = String(body.monthlyRent).trim();
   const monthlyRent = Number(body.monthlyRent);
 
   if (!isValidDate(startDate) || !isValidDate(endDate) || !isValidDate(renewalDate)) {
@@ -48,6 +86,7 @@ function validateAgreementValues(body) {
     body.monthlyRent === "" ||
     body.monthlyRent === null ||
     body.monthlyRent === undefined ||
+    !/^\d+(\.\d{1,2})?$/.test(monthlyRentText) ||
     !Number.isFinite(monthlyRent) ||
     monthlyRent < 0 ||
     monthlyRent > MAX_MONTHLY_RENT
@@ -81,18 +120,47 @@ function validateAgreementValues(body) {
 }
 
 function validateAgreementUpdate(body) {
-  return validateAgreementValues(body || {});
-}
-
-function validateAgreementCreation(body) {
-  const valuesValidation = validateAgreementValues(body || {});
+  const valuesValidation = validateAgreementValues(body);
 
   if (valuesValidation.error) {
     return valuesValidation;
   }
 
-  const stallId = String(body.stallId || "").trim();
-  const agreementReference = String(body.agreementReference || "").trim();
+  if (typeof body.expectedUpdatedAt !== "string") {
+    return { error: "Refresh the agreement before saving changes" };
+  }
+
+  const expectedUpdatedAt = new Date(body.expectedUpdatedAt);
+
+  if (Number.isNaN(expectedUpdatedAt.getTime())) {
+    return { error: "Refresh the agreement before saving changes" };
+  }
+
+  return {
+    value: {
+      ...valuesValidation.value,
+      expectedUpdatedAt: expectedUpdatedAt.toISOString(),
+    },
+  };
+}
+
+function validateAgreementCreation(body) {
+  const valuesValidation = validateAgreementValues(body);
+
+  if (valuesValidation.error) {
+    return valuesValidation;
+  }
+
+  if (typeof body.stallId !== "string") {
+    return { error: "The stall ID must be a text value" };
+  }
+
+  if (typeof body.agreementReference !== "string") {
+    return { error: "The agreement reference must be a text value" };
+  }
+
+  const stallId = body.stallId.trim();
+  const agreementReference = body.agreementReference.trim();
 
   if (!isValidStallId(stallId)) {
     return { error: "The stall ID is not valid" };

@@ -468,6 +468,8 @@ function closeAgreementModal() {
 }
 
 function getFormData() {
+  const agreement = getSelectedAgreement();
+
   return {
     startDate: document.getElementById("editStartDate").value,
     endDate: document.getElementById("editEndDate").value,
@@ -476,6 +478,7 @@ function getFormData() {
     status: document.getElementById("editStatus").value,
     termsSummary: document.getElementById("editTermsSummary").value.trim(),
     changeReason: document.getElementById("editChangeReason").value.trim(),
+    expectedUpdatedAt: agreement ? agreement.updatedAt : "",
   };
 }
 

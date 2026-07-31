@@ -25,6 +25,7 @@ function sendModelError(error, res) {
   if (
     error.code === "AGREEMENT_REFERENCE_EXISTS" ||
     error.code === "CURRENT_AGREEMENT_EXISTS" ||
+    error.code === "STALE_AGREEMENT" ||
     error.code === "AGREEMENT_ID_LIMIT_REACHED"
   ) {
     res.status(409).json({ message: error.message });

@@ -1,5 +1,4 @@
 const sql = require("mssql");
-const dbConfig = require("../dbConfig");
 const { CURRENT_STATUSES } = require("../utils/rentalAgreementValidation");
 const rentalAgreementModel = require("./rentalAgreementModel");
 
@@ -7,7 +6,7 @@ async function getInspectorRentalAgreements() {
   let connection;
 
   try {
-    connection = await sql.connect(dbConfig);
+    connection = await rentalAgreementModel.openConnection();
 
     const stallResult = await connection.request().query(`
       SELECT
@@ -146,7 +145,7 @@ async function createInspectorRentalAgreement(inspectorId, agreementData) {
   let transaction;
 
   try {
-    connection = await sql.connect(dbConfig);
+    connection = await rentalAgreementModel.openConnection();
     transaction = new sql.Transaction(connection);
     await transaction.begin(sql.ISOLATION_LEVEL.SERIALIZABLE);
 

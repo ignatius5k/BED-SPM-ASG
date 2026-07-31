@@ -1,12 +1,11 @@
 const sql = require("mssql");
-const dbConfig = require("../dbConfig");
 const rentalAgreementModel = require("./rentalAgreementModel");
 
 async function getVendorRentalAgreements(vendorId) {
   let connection;
 
   try {
-    connection = await sql.connect(dbConfig);
+    connection = await rentalAgreementModel.openConnection();
 
     const stallRequest = connection.request();
     stallRequest.input("vendorId", sql.VarChar(10), vendorId);

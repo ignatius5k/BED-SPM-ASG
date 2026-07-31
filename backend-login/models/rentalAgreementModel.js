@@ -12,6 +12,12 @@ function createRequest(source) {
   return new sql.Request(source);
 }
 
+async function openConnection() {
+  const connection = new sql.ConnectionPool(dbConfig);
+  await connection.connect();
+  return connection;
+}
+
 function formatDatabaseDate(value) {
   if (!value) {
     return "";
@@ -110,7 +116,7 @@ async function updateRentalAgreement(actorId, actorRole, agreementId, agreementD
   let transaction;
 
   try {
-    connection = await sql.connect(dbConfig);
+    connection = await openConnection();
 
     const existingAgreement = await getAccessibleAgreement(
       connection,
@@ -141,6 +147,15 @@ async function updateRentalAgreement(actorId, actorRole, agreementId, agreementD
       await transaction.rollback();
       transaction = null;
       return null;
+    }
+
+    const currentUpdatedAt = new Date(currentAgreement.updatedAt).toISOString();
+
+    if (currentUpdatedAt !== agreementData.expectedUpdatedAt) {
+      throw createModelError(
+        "STALE_AGREEMENT",
+        "This agreement was changed by another user. Refresh it and try again"
+      );
     }
 
     if (CURRENT_STATUSES.includes(agreementData.status)) {
@@ -202,7 +217,10 @@ async function updateRentalAgreement(actorId, actorRole, agreementId, agreementD
         RenewalDate = @renewalDate,
         Status = @status,
         TermsSummary = @termsSummary,
-        UpdatedAt = GETDATE()
+        UpdatedAt = CASE
+          WHEN GETDATE() <= UpdatedAt THEN DATEADD(MILLISECOND, 1, UpdatedAt)
+          ELSE GETDATE()
+        END
       FROM RentalAgreements ra
       INNER JOIN Stalls s ON ra.StallID = s.StallID
       WHERE ra.AgreementID = @agreementId
@@ -258,7 +276,10 @@ async function updateRentalAgreement(actorId, actorRole, agreementId, agreementD
       }
     }
 
-    if (error.code !== "CURRENT_AGREEMENT_EXISTS") {
+    if (
+      error.code !== "CURRENT_AGREEMENT_EXISTS" &&
+      error.code !== "STALE_AGREEMENT"
+    ) {
       console.error("Database error in updateRentalAgreement:", error);
     }
 
@@ -273,6 +294,7 @@ async function updateRentalAgreement(actorId, actorRole, agreementId, agreementD
 module.exports = {
   createModelError,
   createRequest,
+  openConnection,
   getAccessibleAgreement,
   lockStall,
   findOtherCurrentAgreement,

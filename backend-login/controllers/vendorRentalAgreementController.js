@@ -65,7 +65,10 @@ async function updateVendorRentalAgreement(req, res) {
 
     res.json(result);
   } catch (error) {
-    if (error.code === "CURRENT_AGREEMENT_EXISTS") {
+    if (
+      error.code === "CURRENT_AGREEMENT_EXISTS" ||
+      error.code === "STALE_AGREEMENT"
+    ) {
       return res.status(409).json({ message: error.message });
     }
 

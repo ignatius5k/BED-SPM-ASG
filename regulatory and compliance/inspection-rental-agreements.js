@@ -397,7 +397,7 @@ function startEditingAgreement() {
 }
 
 function getAgreementFormData() {
-  return {
+  const formData = {
     stallId: document.getElementById("stallId").value,
     agreementReference: document.getElementById("agreementReference").value.trim(),
     startDate: document.getElementById("startDate").value,
@@ -408,6 +408,13 @@ function getAgreementFormData() {
     termsSummary: document.getElementById("termsSummary").value.trim(),
     changeReason: document.getElementById("changeReason").value.trim(),
   };
+
+  if (editingAgreementId) {
+    const agreement = getAgreement(editingAgreementId);
+    formData.expectedUpdatedAt = agreement ? agreement.updatedAt : "";
+  }
+
+  return formData;
 }
 
 function validateAgreementForm(formData) {
