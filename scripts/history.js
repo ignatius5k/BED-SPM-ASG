@@ -1,121 +1,160 @@
 import { isLoggedIn, isGuest } from "./js-login/api.js";
-import { getMyOrders } from "./js-login/ordersApi.js";
+import { getMyOrders, searchOrders } from "./js-login/ordersApi.js";
 import { getGuestOrders } from "./js-login/guestOrders.js";
 
 const listEl = document.getElementById("history-list");
 const statTotal = document.getElementById("stat-total");
 const statCompleted = document.getElementById("stat-completed");
 const statSpent = document.getElementById("stat-spent");
+const searchInput = document.getElementById("orderSearch");
+const btnSearch = document.getElementById("btnSearch");
+const btnClearSearch = document.getElementById("btnClearSearch");
 
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+// Neither signed in nor browsing as a guest, so send them to login
+if (!isLoggedIn() && !isGuest()) {
+  window.location.href = `login.html?redirect=${encodeURIComponent("history.html")}`;
 }
 
-function normalizeGuestOrder(order) {
+/**
+ * Converts a guest order from browser storage into the same shape the
+ * backend returns, so one render function can handle both.
+ */
+function normaliseGuestOrder(o) {
   return {
-    OrderID: order.id,
-    StallName: order.stallName || "Guest Order",
-    OrderDate: order.date,
-    Status: order.status || "completed",
-    TotalAmount: Number(order.total) || 0,
-    items: Array.isArray(order.items)
-      ? order.items.map((item) => ({
-          ItemName: item.name,
-          Quantity: Number(item.quantity) || 0,
-          UnitPrice: Number(item.price) || 0
-        }))
-      : []
+    OrderID: o.id,
+    StallName: o.stallName || "Guest Order",
+    OrderDate: o.date,
+    Status: "completed",
+    TotalAmount: o.total,
+    items: (o.items || []).map(i => ({
+      ItemName: i.name,
+      Quantity: i.quantity,
+      UnitPrice: i.price
+    }))
   };
 }
 
-function renderOrder(order) {
-  const total = Number(order.TotalAmount) || 0;
-  const items = Array.isArray(order.items) ? order.items : [];
-  const firstItemName = items[0]?.ItemName || `Order ${order.OrderID || ""}`.trim();
-  const timeText = order.OrderDate
-    ? new Date(order.OrderDate).toLocaleString()
-    : "Time unavailable";
+/** Filters guest orders in the browser, since guests have no backend to query. */
+function filterGuestOrders(orders, term) {
+  const lower = term.toLowerCase();
+  return orders.filter(o =>
+    (o.stallName || "").toLowerCase().includes(lower) ||
+    (o.items || []).some(i => (i.name || "").toLowerCase().includes(lower))
+  );
+}
 
-  const details = items.length > 0
-    ? items.map((item) => {
-        const quantity = Number(item.Quantity) || 0;
-        const unitPrice = Number(item.UnitPrice) || 0;
-        return `
-          <div class="detail-item">
-            ${quantity} x ${escapeHtml(item.ItemName)} - $${(quantity * unitPrice).toFixed(2)}
+function updateStats(orders) {
+  let completed = 0;
+  let spent = 0;
+
+  orders.forEach(o => {
+    if (o.Status === "completed" || o.Status === "paid") completed++;
+    spent += Number(o.TotalAmount) || 0;
+  });
+
+  statTotal.textContent = `Total Order: ${orders.length}`;
+  statCompleted.textContent = `Completed: ${completed}`;
+  statSpent.textContent = `Total Spent: $${spent.toFixed(2)}`;
+}
+
+function renderOrders(orders) {
+  listEl.innerHTML = "";
+
+  if (orders.length === 0) {
+    listEl.innerHTML = `<p class="empty">No orders found.</p>`;
+    updateStats([]);
+    return;
+  }
+
+  orders.forEach(order => {
+    const firstItemName = order.items?.[0]?.ItemName ?? "Order";
+    const dateText = order.OrderDate
+      ? new Date(order.OrderDate).toLocaleDateString()
+      : "";
+    const timeText = order.OrderDate
+      ? new Date(order.OrderDate).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit"
+        })
+      : "";
+
+    const card = document.createElement("div");
+    card.className = "history-card";
+
+    card.innerHTML = `
+      <div class="status">${order.Status ?? "Completed"}</div>
+
+      <div class="history-row main-row">
+        <div>
+          <div class="title">${firstItemName}</div>
+          <div class="meta">
+            <span>${dateText} ${timeText}</span>
+            <span>${order.StallName ?? "Unknown Stall"}</span>
           </div>
-        `;
-      }).join("")
-    : '<div class="detail-item">Item details are unavailable for this order.</div>';
+        </div>
+        <div class="price">$${(Number(order.TotalAmount) || 0).toFixed(2)}</div>
+      </div>
 
-  const card = document.createElement("div");
-  card.className = "history-card";
-  card.innerHTML = `
-    <div class="status">${escapeHtml(order.Status || "Completed")}</div>
-    <div class="history-row main-row">
-      <div>
-        <div class="title">${escapeHtml(firstItemName)}</div>
-        <div class="meta">
-          <span>${escapeHtml(timeText)}</span>
-          <span>${escapeHtml(order.StallName || "Unknown Stall")}</span>
+      <div class="history-details" style="display:none;">
+        ${(order.items || []).map(i => `
+          <div class="detail-item">
+            ${i.Quantity} x ${i.ItemName} — $${(i.Quantity * i.UnitPrice).toFixed(2)}
+          </div>
+        `).join("")}
+        <div class="detail-total">
+          Total: $${(Number(order.TotalAmount) || 0).toFixed(2)}
         </div>
       </div>
-      <div class="price">$${total.toFixed(2)}</div>
-    </div>
-    <div class="history-details" style="display:none;">
-      ${details}
-      <div class="detail-total">Total: $${total.toFixed(2)}</div>
-    </div>
-  `;
+    `;
 
-  card.querySelector(".main-row").addEventListener("click", () => {
-    const detailsEl = card.querySelector(".history-details");
-    detailsEl.style.display = detailsEl.style.display === "none" ? "block" : "none";
+    // Clicking an order expands or collapses its item list
+    card.querySelector(".main-row").onclick = () => {
+      const details = card.querySelector(".history-details");
+      details.style.display = details.style.display === "none" ? "block" : "none";
+    };
+
+    listEl.appendChild(card);
   });
 
-  listEl.appendChild(card);
+  updateStats(orders);
 }
 
-async function loadHistory() {
-  if (!isLoggedIn() && !isGuest()) {
-    window.location.href = `login.html?redirect=${encodeURIComponent("history.html")}`;
-    return;
-  }
+async function loadHistory(searchTerm = "") {
+  listEl.innerHTML = `<p class="empty">Loading orders...</p>`;
 
-  let orders;
   try {
-    orders = isGuest()
-      ? getGuestOrders().map(normalizeGuestOrder)
-      : await getMyOrders();
-  } catch (error) {
-    listEl.innerHTML = `<p class="empty">${escapeHtml(error.message)}</p>`;
-    return;
+    let orders;
+
+    if (isGuest()) {
+      // Guests: read and filter entirely in the browser, no backend call
+      const raw = getGuestOrders();
+      const filtered = searchTerm ? filterGuestOrders(raw, searchTerm) : raw;
+      orders = filtered.map(normaliseGuestOrder);
+    } else {
+      // Registered: the backend filters, scoped to this user's own orders
+      orders = searchTerm ? await searchOrders(searchTerm) : await getMyOrders();
+    }
+
+    renderOrders(orders);
+  } catch (err) {
+    listEl.innerHTML = `<p class="empty">Failed to load order history: ${err.message}</p>`;
+    updateStats([]);
   }
-
-  listEl.innerHTML = "";
-  if (orders.length === 0) {
-    listEl.innerHTML = '<p class="empty">No orders yet</p>';
-    return;
-  }
-
-  let completedOrders = 0;
-  let totalSpent = 0;
-
-  orders.forEach((order) => {
-    const status = String(order.Status || "").toLowerCase();
-    if (status === "completed" || status === "paid") completedOrders += 1;
-    totalSpent += Number(order.TotalAmount) || 0;
-    renderOrder(order);
-  });
-
-  statTotal.textContent = `Total Orders: ${orders.length}`;
-  statCompleted.textContent = `Completed: ${completedOrders}`;
-  statSpent.textContent = `Total Spent: $${totalSpent.toFixed(2)}`;
 }
+
+btnSearch?.addEventListener("click", () => {
+  const term = searchInput.value.trim();
+  loadHistory(term);
+});
+
+// Pressing Enter in the search box searches too
+searchInput?.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") btnSearch.click();
+});
+
+btnClearSearch?.addEventListener("click", () => {
+  searchInput.value = "";
+  loadHistory();
+});
 
 loadHistory();
