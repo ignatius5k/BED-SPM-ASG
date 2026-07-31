@@ -91,13 +91,13 @@ async function init() {
   cachedUser = user;
 
 // keep vendors on the vendor profile page and customers on theirs
-  const onVendorPage = window.location.pathname.includes("vendor-user");
+  const onVendorPage = window.location.pathname.includes("vendor_user");
   if (onVendorPage && cachedUser.role !== "vendor") {
     window.location.href = "user.html";
     return;
   }
   if (!onVendorPage && cachedUser.role === "vendor") {
-    window.location.href = "vendor-user.html";
+    window.location.href = "vendor_user.html";
     return;
   }
 
