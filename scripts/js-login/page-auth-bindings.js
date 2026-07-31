@@ -79,7 +79,7 @@ function getRedirect(role) {
 
   if (role === "customer")  return "home.html";
   if (role === "vendor")    return "vendor_menu.html";
-  if (role === "inspector") return "inspector-analysis.html";
+  if (role === "inspector") return "regulatory%20and%20compliance/inspection-dashboard.html";
   return "home.html";
 }
 
