@@ -26,6 +26,23 @@ const loginSchema = Joi.object({
   password: Joi.string().required(),
 });
 
+const changePasswordSchema = Joi.object({
+  currentPassword: Joi.string().required().messages({
+    "any.required": "Current password is required",
+    "string.empty": "Current password cannot be empty"
+  }),
+  newPassword: Joi.string()
+    .min(8)
+    .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
+    .required()
+    .messages({
+      "string.min": "New password must be at least 8 characters long",
+      "string.pattern.base":
+        "New password must contain at least one uppercase letter, one lowercase letter, and one number",
+      "any.required": "New password is required"
+    })
+});
+
 function validateRegister(req, res, next) {
   const { error } = registerSchema.validate(req.body, { abortEarly: false });
   if (error) {
@@ -42,4 +59,15 @@ function validateLogin(req, res, next) {
   next();
 }
 
+function validateChangePassword(req, res, next) {
+  const { error } = changePasswordSchema.validate(req.body, { abortEarly: false });
+  if (error) {
+    return res.status(400).json({
+      error: error.details.map((d) => d.message).join(", ")
+    });
+  }
+  next();
+}
+
 module.exports = { validateRegister, validateLogin };
+module.exports = { validateRegister, validateLogin, validateChangePassword };

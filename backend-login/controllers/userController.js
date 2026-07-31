@@ -65,13 +65,28 @@ async function login(req, res) {
 async function changePassword(req, res) {
   try {
     const { currentPassword, newPassword } = req.body;
-    const userId = req.userId;       // set by requireAuth after verifying the token
-    const userEmail = req.userEmail; // set by requireAuth after verifying the token
+    const userId = req.userId;       // set by requireAuth from the verified token
+    const userEmail = req.userEmail; // set by requireAuth from the verified token
 
     const user = await userModel.getUserByEmail(userEmail);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Check the current password against the stored hash.
+    // Without this, anyone holding a token could change the password
+    // without knowing the existing one.
     const match = await bcrypt.compare(currentPassword, user.password);
     if (!match) {
       return res.status(400).json({ error: "Current password is incorrect" });
+    }
+
+    // Reject reusing the same password
+    const sameAsOld = await bcrypt.compare(newPassword, user.password);
+    if (sameAsOld) {
+      return res.status(400).json({
+        error: "New password must be different from your current password"
+      });
     }
 
     const newHash = await bcrypt.hash(newPassword, 10);

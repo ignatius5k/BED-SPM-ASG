@@ -142,3 +142,27 @@ export async function updateProfile(userId, updates) {
     body: JSON.stringify(updates)
   });
 }
+
+/* =========================
+   CHANGE PASSWORD
+========================= */
+export async function changePassword(currentPassword, newPassword) {
+  return await request(`${API_BASE}/users/change-password`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${getToken()}`
+    },
+    body: JSON.stringify({ currentPassword, newPassword })
+  });
+}
+
+/* =========================
+   DELETE ACCOUNT
+========================= */
+export async function deleteAccount(userId) {
+  return await request(`${API_BASE}/users/${userId}`, {
+    method: "DELETE",
+    headers: { "Authorization": `Bearer ${getToken()}` }
+  });
+}

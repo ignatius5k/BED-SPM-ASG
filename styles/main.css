@@ -632,3 +632,59 @@ label{
 .history-search .input{
   flex:1;
 }
+
+/* ---------- Profile edit panels ---------- */
+.edit-panel{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  padding:12px;
+  margin-top:8px;
+  background:#fafafa;
+  border:1px solid var(--line);
+  border-radius:10px;
+}
+.edit-panel label{
+  font-size:11px;
+  margin-top:4px;
+}
+.edit-panel .hint{
+  color:var(--muted);
+  font-size:10px;
+}
+.edit-actions{
+  display:flex;
+  gap:8px;
+  margin-top:8px;
+}
+
+/* ---------- Danger zone ---------- */
+.danger-zone{
+  margin-top:24px;
+  padding:14px;
+  border:1px solid #f2b8bb;
+  border-radius:10px;
+  background:#fffafa;
+}
+.danger-zone h3{
+  margin:0 0 4px;
+  font-size:14px;
+  color:#b23a43;
+}
+.danger-zone p{
+  margin:0 0 10px;
+  font-size:11px;
+  color:var(--muted);
+}
+.btn-danger{
+  background:#b23a43;
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  padding:8px 14px;
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+}
+.btn-danger:hover{ background:#8f2f36; }
+.btn-danger:disabled{ opacity:.55; cursor:not-allowed; }

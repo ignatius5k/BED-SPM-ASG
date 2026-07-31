@@ -1,347 +1,322 @@
-import { onAuthStateChanged } from
-  "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { auth, db } from "./firebase.js";
 import {
-  doc,
-  getDoc,
-  updateDoc
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-import {
-  signOut,
-  EmailAuthProvider,
-  reauthenticateWithCredential,
-  updateEmail,
-  sendEmailVerification
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  isLoggedIn,
+  isGuest,
+  getCurrentUser,
+  updateProfile,
+  changePassword,
+  deleteAccount,
+  logoutUser
+} from "./api.js";
 
 /* =========================
    DOM ELEMENTS
 ========================= */
 const els = {
   username: document.getElementById("profileUsername"),
-  description: document.getElementById("profileDescription"),
   email: document.getElementById("profileEmail"),
-  address: document.getElementById("profileAddress"),
-  payment: document.getElementById("profilePayment"),
+  role: document.getElementById("profileRole"),
+
+  message: document.getElementById("profileMessage"),
 
   editor: document.getElementById("editor"),
+  editLabel: document.getElementById("editLabel"),
   editInput: document.getElementById("editInput"),
-  saveBtn: document.getElementById("saveEditBtn"),
+  saveEditBtn: document.getElementById("saveEditBtn"),
+  cancelEditBtn: document.getElementById("cancelEditBtn"),
 
-  addrFields: document.getElementById("addressFields"),
-  addrLine: document.getElementById("addrLine"),
-  addrCity: document.getElementById("addrCity"),
-  addrPostal: document.getElementById("addrPostal"),
+  passwordEdit: document.getElementById("passwordEdit"),
+  currentPassword: document.getElementById("currentPassword"),
+  newPassword: document.getElementById("newPassword"),
+  confirmPassword: document.getElementById("confirmPassword"),
+  passwordChecklist: document.getElementById("passwordChecklist"),
+  savePasswordBtn: document.getElementById("savePasswordBtn"),
+  cancelPasswordBtn: document.getElementById("cancelPasswordBtn"),
+  editPasswordBtn: document.getElementById("editPasswordBtn"),
 
-  paymentEdit: document.getElementById("paymentEdit"),
-  paymentMethod: document.getElementById("paymentMethod"),
-  cardLast4: document.getElementById("cardLast4"),
-
+  deleteBtn: document.getElementById("deleteAccountBtn"),
   logoutBtn: document.getElementById("logoutBtn")
 };
 
-let currentEdit = null;
-let userRef = null;
-let cachedData = null;
+let currentEdit = null;  // which field is being edited
+let cachedUser = null;   // the profile loaded from the server
 
+/* =========================
+   MESSAGES
+========================= */
+function showMessage(text, type = "error") {
+  if (!els.message) return;
+  els.message.textContent = text;
+  els.message.className = `form-message ${type}`;
+}
+
+function clearMessage() {
+  if (els.message) els.message.className = "form-message";
+}
+
+/* =========================
+   EDITOR VISIBILITY
+========================= */
 function closeAllEditors() {
   if (els.editor) els.editor.style.display = "none";
-  if (els.paymentEdit) els.paymentEdit.style.display = "none";
-  if (els.addrFields) els.addrFields.style.display = "none";
+  if (els.passwordEdit) els.passwordEdit.style.display = "none";
+  currentEdit = null;
 }
 
 /* =========================
-   AUTH STATE
+   ACCESS CONTROL
+   Guests have no stored account, so there is no profile to show.
 ========================= */
-onAuthStateChanged(auth, async (user) => {
- if (!userId) {
+if (!isLoggedIn()) {
+  if (isGuest()) {
+    alert("Guests do not have a saved profile. Please sign in or create an account.");
+  }
+  window.location.href = "login.html";
+} else {
+  init();
+}
+
+/* =========================
+   READ - load the profile
+========================= */
+async function init() {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    // Token expired or was tampered with
+    logoutUser();
     window.location.href = "login.html";
-    throw new Error("No logged in user");
-}
-
-  userRef = doc(db, "users", user.uid)
-
-  const snap = await getDoc(userRef);
-
-if (!snap.exists()) {
-  console.error("Profile not found for user:", user.uid);
-  alert("Profile not found. Please complete signup.");
-  return;
-}
-
-cachedData = snap.data();
-
-  // Populate UI
-  els.username.textContent = cachedData.displayName || "Not set";
-  els.description.textContent = cachedData.description || "Not set";
-  els.email.textContent = user.email;
-
-  if (cachedData.address) {
-    els.address.textContent =
-      `${cachedData.address.line1}, ${cachedData.address.city}, ${cachedData.address.postalCode}`;
-  } else {
-    els.address.textContent = "Not set";
+    return;
   }
 
-  if (els.payment && cachedData.payment) {
-    els.payment.textContent =
-      cachedData.payment.method === "Card"
-        ? `Card •••• ${cachedData.payment.last4}`
-        : cachedData.payment.method;
-  } else if (els.payment) {
-    els.payment.textContent = "Not set";
-  }
+  cachedUser = user;
+  renderProfile();
 
-  // Attach edit buttons
+  // Edit buttons for username and email
   document.querySelectorAll("[data-edit]").forEach(btn => {
-    btn.onclick = () => openEditor(btn.dataset.edit, user);
+    btn.addEventListener("click", () => openEditor(btn.dataset.edit));
   });
-  
-  els.saveBtn.onclick = () => saveEdit(user);
 
-  const paymentBtn = document.getElementById("editPaymentBtn");
-  if (paymentBtn) {
-    paymentBtn.onclick = () => {
-      if (els.paymentEdit.style.display === "block") {
-        closeAllEditors();
-        return;
-      }
+  els.saveEditBtn?.addEventListener("click", saveEdit);
+  els.cancelEditBtn?.addEventListener("click", closeAllEditors);
 
-      closeAllEditors();
-      currentEdit = "payment";
-      els.paymentEdit.style.display = "block";
-    };
-  }
-  });
+  els.editPasswordBtn?.addEventListener("click", togglePasswordEditor);
+  els.savePasswordBtn?.addEventListener("click", savePassword);
+  els.cancelPasswordBtn?.addEventListener("click", closeAllEditors);
+
+  // Live checklist updates as the user types either password field
+  els.newPassword?.addEventListener("input", updatePasswordChecklist);
+  els.confirmPassword?.addEventListener("input", updatePasswordChecklist);
+
+  els.deleteBtn?.addEventListener("click", handleDeleteAccount);
+  els.logoutBtn?.addEventListener("click", handleLogout);
+}
+
+function renderProfile() {
+  if (els.username) els.username.textContent = cachedUser.username || "Not set";
+  if (els.email) els.email.textContent = cachedUser.email || "Not set";
+  if (els.role) els.role.textContent = cachedUser.role || "Not set";
+}
 
 /* =========================
-   OPEN EDITOR
+   UPDATE - username or email
 ========================= */
-function openEditor(type, user) {
-  // 🔁 If clicking the SAME edit again → close it
-  if (currentEdit === type && els.editor.style.display === "block") {
+function openEditor(field) {
+  clearMessage();
+
+  // Clicking the same Edit button again closes the editor
+  if (currentEdit === field && els.editor.style.display === "block") {
     closeAllEditors();
     return;
   }
 
-  // Otherwise, switch editor
   closeAllEditors();
-  currentEdit = type;
+  currentEdit = field;
 
+  els.editLabel.textContent = field === "username" ? "New username" : "New email";
+  els.editInput.type = field === "email" ? "email" : "text";
+  els.editInput.value = cachedUser[field] || "";
   els.editor.style.display = "block";
-  els.editInput.style.display = "block";
-  els.addrFields.style.display = "none";
-
-  if (type === "address") {
-    els.editInput.style.display = "none";
-    els.addrFields.style.display = "block";
-    els.addrLine.value = cachedData.address?.line1 || "";
-    els.addrCity.value = cachedData.address?.city || "";
-    els.addrPostal.value = cachedData.address?.postalCode || "";
-    return;
-  }
-
-  if (type === "email") {
-    els.editInput.value = user.email;
-    return;
-  }
-
-  els.editInput.value = cachedData[type] || "";
+  els.editInput.focus();
 }
 
+async function saveEdit() {
+  clearMessage();
+  const value = els.editInput.value.trim();
+
+  if (!value) {
+    showMessage(`${currentEdit === "username" ? "Username" : "Email"} cannot be empty.`);
+    return;
+  }
+
+  if (currentEdit === "username" && value.length < 3) {
+    showMessage("Username must be at least 3 characters long.");
+    return;
+  }
+
+  if (currentEdit === "email" && !/^\S+@\S+\.\S+$/.test(value)) {
+    showMessage("Please enter a valid email address.");
+    return;
+  }
+
+  try {
+    els.saveEditBtn.disabled = true;
+
+    // The backend requires both fields together, so the unchanged
+    // one is sent along with the edited one.
+    const updates = {
+      username: cachedUser.username,
+      email: cachedUser.email
+    };
+    updates[currentEdit] = value;
+
+    cachedUser = await updateProfile(cachedUser.id, updates);
+
+    // Keep the session banner name in sync with the new username
+    localStorage.setItem("username", cachedUser.username);
+
+    renderProfile();
+    closeAllEditors();
+    showMessage("Profile updated successfully.", "success");
+  } catch (err) {
+    showMessage(err.message);
+  } finally {
+    els.saveEditBtn.disabled = false;
+  }
+}
 
 /* =========================
-   SAVE EDIT
+   LIVE PASSWORD CHECKLIST
+   Mirrors the rules the server enforces, so the user sees what is
+   still missing before they submit. The server checks again anyway,
+   since anything in the browser can be bypassed.
 ========================= */
-async function saveEdit(user) {
+function updatePasswordChecklist() {
+  if (!els.passwordChecklist) return;
+
+  const val = els.newPassword.value;
+  const confirmVal = els.confirmPassword.value;
+
+  const checks = {
+    checkLength: val.length >= 8,
+    checkUpper: /[A-Z]/.test(val),
+    checkLower: /[a-z]/.test(val),
+    checkNumber: /\d/.test(val),
+    checkMatch: val.length > 0 && val === confirmVal
+  };
+
+  els.passwordChecklist.querySelectorAll("li").forEach(li => {
+    const passed = checks[li.id];
+    li.textContent = `${passed ? "✓" : "✗"} ${li.dataset.label}`;
+    li.classList.toggle("ok", passed);
+    // Stay neutral until the user has actually typed something
+    li.classList.toggle("fail", !passed && val.length > 0);
+  });
+}
+
+function isPasswordValid(pw) {
+  return pw.length >= 8
+    && /[A-Z]/.test(pw)
+    && /[a-z]/.test(pw)
+    && /\d/.test(pw);
+}
+
+/* =========================
+   UPDATE - password
+========================= */
+function togglePasswordEditor() {
+  clearMessage();
+
+  if (els.passwordEdit.style.display === "block") {
+    closeAllEditors();
+    return;
+  }
+
+  closeAllEditors();
+  els.currentPassword.value = "";
+  els.newPassword.value = "";
+  els.confirmPassword.value = "";
+  updatePasswordChecklist(); // reset the ticks back to neutral
+  els.passwordEdit.style.display = "block";
+  els.currentPassword.focus();
+}
+
+async function savePassword() {
+  clearMessage();
+
+  const current = els.currentPassword.value;
+  const next = els.newPassword.value;
+  const confirm = els.confirmPassword.value;
+
+  if (!current) {
+    showMessage("Please enter your current password.");
+    return;
+  }
+  if (!next) {
+    showMessage("Please enter a new password.");
+    return;
+  }
+  if (!isPasswordValid(next)) {
+    showMessage("New password does not meet all the requirements listed above.");
+    return;
+  }
+  if (next !== confirm) {
+    showMessage("New passwords do not match.");
+    return;
+  }
+  if (next === current) {
+    showMessage("New password must be different from your current password.");
+    return;
+  }
+
   try {
-    /* EMAIL (AUTH LEVEL) */
-    if (currentEdit === "email") {
-      const newEmail = els.editInput.value.trim();
-      const password = prompt("Enter your password to change email:");
+    els.savePasswordBtn.disabled = true;
 
-      if (!password) {
-        alert("Password required");
-        return;
-      }
-
-      const credential = EmailAuthProvider.credential(
-        user.email,
-        password
-      );
-
-      await reauthenticateWithCredential(user, credential);
-      await updateEmail(user, newEmail);
-      await sendEmailVerification(user);
-
-      els.email.textContent = newEmail;
-      alert("Email updated. Please verify your new email.");
-    }
-
-    /* USERNAME */
-    if (currentEdit === "username") {
-      await updateDoc(userRef, { displayName: els.editInput.value });
-      els.username.textContent = els.editInput.value;
-    }
-
-    /* DESCRIPTION */
-    if (currentEdit === "description") {
-      await updateDoc(userRef, { description: els.editInput.value });
-      els.description.textContent = els.editInput.value;
-    }
-
-    /* ADDRESS */
-    if (currentEdit === "address") {
-      const addr = {
-        line1: els.addrLine.value,
-        city: els.addrCity.value,
-        postalCode: els.addrPostal.value
-      };
-
-      await updateDoc(userRef, { address: addr });
-      els.address.textContent =
-        `${addr.line1}, ${addr.city}, ${addr.postalCode}`;
-    }
+    // The server verifies the current password against the stored
+    // hash before applying the change.
+    await changePassword(current, next);
 
     closeAllEditors();
-
+    showMessage("Password changed successfully. Use it the next time you sign in.", "success");
   } catch (err) {
-    console.error(err);
-    alert(err.message);
+    showMessage(err.message);
+  } finally {
+    els.savePasswordBtn.disabled = false;
   }
 }
 
 /* =========================
-   PAYMENT SAVE
+   DELETE - remove the account
 ========================= */
-document.getElementById("savePaymentBtn")?.addEventListener("click", async () => {
-  try {
-    const method = els.paymentMethod.value;
-    const last4 = els.cardLast4.value.trim();
+async function handleDeleteAccount() {
+  clearMessage();
 
-    if (!method) {
-      alert("Select a payment method");
-      return;
-    }
+  // Two-step confirmation, since deletion cannot be undone
+  const confirmed = confirm("Delete your account permanently? This cannot be undone.");
+  if (!confirmed) return;
 
-    if (method === "Card" && last4.length !== 4) {
-      alert("Enter last 4 digits");
-      return;
-    }
-
-    await updateDoc(userRef, {
-      payment: {
-        method,
-        last4: method === "Card" ? last4 : ""
-      }
-    });
-
-    els.payment.textContent =
-      method === "Card" ? `Card •••• ${last4}` : method;
-
-    els.paymentEdit.style.display = "none";
-    alert("Payment updated");
-
-  } catch (err) {
-    console.error(err);
-    alert("Payment update failed");
+  const typed = prompt(`Type your username "${cachedUser.username}" to confirm:`);
+  if (typed !== cachedUser.username) {
+    showMessage("Username did not match. Account was not deleted.");
+    return;
   }
-});
+
+  try {
+    els.deleteBtn.disabled = true;
+    await deleteAccount(cachedUser.id);
+
+    logoutUser();
+    alert("Your account has been deleted.");
+    window.location.href = "signup.html";
+  } catch (err) {
+    showMessage(err.message);
+    els.deleteBtn.disabled = false;
+  }
+}
 
 /* =========================
    LOGOUT
 ========================= */
-els.logoutBtn.onclick = async () => {
-  await signOut(auth);
-  window.location.href = "index.html";
-};
-
-
-/* =========================
-   VENDOR RECEIVE METHOD (NEW ADDITION)
-========================= */
-
-// Add new DOM elements (won't break existing code)
-const vendorEls = {
-  receiveMethod: document.getElementById("profileReceiveMethod"),
-  receiveMethodEdit: document.getElementById("receiveMethodEdit"),
-  receiveMethodType: document.getElementById("receiveMethodType"),
-  bankAccountNumber: document.getElementById("bankAccountNumber")
-};
-
-// Check if we're on vendor user page
-if (vendorEls.receiveMethod) {
-  
-  // Display receive method when page loads
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) return;
-    
-    const userRef = doc(db, "users", user.uid);
-    const snap = await getDoc(userRef);
-    const data = snap.data();
-    
-    if (data.receiveMethod) {
-      vendorEls.receiveMethod.textContent =
-        data.receiveMethod.type === "Bank Transfer"
-          ? `Bank Transfer •••• ${data.receiveMethod.accountLast4}`
-          : data.receiveMethod.type;
-    } else {
-      vendorEls.receiveMethod.textContent = "Not set";
-    }
-  });
-
-  // Edit button click
-  document.getElementById("editReceiveMethodBtn")?.addEventListener("click", () => {
-    if (vendorEls.receiveMethodEdit.style.display === "block") {
-      vendorEls.receiveMethodEdit.style.display = "none";
-      return;
-    }
-    
-    // Close other editors
-    if (els.editor) els.editor.style.display = "none";
-    if (els.paymentEdit) els.paymentEdit.style.display = "none";
-    if (els.addrFields) els.addrFields.style.display = "none";
-    
-    vendorEls.receiveMethodEdit.style.display = "block";
-  });
-
-  // Save button click
-  document.getElementById("saveReceiveMethodBtn")?.addEventListener("click", async () => {
-    try {
-      const user = auth.currentUser;
-      if (!user) return;
-      
-      const type = vendorEls.receiveMethodType.value;
-      const accountLast4 = vendorEls.bankAccountNumber.value.trim();
-
-      if (!type) {
-        alert("Select a receive method");
-        return;
-      }
-
-      if (type === "Bank Transfer" && accountLast4.length !== 4) {
-        alert("Enter last 4 digits of bank account");
-        return;
-      }
-
-      const userRef = doc(db, "users", user.uid)
-      await updateDoc(userRef, {
-        receiveMethod: {
-          type,
-          accountLast4: type === "Bank Transfer" ? accountLast4 : ""
-        }
-      });
-
-      vendorEls.receiveMethod.textContent =
-        type === "Bank Transfer" ? `Bank Transfer •••• ${accountLast4}` : type;
-
-      vendorEls.receiveMethodEdit.style.display = "none";
-      alert("Receive method updated");
-
-    } catch (err) {
-      console.error(err);
-      alert("Receive method update failed");
-    }
-});
+function handleLogout() {
+  logoutUser();
+  window.location.href = "login.html";
 }

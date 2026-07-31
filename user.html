@@ -15,8 +15,7 @@
 <header> 
   <div class="header-brand"> 
     <button id="hamburger"> 
-      <img src="icons/template/hamburger_menu.svg"
-alt="Hamburger Menu">
+      <img src="icons/template/hamburger_menu.svg" alt="Hamburger Menu">
   </button> 
   <div class="logo"> <img src="icons/template/hawkers.svg" alt="Hawkers Logo">
         <h1>Hawkers</h1> 
@@ -61,82 +60,86 @@ alt="Hamburger Menu">
 <section class="profile-section">
 <h2>My Profile</h2>
 
+<div id="profileMessage" class="form-message"></div>
+
 <div class="profile-card">
 
-<!-- USERNAME -->
-<div class="profile-row">
-  <span class="label">Username</span>
-  <span class="value" id="profileUsername"></span>
-  <button class="btn-pill" data-edit="username">Edit</button>
-</div>
-
-<!-- DESCRIPTION -->
-<div class="profile-row">
-  <span class="label">Description</span>
-  <span class="value" id="profileDescription"></span>
-  <button class="btn-pill" data-edit="description">Edit</button>
-</div>
-
-<!-- EMAIL -->
-<div class="profile-row">
-  <span class="label">Email</span>
-  <span class="value" id="profileEmail"></span>
-  <button class="btn-pill" data-edit="email">Edit</button>
-</div>
-
-<!-- ADDRESS -->
-<div class="profile-row">
-  <span class="label">Address</span>
-  <span class="value" id="profileAddress"></span>
-  <button class="btn-pill" data-edit="address">Edit</button>
-</div>
-
-<!-- PAYMENT -->
-<div class="profile-row">
-  <span class="label">Payment</span>
-  <span class="value" id="profilePayment"></span>
-  <button id="editPaymentBtn" class="btn-pill">Edit</button>
-</div>
-
-<!-- GENERAL EDITOR -->
-<div id="editor" style="display:none;">
-  <input id="editInput" class="input">
-
-  <input id="emailPassword"
-         class="input"
-         type="password"
-         placeholder="Confirm password"
-         style="display:none;">
-
-  <div id="addressFields" style="display:none;">
-    <input id="addrLine" class="input" placeholder="Address line">
-    <input id="addrCity" class="input" placeholder="City">
-    <input id="addrPostal" class="input" placeholder="Postal code">
+  <!-- USERNAME -->
+  <div class="profile-row">
+    <span class="label">Username</span>
+    <span class="value" id="profileUsername"></span>
+    <button class="btn-pill" data-edit="username" type="button">Edit</button>
   </div>
 
-  <button id="saveEditBtn" class="btn">Save</button>
-</div>
+  <!-- EMAIL -->
+  <div class="profile-row">
+    <span class="label">Email</span>
+    <span class="value" id="profileEmail"></span>
+    <button class="btn-pill" data-edit="email" type="button">Edit</button>
+  </div>
 
-<!-- PAYMENT EDIT -->
-<div id="paymentEdit" style="display:none;">
-  <select id="paymentMethod" class="input">
-    <option value="">Select</option>
-    <option value="Card">Card</option>
-    <option value="PayNow">PayNow</option>
-    <option value="Cash">Cash</option>
-  </select>
+  <!-- ROLE (read only) -->
+  <div class="profile-row">
+    <span class="label">Account Type</span>
+    <span class="value" id="profileRole"></span>
+  </div>
 
-  <input id="cardLast4" class="input" maxlength="4" placeholder="Last 4 digits">
+  <!-- PASSWORD -->
+  <div class="profile-row">
+    <span class="label">Password</span>
+    <span class="value">••••••••</span>
+    <button id="editPasswordBtn" class="btn-pill" type="button">Change</button>
+  </div>
 
-  <button id="savePaymentBtn" class="btn">Save Payment</button>
-</div>
+  <!-- GENERAL EDITOR (username / email) -->
+  <div id="editor" class="edit-panel" style="display:none;">
+    <label id="editLabel" for="editInput">New value</label>
+    <input id="editInput" class="input" type="text">
+    <div class="edit-actions">
+      <button id="saveEditBtn" class="btn" type="button">Save</button>
+      <button id="cancelEditBtn" class="btn btn-outline" type="button">Cancel</button>
+    </div>
+  </div>
 
-<button id="logoutBtn" class="primary-btn">Logout</button>
+  <!-- PASSWORD EDITOR -->
+  <div id="passwordEdit" class="edit-panel" style="display:none;">
+    <label for="currentPassword">Current password</label>
+    <input id="currentPassword" class="input" type="password" autocomplete="current-password">
+
+    <label for="newPassword">New password</label>
+    <input id="newPassword" class="input" type="password" autocomplete="new-password">
+
+    <label for="confirmPassword">Confirm new password</label>
+    <input id="confirmPassword" class="input" type="password" autocomplete="new-password">
+
+    <ul class="password-checklist" id="passwordChecklist">
+      <li id="checkLength" data-label="At least 8 characters">At least 8 characters</li>
+      <li id="checkUpper" data-label="One uppercase letter">One uppercase letter</li>
+      <li id="checkLower" data-label="One lowercase letter">One lowercase letter</li>
+      <li id="checkNumber" data-label="One number">One number</li>
+      <li id="checkMatch" data-label="Both new passwords match">Both new passwords match</li>
+    </ul>
+
+    <div class="edit-actions">
+      <button id="savePasswordBtn" class="btn" type="button">Save Password</button>
+      <button id="cancelPasswordBtn" class="btn btn-outline" type="button">Cancel</button>
+    </div>
+  </div>
+
+  <button id="logoutBtn" class="primary-btn" type="button">Logout</button>
+
+  <!-- DANGER ZONE -->
+  <div class="danger-zone">
+    <h3>Delete Account</h3>
+    <p>Deleting your account is permanent and cannot be undone.</p>
+    <button id="deleteAccountBtn" class="btn-danger" type="button">Delete My Account</button>
+  </div>
 
 </div>
 </section>
 </main>
 
+<script type="module" src="scripts/js-login/sessionUI.js"></script>
 <script type="module" src="scripts/js-login/user.js"></script>
 </body>
 </html>

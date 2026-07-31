@@ -4,7 +4,7 @@ const cors = require("cors");
 
 const userController = require("./controllers/userController");
 const orderController = require("./controllers/orderController");
-const { validateRegister, validateLogin } = require("./middleware/userValidation");
+const { validateRegister, validateLogin, validateChangePassword } = require("./middleware/userValidation");
 const { requireAuth, requireRole } = require("./middleware/authMiddleware");
 const { validateCreateOrder, validateOrderId } = require("./middleware/orderValidation");
 
@@ -38,7 +38,7 @@ app.use(express.urlencoded({ extended: true }));
 // --- User / Auth routes ---
 app.post("/users/register", validateRegister, userController.register);
 app.post("/users/login", validateLogin, userController.login);
-app.put("/users/change-password", requireAuth, userController.changePassword);
+app.put("/users/change-password", requireAuth, validateChangePassword, userController.changePassword);
 app.get("/users/me", requireAuth, userController.getCurrentUser);
 app.get("/users", userController.getAllUsers);
 app.get("/users/:id", requireAuth, userController.getUserById);
