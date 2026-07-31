@@ -1,12 +1,14 @@
-const dbConfig = {
-    user: "bedasg_user",
-    password: "bob1234",
-    server: "LAPTOP-M6H8NEUO\\SQLEXPRESS",
-    database: "BED ASG",
-    options: {
-        trustServerCertificate: true,
-        encrypt: true,
-    }
-};
+require("dotenv").config();
 
-module.exports = dbConfig;
+module.exports = {
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  server: process.env.DB_SERVER,
+  database: process.env.DB_DATABASE,
+  port: parseInt(process.env.DB_PORT),
+  connectionTimeout: 60000,
+  options: {
+    trustServerCertificate: true,
+    encrypt: false,
+  },
+};
