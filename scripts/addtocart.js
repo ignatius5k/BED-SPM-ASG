@@ -11,11 +11,7 @@ import {
 } from
   "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-import {
-  getAuth,
-  onAuthStateChanged
-} from
-  "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+
 import {
   resolveProductImage,
   setImageSrc
@@ -34,11 +30,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const auth = getAuth(app);
-let CURRENT_USER_ID = null;
+let CURRENT_USER_ID = localStorage.getItem("userId");
 
-// Demo user
-CURRENT_USER_ID = "demo-user";
+
 
 /* =========================
    URL PARAMS (NEW)
@@ -200,13 +194,13 @@ if (!addBtn) {
 
     console.log("Button clicked");
 
-    if (!userId) {
-      alert("Please log in first.");
-      window.location.href = "login.html";
-      return;
-    }
+    CURRENT_USER_ID = localStorage.getItem("userId");
 
-    CURRENT_USER_ID = userId;
+if (!CURRENT_USER_ID) {
+    alert("Please log in first.");
+    window.location.href = "login.html";
+    return;
+}
 
     try {
 

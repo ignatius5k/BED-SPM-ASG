@@ -47,13 +47,18 @@ const paymentButtons = document.querySelectorAll(".payments button");
 let selectedPaymentMethod = null;
 let orderCounter = Number(localStorage.getItem("orderCounter")) || 1008;
 
-const userId = "demo-user";
+const userId = localStorage.getItem("userId");
+
+if (!userId) {
+    alert("Please log in first.");
+    window.location.href = "login.html";
+    throw new Error("No user logged in");
+}
 
 console.log("Logged in as:", userId);
 
-// const itemsRef = collection(db, "carts", userId, "items");
-
-// const snap = await getDocs(itemsRef);
+const itemsRef = collection(db, "carts", userId, "items");
+const snap = await getDocs(itemsRef);
 
 let subtotal = 0;
 container.innerHTML = "";
@@ -293,12 +298,11 @@ payNowBtn.addEventListener("click", async () => {
     return;
   }
   await createVendorNotification();
-  const user = auth.currentUser;
-  const fulfillmentType = sessionStorage.getItem("fulfillmentType") ?? "takeout";
+  const userId = localStorage.getItem("userId");  const fulfillmentType = sessionStorage.getItem("fulfillmentType") ?? "takeout";
 
   // 🔴 BLOCK delivery without address
   if (fulfillmentType === "delivery") {
-    const userRef = doc(db, "users", user.uid);
+    const userRef = doc(db, "users", userId);
     const userSnap = await getDoc(userRef);
 
     const hasAddress = userSnap.exists() && userSnap.data()?.address?.line1;
@@ -312,7 +316,7 @@ payNowBtn.addEventListener("click", async () => {
 
   // 🔴 BLOCK Visa/Mastercard without saved card
   if (selectedPaymentMethod === "visa" || selectedPaymentMethod === "mastercard") {
-    const userRef = doc(db, "users", user.uid);
+    const userRef = doc(db, "users", userId);
     const userSnap = await getDoc(userRef);
 
     const hasCard =
