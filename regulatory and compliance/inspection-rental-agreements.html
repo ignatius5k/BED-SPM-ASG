@@ -6,7 +6,7 @@
   <title>Inspector Rental Agreements | Hawkers</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../template/template.css">
   <link rel="stylesheet" href="inspection-rental-agreements.css">
 </head>
@@ -53,11 +53,9 @@
   <main class="agreement-page">
     <section class="page-heading">
       <div>
-        <span class="eyebrow">Regulatory and compliance</span>
-        <h2>Rental Agreements</h2>
+        <h1>Rental Agreements</h1>
         <p>Create government rental records and review changes made by inspectors and vendors.</p>
       </div>
-      <div class="inspector-badge" id="inspectorBadge">Inspector access</div>
     </section>
 
     <p class="page-message" id="pageMessage" role="status" aria-live="polite">
@@ -86,7 +84,6 @@
     <section class="panel form-panel" aria-labelledby="agreementFormTitle">
       <div class="panel-heading">
         <div>
-          <span class="panel-label" id="formModeLabel">New record</span>
           <h3 id="agreementFormTitle">Create rental agreement</h3>
           <p id="agreementFormHelp">Select a stall and record the official rental details.</p>
         </div>
@@ -162,12 +159,11 @@
     <section class="panel records-panel" aria-labelledby="recordsTitle">
       <div class="panel-heading records-heading">
         <div>
-          <span class="panel-label">Government records</span>
           <h3 id="recordsTitle">Rental agreement records</h3>
           <p>Select a record to view its details and audit history.</p>
         </div>
 
-        <button class="btn-secondary" id="refreshButton" type="button">Refresh records</button>
+        <button class="btn-primary" id="refreshButton" type="button">Refresh records</button>
       </div>
 
       <div class="filter-grid">
@@ -211,7 +207,7 @@
     <section class="panel detail-panel" id="agreementDetail" aria-labelledby="detailTitle" hidden>
       <div class="detail-heading">
         <div>
-          <span class="panel-label" id="detailReference"></span>
+          <strong class="detail-reference" id="detailReference"></strong>
           <h3 id="detailTitle">Agreement details</h3>
           <p id="detailStallVendor"></p>
         </div>
@@ -304,7 +300,7 @@
 
       <div class="footer-info">
         <h3>Contact Us</h3>
-        <p>21 Revolution Street, Singapore</p>
+        <p>21 Revolution Street, Paris, France</p>
         <p>+65 5752 6239</p>
         <p>support@company.com</p>
       </div>

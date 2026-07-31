@@ -171,7 +171,7 @@ function populateStallOptions() {
     const stall = rentalData.stalls[index];
     const option = document.createElement("option");
     option.value = stall.stallId;
-    option.textContent = `${stall.stallName} — ${stall.vendorName}`;
+    option.textContent = `${stall.stallName} - ${stall.vendorName}`;
     select.appendChild(option);
   }
 
@@ -244,7 +244,7 @@ function displayRecords() {
     appendTextCell(row, agreement.agreementReference);
     appendTextCell(row, agreement.stallName);
     appendTextCell(row, agreement.vendorName);
-    appendTextCell(row, `${formatDate(agreement.startDate)} – ${formatDate(agreement.endDate)}`);
+    appendTextCell(row, `${formatDate(agreement.startDate)} to ${formatDate(agreement.endDate)}`);
     appendTextCell(row, formatCurrency(agreement.monthlyRent));
     appendTextCell(row, formatDate(agreement.renewalDate));
 
@@ -327,7 +327,7 @@ function displayAgreementDetails() {
 
   detail.hidden = false;
   document.getElementById("detailReference").textContent = agreement.agreementReference;
-  document.getElementById("detailStallVendor").textContent = `${agreement.stallName} — ${agreement.vendorName}`;
+  document.getElementById("detailStallVendor").textContent = `${agreement.stallName} - ${agreement.vendorName}`;
   document.getElementById("detailAgreementId").textContent = agreement.agreementId;
   document.getElementById("detailPeriod").textContent = `${formatDate(agreement.startDate)} to ${formatDate(agreement.endDate)}`;
   document.getElementById("detailRent").textContent = formatCurrency(agreement.monthlyRent);
@@ -354,7 +354,6 @@ function resetAgreementForm() {
   document.getElementById("stallId").disabled = false;
   document.getElementById("agreementReference").disabled = false;
   document.getElementById("status").value = "active";
-  document.getElementById("formModeLabel").textContent = "New record";
   document.getElementById("agreementFormTitle").textContent = "Create rental agreement";
   document.getElementById("agreementFormHelp").textContent = "Select a stall and record the official rental details.";
   document.getElementById("changeReasonLabel").textContent = "Reason for creating agreement";
@@ -383,7 +382,6 @@ function startEditingAgreement() {
   document.getElementById("status").value = agreement.status;
   document.getElementById("termsSummary").value = agreement.termsSummary || "";
   document.getElementById("changeReason").value = "";
-  document.getElementById("formModeLabel").textContent = "Editing record";
   document.getElementById("agreementFormTitle").textContent = "Update rental agreement";
   document.getElementById("agreementFormHelp").textContent = "The stall and official reference cannot be changed after creation.";
   document.getElementById("changeReasonLabel").textContent = "Reason for changing agreement";
@@ -517,9 +515,6 @@ document.addEventListener("DOMContentLoaded", function () {
     goToInspectorLogin();
     return;
   }
-
-  const username = localStorage.getItem("username") || "Inspector";
-  document.getElementById("inspectorBadge").textContent = `${username} · Inspector`;
 
   document.getElementById("stallId").addEventListener("change", displaySelectedVendor);
   document.getElementById("recordSearch").addEventListener("input", displayRecords);
