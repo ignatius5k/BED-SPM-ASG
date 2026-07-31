@@ -1,8 +1,8 @@
 // Links the order page review form to the feedback backend.
 
 const API_BASE = "http://localhost:3000";
-const CURRENT_CUSTOMER_ID = 1;
-const STALL_ID = 1;
+const CURRENT_CUSTOMER_ID = "CUST001";
+const STALL_ID = "STALL001";
 
 // READ: load this stall's feedback and show it on the page
 async function loadReviews() {
