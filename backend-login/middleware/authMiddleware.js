@@ -21,7 +21,7 @@ function requireAuth(req, res, next) {
     // If either check fails, this throws - caught below.
     const decoded = jwt.verify(token, JWT_SECRET);
 
-    // attach the identity to the request (the controller) knows exactly who is making this call.
+    // Attach the identity so the controller knows who is making this call.
     req.userId = decoded.id;
     req.userEmail = decoded.email;
     req.role = decoded.role;
@@ -32,4 +32,20 @@ function requireAuth(req, res, next) {
   }
 }
 
-module.exports = { requireAuth };
+/**
+ * Restricts a route to specific roles.
+ * Runs after requireAuth, which sets req.role from the verified token.
+ * Example: app.post("/orders", requireAuth, requireRole("customer"), ...)
+ */
+function requireRole(...allowedRoles) {
+  return (req, res, next) => {
+    if (!allowedRoles.includes(req.role)) {
+      return res.status(403).json({
+        error: "You do not have permission to perform this action"
+      });
+    }
+    next();
+  };
+}
+
+module.exports = { requireAuth, requireRole };

@@ -5,7 +5,8 @@ const cors = require("cors");
 const userController = require("./controllers/userController");
 const orderController = require("./controllers/orderController");
 const { validateRegister, validateLogin } = require("./middleware/userValidation");
-const { requireAuth } = require("./middleware/authMiddleware");
+const { requireAuth, requireRole } = require("./middleware/authMiddleware");
+const { validateCreateOrder, validateOrderId } = require("./middleware/orderValidation");
 
 // Routes
 const inspectionRoutes = require("./inspectionRoutes");
@@ -57,9 +58,10 @@ app.use("/vendor-rental-agreements", vendorRentalAgreementRoutes);
 app.use("/vendor-inspection-history", vendorInspectionHistoryRoutes);
 
 // --- Order History routes ---
-app.post("/orders", requireAuth, orderController.createOrder);
+app.post("/orders", requireAuth, requireRole("customer"), validateCreateOrder, orderController.createOrder);
 app.get("/orders", requireAuth, orderController.getMyOrders);
-app.get("/orders/:id", requireAuth, orderController.getOrderById);
+app.get("/orders/search", requireAuth, orderController.searchOrders);
+app.get("/orders/:id", requireAuth, validateOrderId, orderController.getOrderById);
 
 // --- Notifications routes ---
 app.use("/notifications", notificationRoutes);
