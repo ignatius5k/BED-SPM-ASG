@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inspector Rental Agreements | Hawkers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../template/template.css">
+  <link rel="stylesheet" href="inspection-rental-agreements.css">
+</head>
+<body>
+  <header>
+    <div class="header-brand">
+      <button id="hamburger" type="button">
+        <img src="../icons/template/hamburger_menu.svg" alt="Open navigation">
+      </button>
+      <div class="logo">
+        <img src="../icons/template/hawkers.svg" alt="Hawkers logo">
+        <h1>Hawkers</h1>
+      </div>
+    </div>
+
+    <nav class="header-nav" aria-label="Inspector navigation">
+      <ul id="nav-links">
+        <li><a href="inspection-dashboard.html">Dashboard</a></li>
+        <li><a href="inspection-scheduling.html">Scheduling</a></li>
+        <li><a href="inspection-form.html">Form</a></li>
+        <li><a href="inspection-history.html">History</a></li>
+        <li><a class="active" href="inspection-rental-agreements.html">Rental Agreements</a></li>
+        <li><div class="divider"></div></li>
+        <li><a href="../user.html">User</a></li>
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <div id="user">
+        <a href="../user.html">
+          <img src="../icons/template/user.svg" alt="User account">
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <nav id="breadcrumbs" aria-label="Breadcrumb">
+    <ul>
+      <li><a href="inspection-dashboard.html">Inspections / </a></li>
+      <li><a href="inspection-rental-agreements.html">Rental Agreements</a></li>
+    </ul>
+  </nav>
+
+  <main class="agreement-page">
+    <section class="page-heading">
+      <div>
+        <span class="eyebrow">Regulatory and compliance</span>
+        <h2>Rental Agreements</h2>
+        <p>Create government rental records and review changes made by inspectors and vendors.</p>
+      </div>
+      <div class="inspector-badge" id="inspectorBadge">Inspector access</div>
+    </section>
+
+    <p class="page-message" id="pageMessage" role="status" aria-live="polite">
+      Loading rental agreements...
+    </p>
+
+    <section class="summary-grid" aria-label="Rental agreement summary">
+      <article>
+        <span>Eligible stalls</span>
+        <strong id="stallCount">0</strong>
+      </article>
+      <article>
+        <span>All agreements</span>
+        <strong id="agreementCount">0</strong>
+      </article>
+      <article>
+        <span>Current agreements</span>
+        <strong id="currentCount">0</strong>
+      </article>
+      <article>
+        <span>Renewal due</span>
+        <strong id="renewalDueCount">0</strong>
+      </article>
+    </section>
+
+    <section class="panel form-panel" aria-labelledby="agreementFormTitle">
+      <div class="panel-heading">
+        <div>
+          <span class="panel-label" id="formModeLabel">New record</span>
+          <h3 id="agreementFormTitle">Create rental agreement</h3>
+          <p id="agreementFormHelp">Select a stall and record the official rental details.</p>
+        </div>
+      </div>
+
+      <form id="agreementForm">
+        <div class="form-grid">
+          <div class="form-group form-group-wide">
+            <label for="stallId">Stall and vendor</label>
+            <select id="stallId" name="stallId" required>
+              <option value="">Select a stall</option>
+            </select>
+            <small id="selectedVendor">The assigned vendor will see this agreement.</small>
+          </div>
+
+          <div class="form-group form-group-wide">
+            <label for="agreementReference">Agreement reference</label>
+            <input id="agreementReference" name="agreementReference" type="text" maxlength="40" placeholder="Example: NEA-ST003-2026" required>
+          </div>
+
+          <div class="form-group">
+            <label for="startDate">Rental start date</label>
+            <input id="startDate" name="startDate" type="date" required>
+          </div>
+
+          <div class="form-group">
+            <label for="endDate">Rental end date</label>
+            <input id="endDate" name="endDate" type="date" required>
+          </div>
+
+          <div class="form-group">
+            <label for="monthlyRent">Monthly rent (S$)</label>
+            <input id="monthlyRent" name="monthlyRent" type="number" min="0" max="99999999.99" step="0.01" required>
+          </div>
+
+          <div class="form-group">
+            <label for="renewalDate">Renewal date</label>
+            <input id="renewalDate" name="renewalDate" type="date" required>
+          </div>
+
+          <div class="form-group form-group-wide">
+            <label for="status">Agreement status</label>
+            <select id="status" name="status" required>
+              <option value="active">Active</option>
+              <option value="renewal due">Renewal due</option>
+              <option value="renewed">Renewed</option>
+              <option value="expired">Expired</option>
+            </select>
+            <small>A stall can only have one active or renewal-due agreement.</small>
+          </div>
+
+          <div class="form-group form-group-full">
+            <label for="termsSummary">Terms summary</label>
+            <textarea id="termsSummary" name="termsSummary" rows="4" maxlength="500" placeholder="Record the main rental conditions."></textarea>
+          </div>
+
+          <div class="form-group form-group-full">
+            <label for="changeReason" id="changeReasonLabel">Reason for creating agreement</label>
+            <textarea id="changeReason" name="changeReason" rows="3" minlength="3" maxlength="250" required></textarea>
+            <small>This reason and the signed-in user are saved in the audit history.</small>
+          </div>
+        </div>
+
+        <p class="form-message" id="formMessage" role="status" aria-live="polite"></p>
+
+        <div class="form-actions">
+          <button class="btn-secondary" id="cancelEditButton" type="button" hidden>Cancel edit</button>
+          <button class="btn-primary" id="saveAgreementButton" type="submit">Create agreement</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel records-panel" aria-labelledby="recordsTitle">
+      <div class="panel-heading records-heading">
+        <div>
+          <span class="panel-label">Government records</span>
+          <h3 id="recordsTitle">Rental agreement records</h3>
+          <p>Select a record to view its details and audit history.</p>
+        </div>
+
+        <button class="btn-secondary" id="refreshButton" type="button">Refresh records</button>
+      </div>
+
+      <div class="filter-grid">
+        <div class="form-group">
+          <label for="recordSearch">Search</label>
+          <input id="recordSearch" type="search" placeholder="Reference, stall, or vendor">
+        </div>
+        <div class="form-group">
+          <label for="statusFilter">Status</label>
+          <select id="statusFilter">
+            <option value="all">All statuses</option>
+            <option value="active">Active</option>
+            <option value="renewal due">Renewal due</option>
+            <option value="renewed">Renewed</option>
+            <option value="expired">Expired</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="table-wrap" id="recordsTableWrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Reference</th>
+              <th scope="col">Stall</th>
+              <th scope="col">Vendor</th>
+              <th scope="col">Rental period</th>
+              <th scope="col">Rent</th>
+              <th scope="col">Renewal</th>
+              <th scope="col">Status</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody id="recordsTableBody"></tbody>
+        </table>
+      </div>
+
+      <p class="empty-state" id="recordsEmpty" hidden>No rental agreements match these filters.</p>
+    </section>
+
+    <section class="panel detail-panel" id="agreementDetail" aria-labelledby="detailTitle" hidden>
+      <div class="detail-heading">
+        <div>
+          <span class="panel-label" id="detailReference"></span>
+          <h3 id="detailTitle">Agreement details</h3>
+          <p id="detailStallVendor"></p>
+        </div>
+        <div class="detail-actions">
+          <span class="status-badge" id="detailStatus"></span>
+          <button class="btn-primary" id="editAgreementButton" type="button">Edit agreement</button>
+        </div>
+      </div>
+
+      <dl class="detail-grid">
+        <div>
+          <dt>Agreement ID</dt>
+          <dd id="detailAgreementId"></dd>
+        </div>
+        <div>
+          <dt>Rental period</dt>
+          <dd id="detailPeriod"></dd>
+        </div>
+        <div>
+          <dt>Monthly rent</dt>
+          <dd id="detailRent"></dd>
+        </div>
+        <div>
+          <dt>Renewal date</dt>
+          <dd id="detailRenewal"></dd>
+        </div>
+        <div>
+          <dt>Last updated</dt>
+          <dd id="detailUpdated"></dd>
+        </div>
+        <div class="detail-terms">
+          <dt>Terms summary</dt>
+          <dd id="detailTerms"></dd>
+        </div>
+      </dl>
+
+      <div class="history-heading">
+        <h4>Change history</h4>
+        <p>Creation and updates are recorded with the responsible user and role.</p>
+      </div>
+
+      <div class="table-wrap" id="historyTableWrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Changed</th>
+              <th scope="col">Field</th>
+              <th scope="col">Previous</th>
+              <th scope="col">New</th>
+              <th scope="col">Reason</th>
+              <th scope="col">Changed by</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody"></tbody>
+        </table>
+      </div>
+
+      <p class="empty-state" id="historyEmpty" hidden>No changes have been recorded for this agreement.</p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="sub_footer">
+      <div class="footer-branding">
+        <div class="logo">
+          <img src="../icons/template/hawkers_white.svg" alt="Hawkers logo">
+          <h1>Hawkers</h1>
+        </div>
+        <h3>Connect with us</h3>
+        <ul>
+          <li><a href="#"><img src="../icons/template/twitter.svg" alt="Twitter"></a></li>
+          <li><a href="#"><img src="../icons/template/facebook.svg" alt="Facebook"></a></li>
+          <li><a href="#"><img src="../icons/template/instagram.svg" alt="Instagram"></a></li>
+          <li><a href="#"><img src="../icons/template/github.svg" alt="GitHub"></a></li>
+        </ul>
+      </div>
+
+      <div class="footer-nav">
+        <nav>
+          <h3>Inspection pages</h3>
+          <ul>
+            <li><a href="inspection-dashboard.html">Inspection Dashboard</a></li>
+            <li><a href="inspection-scheduling.html">Inspection Scheduling</a></li>
+            <li><a href="inspection-form.html">Inspection Form</a></li>
+            <li><a href="inspection-history.html">Inspection History</a></li>
+            <li><a href="inspection-rental-agreements.html">Rental Agreements</a></li>
+          </ul>
+        </nav>
+      </div>
+
+      <div class="footer-info">
+        <h3>Contact Us</h3>
+        <p>21 Revolution Street, Singapore</p>
+        <p>+65 5752 6239</p>
+        <p>support@company.com</p>
+      </div>
+    </div>
+    <p>&copy; 2026 Hawkers. All rights reserved.</p>
+  </footer>
+
+  <script src="../template/template.js"></script>
+  <script src="inspection-rental-agreements.js"></script>
+</body>
+</html>

@@ -73,6 +73,13 @@ function isSignupPage() {
 ========================= */
 function getRedirect(role) {
   const requested = new URLSearchParams(window.location.search).get("redirect");
+  const inspectorPages = [
+    "regulatory and compliance/inspection-dashboard.html",
+    "regulatory and compliance/inspection-scheduling.html",
+    "regulatory and compliance/inspection-form.html",
+    "regulatory and compliance/inspection-history.html",
+    "regulatory and compliance/inspection-rental-agreements.html"
+  ];
 
   if ((role === "customer" || role === "guest") && requested === "history.html") {
     return "history.html";
@@ -82,9 +89,13 @@ function getRedirect(role) {
     return "vendor_stores.html";
   }
 
+  if (role === "inspector" && inspectorPages.includes(requested)) {
+    return requested;
+  }
+
   if (role === "customer")  return "home.html";
   if (role === "vendor")    return "vendor_menu.html";
-  if (role === "inspector") return "regulatory%20and%20compliance/inspection-dashboard.html";
+  if (role === "inspector") return "regulatory and compliance/inspection-dashboard.html";
   return "home.html";
 }
 

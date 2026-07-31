@@ -409,13 +409,19 @@ function displayChangeHistory() {
 
   agreementChanges.forEach((change) => {
     const row = document.createElement("tr");
+    let changedBy = change.changedByName;
+
+    if (change.changedByRole) {
+      changedBy += ` (${change.changedByRole})`;
+    }
+
     const values = [
       formatDateTime(change.changedAt),
       change.fieldChanged,
       change.previousValue || "Not recorded",
       change.newValue || "Not recorded",
       change.changeReason,
-      change.changedByName,
+      changedBy,
     ];
 
     values.forEach((value, index) => {

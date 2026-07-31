@@ -831,3 +831,6 @@ label {
     display: none !important;
   }
 }
+#nav-links > li:nth-child(5) {
+  display: list-item;
+}
