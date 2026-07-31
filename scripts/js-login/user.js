@@ -55,10 +55,10 @@ function closeAllEditors() {
    AUTH STATE
 ========================= */
 onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    window.location.href = "index.html";
-    return;
-  }
+ if (!userId) {
+    window.location.href = "login.html";
+    throw new Error("No logged in user");
+}
 
   userRef = doc(db, "users", user.uid)
 

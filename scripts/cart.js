@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-
+import { isGuest } from "./js-login/api.js"; //detect if user is a guest
 import {
   getFirestore,
   collection,
@@ -48,51 +48,129 @@ let selectedPaymentMethod = null;
 let orderCounter = Number(localStorage.getItem("orderCounter")) || 1008;
 
 const userId = localStorage.getItem("userId");
+const guest = isGuest();
 
-if (!userId) {
-    alert("Please log in first.");
-    window.location.href = "login.html";
-    throw new Error("No user logged in");
-}
 
 console.log("Logged in as:", userId);
 
-const itemsRef = collection(db, "carts", userId, "items");
-const snap = await getDocs(itemsRef);
+let itemsRef = null;
+let snap = null;
+
+if (!guest) {
+
+    itemsRef = collection(db, "carts", userId, "items");
+
+    console.log("Loading Firestore cart for:", userId);
+
+    snap = await getDocs(itemsRef);
+
+    console.log("Firestore cart size:", snap.size);
+
+}
 
 let subtotal = 0;
 container.innerHTML = "";
 
 let hasItems = false;
 
-snap.forEach(docSnap => {
-  hasItems = true;
-  const item = docSnap.data();
-  subtotal += (item.unitPrice ?? item.price ?? 0) * item.quantity;
+if (!guest) {
 
-  const div = document.createElement("div");
-  div.className = "cart-item";
-  const itemImagePath = normalizeImagePath(item.imagePath, "Background/background.png");
+    snap.forEach(docSnap => {
 
-  div.innerHTML = `
-    <img class="cart-item-image" src="${itemImagePath}" alt="${item.name}">
-    <div class="cart-info">
-      <h4>${item.quantity}x ${item.name}</h4>
-      <p>${item.description ?? ""}</p>
-      <span class="cart-price">$${Number(item.unitPrice ?? item.price ?? 0).toFixed(2)}</span>
-      <div class="remove">Remove</div>
-    </div>
-  `;
+        hasItems = true;
 
-  setImageSrc(div.querySelector(".cart-item-image"), itemImagePath);
+        const item = docSnap.data();
 
-  div.querySelector(".remove").onclick = async () => {
-    await deleteDoc(doc(itemsRef, docSnap.id));
-    location.reload();
-  };
+        subtotal += (item.unitPrice ?? item.price ?? 0) * item.quantity;
 
-  container.appendChild(div);
-});
+        const div = document.createElement("div");
+        div.className = "cart-item";
+
+        const itemImagePath = normalizeImagePath(
+            item.imagePath,
+            "Background/background.png"
+        );
+
+        div.innerHTML = `
+            <img class="cart-item-image" src="${itemImagePath}">
+            <div class="cart-info">
+                <h4>${item.quantity}x ${item.name}</h4>
+                <p>${item.description ?? ""}</p>
+                <span class="cart-price">
+                    $${Number(item.unitPrice ?? item.price ?? 0).toFixed(2)}
+                </span>
+                <div class="remove">Remove</div>
+            </div>
+        `;
+
+        setImageSrc(div.querySelector(".cart-item-image"), itemImagePath);
+
+        div.querySelector(".remove").onclick = async () => {
+
+            await deleteDoc(doc(itemsRef, docSnap.id));
+
+            location.reload();
+
+        };
+
+        container.appendChild(div);
+
+    });
+
+}
+else {
+console.log("Guest:", guest);
+console.log("User:", userId);
+
+    const guestCart =
+        JSON.parse(localStorage.getItem("guestCart")) || [];
+
+    guestCart.forEach((item, index) => {
+
+        hasItems = true;
+
+        subtotal += item.unitPrice * item.quantity;
+
+        const div = document.createElement("div");
+
+        div.className = "cart-item";
+
+        const itemImagePath = normalizeImagePath(
+            item.imagePath,
+            "Background/background.png"
+        );
+
+        div.innerHTML = `
+            <img class="cart-item-image" src="${itemImagePath}">
+            <div class="cart-info">
+                <h4>${item.quantity}x ${item.name}</h4>
+                <span class="cart-price">
+                    $${item.unitPrice.toFixed(2)}
+                </span>
+                <div class="remove">Remove</div>
+            </div>
+        `;
+
+        setImageSrc(div.querySelector(".cart-item-image"), itemImagePath);
+
+        div.querySelector(".remove").onclick = () => {
+
+            guestCart.splice(index, 1);
+
+            localStorage.setItem(
+                "guestCart",
+                JSON.stringify(guestCart)
+            );
+
+            location.reload();
+
+        };
+
+        container.appendChild(div);
+
+    });
+
+}
 
 // 🔒 Block payment if cart empty
 
@@ -121,8 +199,10 @@ radios.forEach(r => {
   r.addEventListener("change", () => {
     fulfillmentType = r.value;
 
-    updateTotal(subtotal);          // updates fee label UI
-    loadAppliedCodes(userId, subtotal); // recalculates promo + final total
+    updateTotal(subtotal);  
+    if (!guest) { // updates fee label UI
+    loadAppliedCodes(userId, subtotal);
+    } // recalculates promo + final total
   });
 });
 
@@ -178,11 +258,12 @@ function updateTotal(subtotal) {
 
 // run once on load
 updateTotal(subtotal);
-
+if (!guest) {
   loadAppliedCodes(userId, subtotal);
-
-  const promoCode = document.getElementById("promo-code");
-  promoCode.addEventListener("submit", async (e) => {
+}
+if (guest) {
+    document.getElementById("promo-code").style.display = "none";
+}  promoCode.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const inputCode = document.getElementById("input-code");
@@ -293,10 +374,12 @@ async function createVendorNotification() {
 
 
 payNowBtn.addEventListener("click", async () => {
-  if (!selectedPaymentMethod) {
-    alert("Please select a payment method");
-    return;
-  }
+  if (isGuest()) {
+    await saveGuestOrder();
+} else {
+    await saveFirestoreOrder();
+}
+
   await createVendorNotification();
   const userId = localStorage.getItem("userId");  const fulfillmentType = sessionStorage.getItem("fulfillmentType") ?? "takeout";
 
@@ -369,6 +452,7 @@ function createDiscount(description, discount, type) {
 }
 
 async function loadAppliedCodes(userId, subtotal) {
+
   // const order_summary = document.querySelector(".order-summary");
   const discounts = document.getElementById("discounts")
   const appliedCodesRef = collection(db, "carts", userId, "appliedCodes");
@@ -413,3 +497,79 @@ if (fulfillmentType === "delivery") {
 document.getElementById("qr-done").addEventListener("click", () => {
   window.location.href = "payment.html";
 });
+
+async function saveFirestoreOrder() {
+    const fulfillmentType =
+    sessionStorage.getItem("fulfillmentType") ?? "takeout";
+    const itemsRef = collection(db, "carts", userId, "items");
+    const itemsSnap = await getDocs(itemsRef);
+
+    const items = [];
+
+    itemsSnap.forEach(docSnap => {
+        items.push(docSnap.data());
+    });
+
+    await addDoc(collection(db, "orders"), {
+
+        userId,
+
+        items,
+
+        total: Number(sessionStorage.getItem("total")),
+
+        paymentMethod: selectedPaymentMethod,
+
+        fulfillmentType,
+
+        createdAt: Timestamp.now(),
+
+        status: "Preparing"
+
+    });
+
+    // Empty cart after saving order
+    for (const document of itemsSnap.docs) {
+        await deleteDoc(document.ref);
+    }
+
+}
+
+function saveGuestOrder() {
+
+    const items =
+        JSON.parse(localStorage.getItem("guestCart")) || [];
+
+    const existing =
+        JSON.parse(localStorage.getItem("guestOrders")) || [];
+
+    const fulfillmentType =
+        sessionStorage.getItem("fulfillmentType") ?? "takeout";
+
+    const order = {
+
+        items,
+
+        total: Number(sessionStorage.getItem("total")),
+
+        paymentMethod: selectedPaymentMethod,
+
+        fulfillmentType,
+
+        createdAt: new Date().toISOString(),
+
+        status: "Preparing"
+
+    };
+
+    existing.push(order);
+
+    localStorage.setItem(
+        "guestOrders",
+        JSON.stringify(existing)
+    );
+
+    localStorage.removeItem("guestCart");
+
+}
+
