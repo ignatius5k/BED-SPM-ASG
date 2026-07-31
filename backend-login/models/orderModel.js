@@ -22,6 +22,7 @@ async function createOrder(customerId, stallId, items) {
     // Prices are never taken from the browser - a user could edit those.
     let total = 0;
     const priced = [];
+
     for (const item of items) {
       const priceReq = connection.request();
       priceReq.input("menuItemId", item.menuItemId);
@@ -123,6 +124,64 @@ async function getOrdersByCustomer(customerId) {
   }
 }
 
+// Searches a customer's own orders by stall name, status, or item name.
+// Uses a parameterized query so user input can never alter the SQL.
+async function searchOrders(customerId, searchTerm) {
+  let connection;
+  try {
+    connection = await sql.connect(dbConfig);
+
+    const req = connection.request();
+    req.input("customerId", customerId);
+    req.input("searchTerm", sql.NVarChar, searchTerm);
+
+    const ordersResult = await req.query(`
+      SELECT DISTINCT o.OrderID, o.StallID, s.StallName,
+             o.OrderDate, o.Status, o.TotalAmount
+      FROM Orders o
+      JOIN Stalls s ON o.StallID = s.StallID
+      LEFT JOIN OrderItems oi ON o.OrderID = oi.OrderID
+      LEFT JOIN MenuItems mi ON oi.MenuItemID = mi.MenuItemID
+      WHERE o.CustomerID = @customerId
+        AND (s.StallName LIKE '%' + @searchTerm + '%'
+             OR o.Status LIKE '%' + @searchTerm + '%'
+             OR mi.ItemName LIKE '%' + @searchTerm + '%')
+      ORDER BY o.OrderDate DESC
+    `);
+
+    const orders = ordersResult.recordset;
+    if (orders.length === 0) return [];
+
+    // Attach the items to each matching order
+    const itemsReq = connection.request();
+    itemsReq.input("customerId", customerId);
+    const itemsResult = await itemsReq.query(`
+      SELECT oi.OrderID, mi.ItemName, oi.Quantity, oi.UnitPrice
+      FROM OrderItems oi
+      JOIN MenuItems mi ON oi.MenuItemID = mi.MenuItemID
+      JOIN Orders o ON oi.OrderID = o.OrderID
+      WHERE o.CustomerID = @customerId
+    `);
+
+    const itemsByOrder = {};
+    for (const row of itemsResult.recordset) {
+      if (!itemsByOrder[row.OrderID]) itemsByOrder[row.OrderID] = [];
+      itemsByOrder[row.OrderID].push({
+        ItemName: row.ItemName,
+        Quantity: row.Quantity,
+        UnitPrice: row.UnitPrice
+      });
+    }
+
+    return orders.map(o => ({ ...o, items: itemsByOrder[o.OrderID] || [] }));
+  } catch (error) {
+    console.error("Database error in searchOrders:", error);
+    throw error;
+  } finally {
+    if (connection) await connection.close();
+  }
+}
+
 // Returns one order with its full item list.
 async function getOrderById(orderId) {
   let connection;
@@ -160,4 +219,9 @@ async function getOrderById(orderId) {
   }
 }
 
-module.exports = { createOrder, getOrdersByCustomer, getOrderById };
+module.exports = {
+  createOrder,
+  getOrdersByCustomer,
+  getOrderById,
+  searchOrders
+};

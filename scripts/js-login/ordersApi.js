@@ -8,17 +8,26 @@ async function request(path, options = {}) {
     throw new Error("Please sign in to view your orders.");
   }
 
-  const response = await fetch(`${API_BASE}${path}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`,
-      ...(options.headers || {})
-    }
-  });
+  let response;
+  try {
+    response = await fetch(`${API_BASE}${path}`, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+        ...(options.headers || {})
+      }
+    });
+  } catch {
+    throw new Error("Unable to connect. Please try again later.");
+  }
 
   const data = await response.json().catch(() => ({}));
+
   if (!response.ok) {
+    if (response.status >= 500) {
+      throw new Error("Unable to connect. Please try again later.");
+    }
     throw new Error(data.error || "Unable to load orders.");
   }
 
@@ -27,6 +36,10 @@ async function request(path, options = {}) {
 
 export function getMyOrders() {
   return request("/orders");
+}
+
+export function searchOrders(searchTerm) {
+  return request(`/orders/search?searchTerm=${encodeURIComponent(searchTerm)}`);
 }
 
 export function getOrderById(orderId) {
