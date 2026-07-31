@@ -79,7 +79,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "sync:firebase-catalog": "node scripts/syncFirebaseCatalog.js",
-    "cleanup:firebase-catalog": "node scripts/syncFirebaseCatalog.js --cleanup"
+    "cleanup:firebase-catalog": "node scripts/syncFirebaseCatalog.js --cleanup",
+    "seed:firebase-reviews": "node scripts/syncFirebaseReviews.js --apply",
+    "cleanup:firebase-reviews": "node scripts/syncFirebaseReviews.js --cleanup"
   },
   "keywords": [],
   "author": "",
