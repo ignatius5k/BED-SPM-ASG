@@ -73,6 +73,11 @@ function isSignupPage() {
 ========================= */
 function getRedirect(role) {
   const requested = new URLSearchParams(window.location.search).get("redirect");
+
+  if ((role === "customer" || role === "guest") && requested === "history.html") {
+    return "history.html";
+  }
+
   if (role === "vendor" && requested === "vendor_stores.html") {
     return "vendor_stores.html";
   }
@@ -263,7 +268,7 @@ async function handleLogin() {
 ========================= */
 function handleGuest() {
   continueAsGuest();
-  window.location.href = "home.html";
+  window.location.href = getRedirect("guest");
 }
 
 /* =========================
