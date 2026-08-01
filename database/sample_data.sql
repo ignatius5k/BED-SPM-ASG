@@ -58,6 +58,12 @@ INSERT INTO Users (id, username, email, password, role) VALUES
 ('INSP005', 'neaofficer05',  'neaofficer05@example.com',  '$2b$10$placeholderhash0000000000000000000000000000000048', 'inspector'),
 ('INSP006', 'neaofficer06',  'neaofficer06@example.com',  '$2b$10$placeholderhash0000000000000000000000000000000049', 'inspector'),
 ('INSP007', 'neaofficer07',  'neaofficer07@example.com',  '$2b$10$placeholderhash0000000000000000000000000000000050', 'inspector');
+
+-- Seeded demonstration accounts predate email verification and must remain
+-- immediately usable. Newly registered accounts keep the default value 0.
+UPDATE Users
+SET IsVerified = 1
+WHERE id LIKE 'CUST%' OR id LIKE 'VEND%' OR id LIKE 'INSP%';
  
 
 -- InspectorProfiles
@@ -99,7 +105,8 @@ VALUES
 ('N010', 'VEND004', 'ORD1008', '[NEW ORDER] OrderID: O1008', 'False', GETDATE());
 
 
--- Link the first SQL stall to its matching customer-side Firestore location.
+-- Keep Ben's legacy SQL location. The public catalogue mapping links STALL001
+-- to Maxwell 01-05 without rewriting this operational record.
 UPDATE Stalls
 SET HawkerCentreID = '069184', CustomerStallID = '01-01'
 WHERE StallID = 'STALL001';

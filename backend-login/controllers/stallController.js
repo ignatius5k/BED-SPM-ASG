@@ -12,6 +12,19 @@ async function getAllStalls(req, res) {
     }
 }
 
+async function getPublicStalls(req, res) {
+    try {
+        const stalls = await stallModel.getPublicStalls();
+        res.json(stalls);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            message: "Error retrieving the public stall catalogue"
+        });
+    }
+}
+
 module.exports = {
-    getAllStalls
+    getAllStalls,
+    getPublicStalls
 };

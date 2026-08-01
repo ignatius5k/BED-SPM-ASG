@@ -1,4 +1,5 @@
-const STALL_API = "http://localhost:3000/stalls";
+const PUBLIC_STALL_API = "http://localhost:3000/stalls/public";
+const LEGACY_STALL_API = "http://localhost:3000/stalls";
 const INSPECTOR_API = "http://localhost:3000/inspectors";
 const SCHEDULE_API = "http://localhost:3000/schedule";
 
@@ -24,7 +25,12 @@ async function loadStalls() {
 
     try {
 
-        const response = await fetch(STALL_API);
+        let response = await fetch(PUBLIC_STALL_API);
+
+        if (!response.ok) {
+            response = await fetch(LEGACY_STALL_API);
+        }
+
         const stalls = await response.json();
 
         const select = document.getElementById("stallSelect");

@@ -1,0 +1,59 @@
+{
+  "capturedAt": "2026-08-01",
+  "firebaseProject": "hawkers-native",
+  "collection": "hawker-centers/069184/food-stalls",
+  "documents": [
+    {
+      "name": "projects/hawkers-native/databases/(default)/documents/hawker-centers/069184/food-stalls/01-01",
+      "fields": {
+        "name": {
+          "stringValue": "Maxwell Hainanese Chicken Rice"
+        },
+        "imagePath": {
+          "stringValue": "assets/images/food_stall/maxwell _food_center/chicken rice stall.jpg"
+        }
+      },
+      "createTime": "2026-02-04T05:19:15.927109Z",
+      "updateTime": "2026-02-05T16:25:43.896115Z"
+    },
+    {
+      "name": "projects/hawkers-native/databases/(default)/documents/hawker-centers/069184/food-stalls/01-02",
+      "fields": {
+        "imagePath": {
+          "stringValue": "assets/images/food_stall/maxwell _food_center/taste_fusion_hiananese_chicken_chop.jpg"
+        },
+        "name": {
+          "stringValue": "Taste Fusion Hainanese Chicken Chop"
+        }
+      },
+      "createTime": "2026-02-04T10:22:44.822224Z",
+      "updateTime": "2026-02-05T10:57:57.346716Z"
+    },
+    {
+      "name": "projects/hawkers-native/databases/(default)/documents/hawker-centers/069184/food-stalls/01-03",
+      "fields": {
+        "imagePath": {
+          "stringValue": "assets/images/food_stall/maxwell _food_center/maxwell_fuzhou_oyster_cake.jpg"
+        },
+        "name": {
+          "stringValue": "Maxwell Fuzhou Oyster Cake"
+        }
+      },
+      "createTime": "2026-02-04T10:23:15.692959Z",
+      "updateTime": "2026-02-04T10:47:50.279009Z"
+    },
+    {
+      "name": "projects/hawkers-native/databases/(default)/documents/hawker-centers/069184/food-stalls/01-04",
+      "fields": {
+        "name": {
+          "stringValue": "Zhen Zhen Porridge"
+        },
+        "imagePath": {
+          "stringValue": "assets/images/food_stall/maxwell _food_center/zhen_zhen_porridge.jpg"
+        }
+      },
+      "createTime": "2026-02-04T10:23:34.147110Z",
+      "updateTime": "2026-02-04T10:34:46.519833Z"
+    }
+  ]
+}
