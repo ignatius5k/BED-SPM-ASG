@@ -29,21 +29,12 @@ function addPublicFilters(request, filters) {
   const conditions = [
     "mi.IsAvailable = 1",
     "mi.IsDeleted = 0",
-    `(
-      s.StallID LIKE 'FBS%'
-      OR NOT EXISTS (
-        SELECT 1
-        FROM Stalls firebaseMirrorStall
-        WHERE firebaseMirrorStall.StallID LIKE 'FBS%'
-          AND firebaseMirrorStall.HawkerCentreID = s.HawkerCentreID
-          AND firebaseMirrorStall.CustomerStallID = s.CustomerStallID
-      )
-    )`,
+    "publicStore.IsActive = 1",
   ];
 
   if (filters.centreId) {
     request.input("centreId", sql.VarChar(10), filters.centreId);
-    conditions.push("s.HawkerCentreID = @centreId");
+    conditions.push("publicStore.HawkerCentreID = @centreId");
   }
 
   if (filters.customerStallId) {
@@ -52,7 +43,7 @@ function addPublicFilters(request, filters) {
       sql.VarChar(20),
       filters.customerStallId
     );
-    conditions.push("s.CustomerStallID = @customerStallId");
+    conditions.push("publicStore.CustomerStallID = @customerStallId");
   }
 
   if (filters.cuisine) {
@@ -178,14 +169,20 @@ async function getPublicMenuItems(filters) {
         mi.MenuItemID AS menuItemId,
         mi.StallID AS stallId,
         s.StallName AS stallName,
-        s.HawkerCentreID AS centreId,
-        s.CustomerStallID AS customerStallId,
+        publicStore.HawkerCentreID AS centreId,
+        publicStore.CustomerStallID AS customerStallId,
         mi.ItemName AS itemName,
         mi.Description AS description,
         mi.Price AS price,
         mi.Category AS category
       FROM MenuItems mi
       INNER JOIN Stalls s ON mi.StallID = s.StallID
+      INNER JOIN PublicStoreLinks publicStore
+        ON publicStore.StallID = s.StallID
+      INNER JOIN PublicProductLinks publicProduct
+        ON publicProduct.HawkerCentreID = publicStore.HawkerCentreID
+        AND publicProduct.CustomerStallID = publicStore.CustomerStallID
+        AND publicProduct.MenuItemID = mi.MenuItemID
       WHERE ${itemConditions}
       ORDER BY s.StallName, mi.Category, mi.ItemName;
     `);
@@ -200,6 +197,12 @@ async function getPublicMenuItems(filters) {
       INNER JOIN Cuisines c ON mic.CuisineID = c.CuisineID
       INNER JOIN MenuItems mi ON mic.MenuItemID = mi.MenuItemID
       INNER JOIN Stalls s ON mi.StallID = s.StallID
+      INNER JOIN PublicStoreLinks publicStore
+        ON publicStore.StallID = s.StallID
+      INNER JOIN PublicProductLinks publicProduct
+        ON publicProduct.HawkerCentreID = publicStore.HawkerCentreID
+        AND publicProduct.CustomerStallID = publicStore.CustomerStallID
+        AND publicProduct.MenuItemID = mi.MenuItemID
       WHERE ${cuisineConditions}
       ORDER BY c.CuisineName;
     `);
@@ -240,25 +243,22 @@ async function getBestSellingMenuItems(filters) {
           ELSE 0
         END) AS quantitySold
       FROM Stalls s
+      INNER JOIN PublicStoreLinks publicStore
+        ON publicStore.StallID = s.StallID
       INNER JOIN MenuItems mi ON s.StallID = mi.StallID
+      INNER JOIN PublicProductLinks publicProduct
+        ON publicProduct.HawkerCentreID = publicStore.HawkerCentreID
+        AND publicProduct.CustomerStallID = publicStore.CustomerStallID
+        AND publicProduct.MenuItemID = mi.MenuItemID
       LEFT JOIN OrderItems oi ON mi.MenuItemID = oi.MenuItemID
       LEFT JOIN Orders o
         ON oi.OrderID = o.OrderID
         AND o.StallID = s.StallID
-      WHERE s.HawkerCentreID = @centreId
-        AND s.CustomerStallID = @customerStallId
+      WHERE publicStore.HawkerCentreID = @centreId
+        AND publicStore.CustomerStallID = @customerStallId
+        AND publicStore.IsActive = 1
         AND mi.IsAvailable = 1
         AND mi.IsDeleted = 0
-        AND (
-          s.StallID LIKE 'FBS%'
-          OR NOT EXISTS (
-            SELECT 1
-            FROM Stalls firebaseMirrorStall
-            WHERE firebaseMirrorStall.StallID LIKE 'FBS%'
-              AND firebaseMirrorStall.HawkerCentreID = s.HawkerCentreID
-              AND firebaseMirrorStall.CustomerStallID = s.CustomerStallID
-          )
-        )
       GROUP BY
         mi.MenuItemID,
         mi.ItemName,

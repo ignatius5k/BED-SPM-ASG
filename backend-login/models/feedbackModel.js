@@ -13,14 +13,14 @@ async function findPublicStall(connection, centreId, customerStallId) {
 
   const result = await request.query(`
     SELECT TOP (1)
-      StallID AS stallId,
-      StallName AS stallName
-    FROM Stalls
-    WHERE HawkerCentreID = @centreId
-      AND CustomerStallID = @customerStallId
-    ORDER BY
-      CASE WHEN StallID LIKE 'FBS%' THEN 0 ELSE 1 END,
-      StallID;
+      s.StallID AS stallId,
+      s.StallName AS stallName
+    FROM PublicStoreLinks publicStore
+    INNER JOIN Stalls s
+      ON publicStore.StallID = s.StallID
+    WHERE publicStore.HawkerCentreID = @centreId
+      AND publicStore.CustomerStallID = @customerStallId
+      AND publicStore.IsActive = 1;
   `);
 
   return result.recordset[0] || null;

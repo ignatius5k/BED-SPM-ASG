@@ -58,6 +58,12 @@ INSERT INTO Users (id, username, email, password, role) VALUES
 ('INSP005', 'neaofficer05',  'neaofficer05@example.com',  '$2b$10$placeholderhash0000000000000000000000000000000048', 'inspector'),
 ('INSP006', 'neaofficer06',  'neaofficer06@example.com',  '$2b$10$placeholderhash0000000000000000000000000000000049', 'inspector'),
 ('INSP007', 'neaofficer07',  'neaofficer07@example.com',  '$2b$10$placeholderhash0000000000000000000000000000000050', 'inspector');
+
+-- Seeded demonstration accounts predate email verification and must remain
+-- immediately usable. Newly registered accounts keep the default value 0.
+UPDATE Users
+SET IsVerified = 1
+WHERE id LIKE 'CUST%' OR id LIKE 'VEND%' OR id LIKE 'INSP%';
  
 
 -- InspectorProfiles
@@ -99,7 +105,8 @@ VALUES
 ('N010', 'VEND004', 'ORD1008', '[NEW ORDER] OrderID: O1008', 'False', GETDATE());
 
 
--- Link the first SQL stall to its matching customer-side Firestore location.
+-- Keep Ben's legacy SQL location. The public catalogue mapping links STALL001
+-- to Maxwell 01-05 without rewriting this operational record.
 UPDATE Stalls
 SET HawkerCentreID = '069184', CustomerStallID = '01-01'
 WHERE StallID = 'STALL001';
@@ -331,6 +338,14 @@ INSERT INTO Complaint (customer_id, stall_id, complaint_type, description) VALUE
 ('CUST031', 'STALL001', 'Hygiene', 'Table was not wiped down before I sat.'),
 ('CUST032', 'STALL002', 'Service', 'Waited over 20 minutes despite the stall not being busy.');
 
--- Sample data for the promotion feature.
-INSERT INTO Promotion (stall_id, title, description, discount)
-VALUES ('STALL001', 'Lunch Special', 'Get a free drink with any main dish', '10% off');
+-- Promotion records recovered from the verified feature demonstration.
+INSERT INTO Promotion (stall_id, title, description, discount) VALUES
+('STALL001', 'Lunch Special', 'Get a free drink with any main dish', '10% off'),
+('STALL001', 'Test Promo', 'Testing the email notification', '20% off'),
+('STALL001', 'Weekend Feast', 'Buy any two mains and get a free dessert', '1-for-1 dessert'),
+('STALL001', 'Weekend Special', 'Free drink with every main dish this weekend', '20% off'),
+('STALL001', 'Happy Hour Deal', 'All drinks half price from 3pm to 5pm daily', '50% off drinks'),
+('STALL001', 'Student Meal Deal', 'Show your student ID and get a free upsize on any meal', 'Free upsize'),
+('STALL001', 'Early Bird Breakfast', 'First 20 customers before 9am get a free kopi with any breakfast set', 'Free kopi'),
+('STALL001', 'Late Night Supper', 'Order after 9pm and get a free dessert with any main dish', 'Free dessert'),
+('STALL001', 'Lunch Combo Special', 'Any main dish with a drink and side for one low price, weekdays only', '$2 off combo');

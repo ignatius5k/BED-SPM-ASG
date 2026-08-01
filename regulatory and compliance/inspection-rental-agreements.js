@@ -171,7 +171,10 @@ function populateStallOptions() {
     const stall = rentalData.stalls[index];
     const option = document.createElement("option");
     option.value = stall.stallId;
-    option.textContent = `${stall.stallName} - ${stall.vendorName}`;
+    option.disabled = stall.agreementEligible === false;
+    option.textContent = option.disabled
+      ? `${stall.stallName} - no registered vendor`
+      : `${stall.stallName} - ${stall.vendorName}`;
     select.appendChild(option);
   }
 
@@ -495,6 +498,10 @@ async function loadRentalAgreements(preferredAgreementId, announceLoaded) {
 
   try {
     rentalData = await apiRequest(API_URL, { method: "GET" });
+
+    if (Array.isArray(rentalData.publicStalls)) {
+      rentalData.stalls = rentalData.publicStalls;
+    }
     populateStallOptions();
     displaySummary();
 

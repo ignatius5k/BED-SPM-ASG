@@ -70,6 +70,8 @@
     "side-channel-map": "^1.0.1",
     "side-channel-weakmap": "^1.0.2",
     "statuses": "^2.0.2",
+    "swagger-jsdoc": "^6.3.0",
+    "swagger-ui-express": "^5.0.1",
     "toidentifier": "^1.0.1",
     "type-is": "^2.1.0",
     "unpipe": "^1.0.0",
@@ -80,6 +82,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "sync:firebase-catalog": "node scripts/syncFirebaseCatalog.js",
     "cleanup:firebase-catalog": "node scripts/syncFirebaseCatalog.js --cleanup",
+    "firebase:ben-store": "node scripts/syncBensFirebaseStore.js",
+    "firebase:ben-store:apply": "node scripts/syncBensFirebaseStore.js --apply",
+    "firebase:ben-store:cleanup": "node scripts/syncBensFirebaseStore.js --cleanup",
     "seed:firebase-reviews": "node scripts/syncFirebaseReviews.js --apply",
     "cleanup:firebase-reviews": "node scripts/syncFirebaseReviews.js --cleanup"
   },

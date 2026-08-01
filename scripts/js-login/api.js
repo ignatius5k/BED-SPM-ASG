@@ -26,7 +26,12 @@ async function request(url, options = {}) {
     if (res.status >= 500) {
       throw new Error("Unable to connect. Please try again later.");
     }
-    throw new Error(data.error || "Request failed");
+    // Keep the full response body on the error, so callers can react to
+    // flags like needsVerification instead of parsing the message text.
+    const err = new Error(data.error || "Request failed");
+    err.data = data;
+    err.status = res.status;
+    throw err;
   }
 
   return data;
@@ -69,6 +74,19 @@ export async function loginUser(email, password) {
   localStorage.removeItem("guest"); // a real login cancels guest mode
 
   return data;
+}
+
+/* =========================
+   EMAIL VERIFICATION
+   Asks the server to email a fresh verification link. Used when the
+   first one expired or never arrived.
+========================= */
+export async function resendVerification(email) {
+  return await request(`${API_BASE}/users/resend-verification`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email })
+  });
 }
 
 /* =========================

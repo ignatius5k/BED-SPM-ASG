@@ -1,16 +1,23 @@
- 
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/userModel");
+const verificationModel = require("../models/emailVerificationModel");
+const { sendVerificationEmail } = require("../services/emailService");
 
 require("dotenv").config();
 const JWT_SECRET = process.env.JWT_SECRET;
 
-async function register(req, res) {
-    console.log("REGISTER BODY:", req.body);
+// Frontend root, used when redirecting the browser back after a click.
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://127.0.0.1:5500";
 
-    try {
-        const { username, email, password, role, badgeNumber, department } = req.body;
+// Set REQUIRE_EMAIL_VERIFICATION=false in .env to let unverified users log in.
+// Handy while other teammates are testing against the same database.
+const REQUIRE_VERIFICATION = process.env.REQUIRE_EMAIL_VERIFICATION !== "false";
+
+async function register(req, res) {
+  try {
+    const { username, email, password, role, badgeNumber, department } = req.body;
+
     const existing = await userModel.getUserByEmail(email);
     if (existing) {
       return res.status(400).json({ error: "Email already registered" });
@@ -22,7 +29,25 @@ async function register(req, res) {
       username, email, password: hashedPassword, role, badgeNumber, department
     });
 
-    res.status(201).json(newUser);
+    // Issue a one-time link and email it through the third-party provider.
+    // A failure here must not lose the account that was just created, so the
+    // user is told to request a new link instead of seeing a 500.
+    let emailSent = true;
+    try {
+      const rawToken = await verificationModel.createVerification(newUser.id);
+      await sendVerificationEmail(email, username, rawToken);
+    } catch (emailError) {
+      emailSent = false;
+      console.error("Verification email failed for", email, emailError);
+    }
+
+    res.status(201).json({
+      ...newUser,
+      emailSent,
+      message: emailSent
+        ? "Account created. Check your email for the verification link."
+        : "Account created, but the verification email could not be sent. Please request a new link."
+    });
   } catch (error) {
     console.error("Controller error in register:", error);
     res.status(500).json({ error: "Error registering user" });
@@ -44,6 +69,16 @@ async function login(req, res) {
       return res.status(400).json({ error: "Invalid email or password" });
     }
 
+    // Unverified accounts exist but cannot be used yet. The password is
+    // checked FIRST so this response cannot be used to discover which
+    // email addresses are registered.
+    if (REQUIRE_VERIFICATION && !user.IsVerified) {
+      return res.status(403).json({
+        error: "Please verify your email address before signing in.",
+        needsVerification: true
+      });
+    }
+
     // JWT STEP 1: "Stamp the ID card."
     // Payload = who this token represents (id, role, email).
     // JWT_SECRET = the stamp only this server knows - proves the card is genuine.
@@ -59,6 +94,59 @@ async function login(req, res) {
   } catch (error) {
     console.error("Controller error in login:", error);
     res.status(500).json({ error: "Error logging in" });
+  }
+}
+
+/**
+ * Landing point for the link inside the email.
+ * The browser opens this directly, so it redirects back to the login page
+ * with a status flag rather than returning JSON.
+ */
+async function verifyEmail(req, res) {
+  try {
+    const token = req.query.token;
+
+    if (!token || typeof token !== "string") {
+      return res.redirect(`${FRONTEND_URL}/login.html?verified=invalid`);
+    }
+
+    const result = await verificationModel.consumeVerification(token);
+    return res.redirect(`${FRONTEND_URL}/login.html?verified=${result.status}`);
+  } catch (error) {
+    console.error("Controller error in verifyEmail:", error);
+    return res.redirect(`${FRONTEND_URL}/login.html?verified=error`);
+  }
+}
+
+/**
+ * Sends a fresh link if the first one expired or never arrived.
+ * The response is deliberately the same whether or not the email exists,
+ * so this endpoint cannot be used to check who has an account.
+ */
+async function resendVerification(req, res) {
+  const genericResponse = {
+    message: "If that email needs verification, a new link has been sent."
+  };
+
+  try {
+    const { email } = req.body;
+
+    if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+      return res.status(400).json({ error: "A valid email address is required" });
+    }
+
+    const user = await userModel.getUserByEmail(email);
+    if (!user || user.IsVerified) {
+      return res.json(genericResponse);
+    }
+
+    const rawToken = await verificationModel.createVerification(user.id);
+    await sendVerificationEmail(user.email, user.username, rawToken);
+
+    res.json(genericResponse);
+  } catch (error) {
+    console.error("Controller error in resendVerification:", error);
+    res.status(500).json({ error: "Error sending verification email" });
   }
 }
 
@@ -171,6 +259,8 @@ async function deleteUser(req, res) {
 module.exports = {
   register,
   login,
+  verifyEmail,
+  resendVerification,
   changePassword,
   getAllUsers,
   getCurrentUser,

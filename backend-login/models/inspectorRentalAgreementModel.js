@@ -20,6 +20,27 @@ async function getInspectorRentalAgreements() {
       ORDER BY s.StallName, u.username;
     `);
 
+    const publicStallResult = await connection.request().query(`
+      SELECT
+        s.StallID AS stallId,
+        s.StallName AS stallName,
+        s.OwnerID AS vendorId,
+        u.username AS vendorName,
+        publicStore.HawkerCentreID AS centreId,
+        publicStore.CustomerStallID AS customerStallId,
+        CAST(
+          CASE WHEN s.OwnerID LIKE 'FBV%' THEN 0 ELSE 1 END
+          AS BIT
+        ) AS agreementEligible
+      FROM PublicStoreLinks publicStore
+      INNER JOIN Stalls s ON publicStore.StallID = s.StallID
+      INNER JOIN Users u ON s.OwnerID = u.id
+      WHERE publicStore.IsActive = 1
+      ORDER BY
+        publicStore.HawkerCentreID,
+        publicStore.CustomerStallID;
+    `);
+
     const agreementResult = await connection.request().query(`
       SELECT
         ra.AgreementID AS agreementId,
@@ -72,6 +93,7 @@ async function getInspectorRentalAgreements() {
 
     return {
       stalls: stallResult.recordset,
+      publicStalls: publicStallResult.recordset,
       agreements: agreementResult.recordset,
       changes: changeResult.recordset,
     };

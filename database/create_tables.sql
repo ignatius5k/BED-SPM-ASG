@@ -4,7 +4,8 @@ CREATE TABLE Users (
   email VARCHAR(100) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
   role VARCHAR(20) NOT NULL DEFAULT 'customer'
-    CHECK (role IN ('customer', 'vendor', 'inspector'))
+    CHECK (role IN ('customer', 'vendor', 'inspector')),
+  IsVerified BIT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE Stalls (
@@ -15,6 +16,22 @@ CREATE TABLE Stalls (
   Description VARCHAR(500),
   HawkerCentreID VARCHAR(10),
   CustomerStallID VARCHAR(20)
+);
+
+-- Stable link between a customer-facing Firebase stall and its SQL stall.
+-- This keeps public document IDs separate from the operational StallID used
+-- by agreements, inspections, promotions, reviews, and vendor ownership.
+CREATE TABLE PublicStoreLinks (
+  HawkerCentreID VARCHAR(10) NOT NULL,
+  CustomerStallID VARCHAR(20) NOT NULL,
+  StallID VARCHAR(10) NOT NULL,
+  IsActive BIT NOT NULL DEFAULT 1,
+  LastSyncedAt DATETIME2,
+  CONSTRAINT PK_PublicStoreLinks
+    PRIMARY KEY (HawkerCentreID, CustomerStallID),
+  CONSTRAINT UQ_PublicStoreLinks_StallID UNIQUE (StallID),
+  CONSTRAINT FK_PublicStoreLinks_Stalls
+    FOREIGN KEY (StallID) REFERENCES Stalls(StallID)
 );
 
 CREATE TABLE InspectorProfiles (
@@ -32,6 +49,24 @@ CREATE TABLE MenuItems (
   Category VARCHAR(50),
   IsAvailable BIT NOT NULL DEFAULT 1,
   IsDeleted BIT NOT NULL DEFAULT 0
+);
+
+-- Stable product mapping prevents Firebase catalogue additions from changing
+-- existing MENU/FBM identifiers and invalidating order history.
+CREATE TABLE PublicProductLinks (
+  HawkerCentreID VARCHAR(10) NOT NULL,
+  CustomerStallID VARCHAR(20) NOT NULL,
+  FirebaseProductID VARCHAR(100) NOT NULL,
+  MenuItemID VARCHAR(10) NOT NULL,
+  LastSyncedAt DATETIME2,
+  CONSTRAINT PK_PublicProductLinks
+    PRIMARY KEY (HawkerCentreID, CustomerStallID, FirebaseProductID),
+  CONSTRAINT UQ_PublicProductLinks_MenuItemID UNIQUE (MenuItemID),
+  CONSTRAINT FK_PublicProductLinks_Store
+    FOREIGN KEY (HawkerCentreID, CustomerStallID)
+    REFERENCES PublicStoreLinks(HawkerCentreID, CustomerStallID),
+  CONSTRAINT FK_PublicProductLinks_MenuItems
+    FOREIGN KEY (MenuItemID) REFERENCES MenuItems(MenuItemID)
 );
 
 CREATE TABLE Notifications (
@@ -178,3 +213,15 @@ CREATE TABLE Promotion (
     FOREIGN KEY (stall_id) REFERENCES Stalls(StallID)
 );
 
+
+CREATE TABLE EmailVerifications (
+  VerificationID INT IDENTITY(1,1) PRIMARY KEY,
+  UserID VARCHAR(10) NOT NULL FOREIGN KEY REFERENCES Users(id),
+  TokenHash CHAR(64) NOT NULL,
+  ExpiresAt DATETIME2 NOT NULL,
+  UsedAt DATETIME2 NULL,
+  CreatedAt DATETIME2 NOT NULL DEFAULT GETDATE()
+);
+
+CREATE INDEX IX_EmailVerifications_TokenHash
+  ON EmailVerifications (TokenHash);

@@ -81,6 +81,17 @@ if (!guest) {
 
         const item = docSnap.data();
 
+        const addonHTML =
+    item.addons && item.addons.length > 0
+        ? `
+            <div class="cart-addons">
+                ${item.addons.map(addon => `
+                    <div>+ ${addon.name} ($${Number(addon.price).toFixed(2)})</div>
+                `).join("")}
+            </div>
+        `
+        : "";
+console.log(item);
         subtotal += (item.unitPrice ?? item.price ?? 0) * item.quantity;
 
         const div = document.createElement("div");
@@ -94,9 +105,12 @@ if (!guest) {
         div.innerHTML = `
             <img class="cart-item-image" src="${itemImagePath}">
             <div class="cart-info">
-                <h4>${item.quantity}x ${item.name}</h4>
-                <p>${item.description ?? ""}</p>
-                <span class="cart-price">
+    <h4>${item.quantity}x ${item.name}</h4>
+    <p>${item.description ?? ""}</p>
+
+    ${addonHTML}
+
+    <span class="cart-price">
                     $${Number(item.unitPrice ?? item.price ?? 0).toFixed(2)}
                 </span>
                 <div class="remove">Remove</div>
@@ -126,10 +140,24 @@ console.log("User:", userId);
         JSON.parse(localStorage.getItem("guestCart")) || [];
 
     guestCart.forEach((item, index) => {
+    console.log(JSON.stringify(item.addons, null, 2));
 
         hasItems = true;
 
         subtotal += item.unitPrice * item.quantity;
+
+        const addonHTML =
+    item.addons && item.addons.length > 0
+        ? `
+            <div class="cart-addons">
+                ${item.addons?.map(addon => `
+    <div class="addon">
+        + ${addon.label} ($${Number(addon.price).toFixed(2)})
+    </div>
+`).join("") ?? ""}
+            </div>
+        `
+        : "";
 
         const div = document.createElement("div");
 
@@ -143,8 +171,11 @@ console.log("User:", userId);
         div.innerHTML = `
             <img class="cart-item-image" src="${itemImagePath}">
             <div class="cart-info">
-                <h4>${item.quantity}x ${item.name}</h4>
-                <span class="cart-price">
+    <h4>${item.quantity}x ${item.name}</h4>
+
+    ${addonHTML}
+
+    <span class="cart-price">
                     $${item.unitPrice.toFixed(2)}
                 </span>
                 <div class="remove">Remove</div>
@@ -261,62 +292,75 @@ updateTotal(subtotal);
 if (!guest) {
   loadAppliedCodes(userId, subtotal);
 }
+const promoCode = document.getElementById("promo-code");
+
 if (guest) {
-    document.getElementById("promo-code").style.display = "none";
-}  promoCode.addEventListener("submit", async (e) => {
-    e.preventDefault();
 
-    const inputCode = document.getElementById("input-code");
-    const now = Timestamp.fromDate(new Date());
-    const promoQuery = query(
-      collection(db, "promotions"),
-      where("code", "==", inputCode.value),
-      where("start", "<=", now),
-      where("end", ">=", now)
-    );
+    promoCode.style.display = "none";
 
-    const promoSnapshot = await getDocs(promoQuery);
+}
+else {
 
-    if (promoSnapshot.empty) {
-      return alert("ℹ️ No promo codes found.");
-    }
+    promoCode.addEventListener("submit", async (e) => {
 
-    const redemptionQuery = query(
-      collection(db, "redemptions"),
-      where("userId", "==", userId),
-      where("code", "==", inputCode.value)
-    );
-    const redemptionSnapshot = await getDocs(redemptionQuery);
+        e.preventDefault();
 
-    if (!redemptionSnapshot.empty) {
-      return alert("⚠️ You have already redeemed this promo code.");
-    }
+        const inputCode = document.getElementById("input-code");
+        const now = Timestamp.fromDate(new Date());
 
-    const promoDoc = promoSnapshot.docs[0];
-    const data = promoDoc.data();
+        const promoQuery = query(
+            collection(db, "promotions"),
+            where("code", "==", inputCode.value),
+            where("start", "<=", now),
+            where("end", ">=", now)
+        );
 
-    await addDoc(collection(db, "carts", userId, "appliedCodes"), {
-      code: inputCode.value,
-      discount: data.discount,
-      type: data.type,
-      description: data.description,
-      redeemedAt: new Date().toLocaleDateString()
+        const promoSnapshot = await getDocs(promoQuery);
+
+        if (promoSnapshot.empty) {
+            return alert("ℹ️ No promo codes found.");
+        }
+
+        const redemptionQuery = query(
+            collection(db, "redemptions"),
+            where("userId", "==", userId),
+            where("code", "==", inputCode.value)
+        );
+
+        const redemptionSnapshot = await getDocs(redemptionQuery);
+
+        if (!redemptionSnapshot.empty) {
+            return alert("⚠️ You have already redeemed this promo code.");
+        }
+
+        const promoDoc = promoSnapshot.docs[0];
+        const data = promoDoc.data();
+
+        await addDoc(collection(db, "carts", userId, "appliedCodes"), {
+            code: inputCode.value,
+            discount: data.discount,
+            type: data.type,
+            description: data.description,
+            redeemedAt: new Date().toLocaleDateString()
+        });
+
+        await addDoc(collection(db, "redemptions"), {
+            userId,
+            code: inputCode.value,
+            type: data.type,
+            description: data.description,
+            redeemedAt: new Date()
+        });
+
+        await loadAppliedCodes(userId, subtotal);
+
+        alert("✅ Promo code redeemed successfully!");
+        promoCode.reset();
+
     });
 
-    await addDoc(collection(db, "redemptions"), {
-      userId,
-      code: inputCode.value,
-      type: data.type,
-      description: data.description,
-      redeemedAt: new Date()
-    });
+}
 
-    await loadAppliedCodes(userId, subtotal);
-
-
-    alert("✅ Promo code redeemed successfully!");
-    promoCode.reset();
-  });
 /* =========================
    PAYMENT METHOD UI
 ========================= */
@@ -374,6 +418,10 @@ async function createVendorNotification() {
 
 
 payNowBtn.addEventListener("click", async () => {
+  if (!selectedPaymentMethod) {
+    alert("Please select a payment method.");
+    return;
+}
   if (isGuest()) {
     await saveGuestOrder();
 } else {

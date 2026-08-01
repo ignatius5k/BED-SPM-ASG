@@ -94,7 +94,11 @@ async function loadStalls() {
 
     try {
 
-        const response = await fetch("http://localhost:3000/stalls");
+        let response = await fetch("http://localhost:3000/stalls/public");
+
+        if (!response.ok) {
+            response = await fetch("http://localhost:3000/stalls");
+        }
 
         const stalls = await response.json();
 
