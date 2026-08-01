@@ -1,4 +1,9 @@
-import { registerUser, loginUser, continueAsGuest } from "./api.js";
+import {
+  registerUser,
+  loginUser,
+  continueAsGuest,
+  resendVerification
+} from "./api.js";
 
 /* =========================
    MESSAGE DISPLAY
@@ -6,13 +11,16 @@ import { registerUser, loginUser, continueAsGuest } from "./api.js";
 function showMessage(text, type = "error") {
   const el = document.getElementById("formMessage");
   if (!el) { alert(text); return; }
-  el.textContent = text;
+  el.textContent = text;   // also clears any resend button from a previous attempt
   el.className = `form-message ${type}`;
 }
 
 function clearMessage() {
   const el = document.getElementById("formMessage");
-  if (el) el.className = "form-message";
+  if (el) {
+    el.textContent = "";
+    el.className = "form-message";
+  }
 }
 
 /* =========================
@@ -173,6 +181,65 @@ function setButtonLoading(isLoading, label) {
 }
 
 /* =========================
+   EMAIL VERIFICATION UI
+========================= */
+
+/** Asks the server for a fresh verification link. */
+async function handleResendVerification(email) {
+  try {
+    const result = await resendVerification(email);
+    showMessage(result.message, "success");
+  } catch (err) {
+    showMessage(err.message);
+  }
+}
+
+/**
+ * Adds a "resend link" button under the error message.
+ * Only shown when the server reports the account is unverified.
+ */
+function offerResend(email) {
+  const el = document.getElementById("formMessage");
+  if (!el) return;
+
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "btn btn-outline";
+  btn.style.marginTop = "8px";
+  btn.textContent = "Resend verification link";
+  btn.addEventListener("click", () => handleResendVerification(email));
+
+  el.appendChild(document.createElement("br"));
+  el.appendChild(btn);
+}
+
+/**
+ * The backend redirects the browser here after the emailed link is clicked,
+ * adding ?verified=<status>. Signup also passes ?email= so the field is prefilled.
+ */
+function showVerificationResult() {
+  const params = new URLSearchParams(window.location.search);
+
+  // Prefill the email box after a signup or a verification click
+  const email = params.get("email");
+  const emailInput = document.getElementById("email");
+  if (email && emailInput) emailInput.value = email;
+
+  const status = params.get("verified");
+  if (!status) return;
+
+  const messages = {
+    verified: ["Email verified. You can sign in now.", "success"],
+    already:  ["This email was already verified. Please sign in.", "success"],
+    invalid:  ["That verification link is invalid or has expired. Sign in to request a new one.", "error"],
+    error:    ["Something went wrong verifying your email. Please try again.", "error"]
+  };
+
+  const [text, type] = messages[status] || messages.error;
+  showMessage(text, type);
+}
+
+/* =========================
    SIGNUP
 ========================= */
 async function handleSignup() {
@@ -212,21 +279,21 @@ async function handleSignup() {
   try {
     setButtonLoading(true, "Sign Up");
 
-    // Create the account
-    await registerUser(name, email, password, role, badgeNumber);
-
-    // Log in straight away, which reads the stored account back
-    // from the database and confirms it was created properly
-    const loginData = await loginUser(email, password);
+    // Create the account. The server emails a verification link, so the
+    // user is NOT logged in automatically - the account is inactive until
+    // that link is clicked.
+    const result = await registerUser(name, email, password, role, badgeNumber);
 
     showMessage(
-      `Account created. Welcome, ${loginData.username} (${loginData.role}). Redirecting...`,
+      result.emailSent
+        ? `Account created. We sent a verification link to ${email}. Click it, then sign in.`
+        : "Account created, but the verification email failed to send. Sign in and use 'Resend verification link'.",
       "success"
     );
 
     setTimeout(() => {
-      window.location.href = getRedirect(loginData.role);
-    }, 1200);
+      window.location.href = `login.html?email=${encodeURIComponent(email)}`;
+    }, 2500);
   } catch (err) {
     showMessage(err.message);
   } finally {
@@ -266,6 +333,10 @@ async function handleLogin() {
     }, 800);
   } catch (err) {
     showMessage(err.message);
+
+    // 403 with this flag means the password was right but the email
+    // has not been confirmed yet, so offer to send a new link.
+    if (err.data?.needsVerification) offerResend(email);
   } finally {
     setButtonLoading(false, "Sign In");
   }
@@ -292,6 +363,7 @@ if (isSignupPage()) {
   setupRoleToggle();
   document.getElementById("btnPrimary")?.addEventListener("click", handleSignup);
 } else {
+  showVerificationResult();  // handles ?verified= and ?email= on the login page
   document.getElementById("btnPrimary")?.addEventListener("click", handleLogin);
 }
 
