@@ -261,62 +261,75 @@ updateTotal(subtotal);
 if (!guest) {
   loadAppliedCodes(userId, subtotal);
 }
+const promoCode = document.getElementById("promo-code");
+
 if (guest) {
-    document.getElementById("promo-code").style.display = "none";
-}  promoCode.addEventListener("submit", async (e) => {
-    e.preventDefault();
 
-    const inputCode = document.getElementById("input-code");
-    const now = Timestamp.fromDate(new Date());
-    const promoQuery = query(
-      collection(db, "promotions"),
-      where("code", "==", inputCode.value),
-      where("start", "<=", now),
-      where("end", ">=", now)
-    );
+    promoCode.style.display = "none";
 
-    const promoSnapshot = await getDocs(promoQuery);
+}
+else {
 
-    if (promoSnapshot.empty) {
-      return alert("ℹ️ No promo codes found.");
-    }
+    promoCode.addEventListener("submit", async (e) => {
 
-    const redemptionQuery = query(
-      collection(db, "redemptions"),
-      where("userId", "==", userId),
-      where("code", "==", inputCode.value)
-    );
-    const redemptionSnapshot = await getDocs(redemptionQuery);
+        e.preventDefault();
 
-    if (!redemptionSnapshot.empty) {
-      return alert("⚠️ You have already redeemed this promo code.");
-    }
+        const inputCode = document.getElementById("input-code");
+        const now = Timestamp.fromDate(new Date());
 
-    const promoDoc = promoSnapshot.docs[0];
-    const data = promoDoc.data();
+        const promoQuery = query(
+            collection(db, "promotions"),
+            where("code", "==", inputCode.value),
+            where("start", "<=", now),
+            where("end", ">=", now)
+        );
 
-    await addDoc(collection(db, "carts", userId, "appliedCodes"), {
-      code: inputCode.value,
-      discount: data.discount,
-      type: data.type,
-      description: data.description,
-      redeemedAt: new Date().toLocaleDateString()
+        const promoSnapshot = await getDocs(promoQuery);
+
+        if (promoSnapshot.empty) {
+            return alert("ℹ️ No promo codes found.");
+        }
+
+        const redemptionQuery = query(
+            collection(db, "redemptions"),
+            where("userId", "==", userId),
+            where("code", "==", inputCode.value)
+        );
+
+        const redemptionSnapshot = await getDocs(redemptionQuery);
+
+        if (!redemptionSnapshot.empty) {
+            return alert("⚠️ You have already redeemed this promo code.");
+        }
+
+        const promoDoc = promoSnapshot.docs[0];
+        const data = promoDoc.data();
+
+        await addDoc(collection(db, "carts", userId, "appliedCodes"), {
+            code: inputCode.value,
+            discount: data.discount,
+            type: data.type,
+            description: data.description,
+            redeemedAt: new Date().toLocaleDateString()
+        });
+
+        await addDoc(collection(db, "redemptions"), {
+            userId,
+            code: inputCode.value,
+            type: data.type,
+            description: data.description,
+            redeemedAt: new Date()
+        });
+
+        await loadAppliedCodes(userId, subtotal);
+
+        alert("✅ Promo code redeemed successfully!");
+        promoCode.reset();
+
     });
 
-    await addDoc(collection(db, "redemptions"), {
-      userId,
-      code: inputCode.value,
-      type: data.type,
-      description: data.description,
-      redeemedAt: new Date()
-    });
+}
 
-    await loadAppliedCodes(userId, subtotal);
-
-
-    alert("✅ Promo code redeemed successfully!");
-    promoCode.reset();
-  });
 /* =========================
    PAYMENT METHOD UI
 ========================= */
@@ -374,6 +387,10 @@ async function createVendorNotification() {
 
 
 payNowBtn.addEventListener("click", async () => {
+  if (!selectedPaymentMethod) {
+    alert("Please select a payment method.");
+    return;
+}
   if (isGuest()) {
     await saveGuestOrder();
 } else {
