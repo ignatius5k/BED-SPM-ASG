@@ -1,36 +1,42 @@
-/**
- * sends email when register for an account
- */
 require("dotenv").config();
 
-const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const EMAIL_FROM = process.env.EMAIL_FROM || "Hawkers <onboarding@resend.dev>";
+const BREVO_API_KEY = process.env.BREVO_API_KEY;
+const FROM_NAME = process.env.EMAIL_FROM_NAME || "Hawkers";
+const FROM_ADDRESS = process.env.EMAIL_FROM_ADDRESS;
 const API_URL = process.env.API_URL || "http://localhost:3000";
 
 /**
- * Low-level send. Returns the provider's response.
- * If no API key is configured, the email is printed to the terminal instead
- * of crashing the signup flow - useful for local testing and demos.
+ * Low-level send.
+ * If no API key is configured the email is printed to the terminal instead
+ * of failing, so the flow can still be demonstrated without credentials.
  */
-async function sendEmail({ to, subject, html }) {
-  if (!RESEND_API_KEY) {
-    console.warn("[emailService] RESEND_API_KEY not set - printing email instead of sending.");
-    console.warn(`[emailService] To: ${to}\nSubject: ${subject}\n${html}`);
+async function sendEmail({ to, toName, subject, html, text }) {
+  if (!BREVO_API_KEY) {
+    console.warn("\n[emailService] BREVO_API_KEY not set - printing email instead of sending.");
+    console.warn(`[emailService] To: ${to}`);
+    console.warn(`[emailService] Subject: ${subject}`);
+    console.warn(`[emailService] ${text || html}\n`);
     return { skipped: true };
   }
 
   let response;
   try {
-    response = await fetch("https://api.resend.com/emails", {
+    response = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${RESEND_API_KEY}`,
-        "Content-Type": "application/json"
+        "api-key": BREVO_API_KEY,
+        "Content-Type": "application/json",
+        Accept: "application/json"
       },
-      body: JSON.stringify({ from: EMAIL_FROM, to: [to], subject, html })
+      body: JSON.stringify({
+        sender: { name: FROM_NAME, email: FROM_ADDRESS },
+        to: [{ email: to, name: toName || to }],
+        subject,
+        htmlContent: html
+      })
     });
   } catch (error) {
-    // Network failure reaching the provider
+    // Could not reach the provider at all (no internet, DNS failure)
     console.error("[emailService] Could not reach the email provider:", error);
     throw new Error("Email service unavailable");
   }
@@ -68,7 +74,13 @@ async function sendVerificationEmail(to, username, rawToken) {
     </div>
   `;
 
-  return sendEmail({ to, subject: "Verify your Hawkers account", html });
+  return sendEmail({
+    to,
+    toName: username,
+    subject: "Verify your Hawkers account",
+    html,
+    text: `Verify your Hawkers account: ${link}`
+  });
 }
 
 module.exports = { sendEmail, sendVerificationEmail };
