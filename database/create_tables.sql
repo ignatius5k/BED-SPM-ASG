@@ -178,3 +178,20 @@ CREATE TABLE Promotion (
     FOREIGN KEY (stall_id) REFERENCES Stalls(StallID)
 );
 
+
+ALTER TABLE Users
+ADD IsVerified BIT NOT NULL DEFAULT 0;
+
+UPDATE Users SET IsVerified = 1;
+
+CREATE TABLE EmailVerifications (
+  VerificationID INT IDENTITY(1,1) PRIMARY KEY,
+  UserID VARCHAR(10) NOT NULL FOREIGN KEY REFERENCES Users(id),
+  TokenHash CHAR(64) NOT NULL,
+  ExpiresAt DATETIME2 NOT NULL,
+  UsedAt DATETIME2 NULL,
+  CreatedAt DATETIME2 NOT NULL DEFAULT GETDATE()
+);
+
+CREATE INDEX IX_EmailVerifications_TokenHash
+  ON EmailVerifications (TokenHash);

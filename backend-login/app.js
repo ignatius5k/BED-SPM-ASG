@@ -44,6 +44,8 @@ app.post("/users/login", validateLogin, userController.login);
 app.put("/users/change-password", requireAuth, validateChangePassword, userController.changePassword);
 app.get("/users/me", requireAuth, userController.getCurrentUser);
 app.get("/users", userController.getAllUsers);
+app.get("/users/verify-email", userController.verifyEmail);
+app.post("/users/resend-verification", userController.resendVerification);
 app.get("/users/:id", requireAuth, userController.getUserById);
 app.put("/users/:id", requireAuth, userController.updateUser);
 app.delete("/users/:id", requireAuth, userController.deleteUser);
