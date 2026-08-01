@@ -1,37 +1,94 @@
-// Loads promotions from the backend and shows them on the promotions page.
-
 const API_BASE = "http://localhost:3000";
 
+function createPromotionGroup() {
+  const list = document.getElementById("promotions-list");
+  const group = document.createElement("section");
+  const heading = document.createElement("h3");
+
+  group.className = "group";
+  heading.textContent = "Promotions";
+  group.appendChild(heading);
+  list.replaceChildren(group);
+
+  return group;
+}
+
+function showPromotionStatus(group, message, isError) {
+  const status = document.createElement("p");
+  status.className = isError
+    ? "promotion-status promotion-error"
+    : "promotion-status";
+  status.textContent = message;
+  group.appendChild(status);
+}
+
+function createPromotionCard(promotion) {
+  const card = document.createElement("article");
+  const discount = document.createElement("div");
+  const title = document.createElement("h4");
+  const description = document.createElement("p");
+  const stall = document.createElement("p");
+
+  card.className = "promo-card";
+  discount.className = "promo-discount-tag";
+  title.className = "promo-title";
+  description.className = "promo-desc";
+  stall.className = "promo-stall";
+
+  discount.textContent = promotion.discount;
+  title.textContent = promotion.title;
+  description.textContent = promotion.description;
+  stall.textContent = promotion.stallName;
+
+  card.appendChild(discount);
+  card.appendChild(title);
+  card.appendChild(description);
+  card.appendChild(stall);
+
+  return card;
+}
+
 async function loadPromotions() {
+  const group = createPromotionGroup();
+  showPromotionStatus(group, "Loading promotions from the database...", false);
+
   try {
-    const res = await fetch(API_BASE + "/promotion");
-    const promotions = await res.json();
+    const response = await fetch(API_BASE + "/promotion");
+    const data = await response.json();
 
-    const list = document.getElementById("promotions-list");
-    list.innerHTML = '<section class="group"><h3>Promotions</h3></section>';
+    if (!response.ok) {
+      throw new Error(data.error || "Unable to retrieve promotions");
+    }
 
-    const group = list.querySelector(".group");
+    if (!Array.isArray(data)) {
+      throw new Error("The promotions response is invalid");
+    }
 
-    if (promotions.length === 0) {
-      const none = document.createElement("p");
-      none.textContent = "No promotions currently";
-      group.appendChild(none);
+    const status = group.querySelector(".promotion-status");
+    if (status) {
+      status.remove();
+    }
+
+    if (data.length === 0) {
+      showPromotionStatus(group, "No promotions currently", false);
       return;
     }
 
-    for (let i = 0; i < promotions.length; i++) {
-      const p = promotions[i];
-      const card = document.createElement("div");
-      card.className = "promo-card";
-      card.innerHTML =
-        '<div class="promo-discount-tag">' + p.discount + '</div>' +
-        '<h4 class="promo-title">' + p.title + '</h4>' +
-        '<p class="promo-desc">' + p.description + '</p>';
-      group.appendChild(card);
+    for (let i = 0; i < data.length; i += 1) {
+      group.appendChild(createPromotionCard(data[i]));
     }
-  } catch (err) {
-    console.error("Could not load promotions:", err);
+  } catch (error) {
+    console.error("Could not load SQL promotions:", error);
+    const status = group.querySelector(".promotion-status");
+    if (status) {
+      status.remove();
+    }
+    showPromotionStatus(
+      group,
+      "Unable to load promotions from the database. Please try again later.",
+      true
+    );
   }
 }
 
-loadPromotions();
+document.addEventListener("DOMContentLoaded", loadPromotions);

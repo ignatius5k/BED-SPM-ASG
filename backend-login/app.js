@@ -21,6 +21,7 @@ const vendorRentalAgreementRoutes = require("./vendorRentalAgreementRoutes");
 const inspectorRentalAgreementRoutes = require("./inspectorRentalAgreementRoutes");
 const vendorInspectionHistoryRoutes = require("./vendorInspectionHistoryRoutes");
 const feedbackRoutes = require("./feedbackRoutes");
+const promotionRoutes = require("./promotionRoutes");
 
 // --- Notifications ---
 const notificationRoutes = require("../backend-declan/routes/notificationRoutes");
@@ -60,6 +61,7 @@ app.use("/vendor-rental-agreements", vendorRentalAgreementRoutes);
 app.use("/inspection-rental-agreements", inspectorRentalAgreementRoutes);
 app.use("/vendor-inspection-history", vendorInspectionHistoryRoutes);
 app.use("/feedback", feedbackRoutes);
+app.use("/promotion", promotionRoutes);
 
 // --- Order History routes ---
 app.post("/orders", requireAuth, requireRole("customer"), validateCreateOrder, orderController.createOrder);
