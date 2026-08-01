@@ -137,7 +137,7 @@ h3, h4, p {
     flex: 0 0 336px; 
     display: grid;
     grid-template-columns: 48px 1fr 1fr;
-    grid-template-rows: 20px 20px auto;
+    grid-template-rows: 20px 20px minmax(0, 1fr) auto;
     gap: 0.5rem;
     scroll-snap-align: center;
 
@@ -190,6 +190,20 @@ h3, h4, p {
 
     color: #2A363D;
     word-wrap: break-word;
+    overflow-y: auto;
+}
+
+.review-actions {
+    grid-row: 4;
+    grid-column: 1 / span 3;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.review-empty {
+    margin: auto;
+    color: #757280;
 }
 
 
@@ -439,4 +453,11 @@ h3, h4, p {
     .review {
         flex: 0 0 100%;
     }
+}
+
+#write-review:disabled,
+#post-review:disabled,
+.review-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }

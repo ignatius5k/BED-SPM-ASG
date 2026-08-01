@@ -19,6 +19,7 @@ const menuItemRoutes = require("./menuItemRoutes");
 const vendorSatisfactionRoutes = require("./vendorSatisfactionRoutes");
 const vendorRentalAgreementRoutes = require("./vendorRentalAgreementRoutes");
 const vendorInspectionHistoryRoutes = require("./vendorInspectionHistoryRoutes");
+const feedbackRoutes = require("./feedbackRoutes");
 
 // --- Notifications ---
 const notificationRoutes = require("../backend-declan/routes/notificationRoutes");
@@ -28,7 +29,7 @@ const vendorComplaintRoutes = require("../backend-declan/routes/vendorComplaintR
 const vendorBadgeRoutes = require("../backend-declan/routes/vendorBadgeRoutes");
 
 const app = express();
-const port = 3000;
+const port = Number(process.env.PORT) || 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -56,6 +57,7 @@ app.use("/menu-items", menuItemRoutes);
 app.use("/vendor-satisfaction", vendorSatisfactionRoutes);
 app.use("/vendor-rental-agreements", vendorRentalAgreementRoutes);
 app.use("/vendor-inspection-history", vendorInspectionHistoryRoutes);
+app.use("/feedback", feedbackRoutes);
 
 // --- Order History routes ---
 app.post("/orders", requireAuth, requireRole("customer"), validateCreateOrder, orderController.createOrder);
