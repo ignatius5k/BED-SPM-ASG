@@ -37,7 +37,7 @@ INSERT INTO Users (id, username, email, password, role) VALUES
 -- VENDORS
 
 INSERT INTO Users (id, username, email, password, role) VALUES
-('VEND001', 'bensvendor',         'bensvendor@example.com',         '$2b$10$JjUS/F23qMKB9ZkWKnj/y.n.Hhl/xCiK6AIuLVAR1mOd/H.EuPdEq', 'vendor'),
+('VEND001', 'bensvendor',         'bensvendor@example.com',         '$2b$10$QYtjIw.VqDpFW.NJSR.Z.OBG36oKE2laeAtgmEOLNEgfbqm.K211K', 'vendor'),
 ('VEND002', 'limahchengstall',    'limahchengstall@example.com',    '$2b$10$ICBgUr11P1o59hTGUDSIhOB7dqgGgvfsKDljUxqE1u7S.GmrZrguC', 'vendor'),
 ('VEND003', 'teohbrothersnoodle', 'teohbrothers@example.com',       '$2b$10$placeholderhash0000000000000000000000000000000036', 'vendor'),
 ('VEND004', 'nasilemakcorner',    'nasilemakcorner@example.com',    '$2b$10$placeholderhash0000000000000000000000000000000037', 'vendor'),
