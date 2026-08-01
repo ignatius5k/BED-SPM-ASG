@@ -81,6 +81,17 @@ if (!guest) {
 
         const item = docSnap.data();
 
+        const addonHTML =
+    item.addons && item.addons.length > 0
+        ? `
+            <div class="cart-addons">
+                ${item.addons.map(addon => `
+                    <div>+ ${addon.name} ($${Number(addon.price).toFixed(2)})</div>
+                `).join("")}
+            </div>
+        `
+        : "";
+console.log(item);
         subtotal += (item.unitPrice ?? item.price ?? 0) * item.quantity;
 
         const div = document.createElement("div");
@@ -94,9 +105,12 @@ if (!guest) {
         div.innerHTML = `
             <img class="cart-item-image" src="${itemImagePath}">
             <div class="cart-info">
-                <h4>${item.quantity}x ${item.name}</h4>
-                <p>${item.description ?? ""}</p>
-                <span class="cart-price">
+    <h4>${item.quantity}x ${item.name}</h4>
+    <p>${item.description ?? ""}</p>
+
+    ${addonHTML}
+
+    <span class="cart-price">
                     $${Number(item.unitPrice ?? item.price ?? 0).toFixed(2)}
                 </span>
                 <div class="remove">Remove</div>
@@ -126,10 +140,24 @@ console.log("User:", userId);
         JSON.parse(localStorage.getItem("guestCart")) || [];
 
     guestCart.forEach((item, index) => {
+    console.log(JSON.stringify(item.addons, null, 2));
 
         hasItems = true;
 
         subtotal += item.unitPrice * item.quantity;
+
+        const addonHTML =
+    item.addons && item.addons.length > 0
+        ? `
+            <div class="cart-addons">
+                ${item.addons?.map(addon => `
+    <div class="addon">
+        + ${addon.label} ($${Number(addon.price).toFixed(2)})
+    </div>
+`).join("") ?? ""}
+            </div>
+        `
+        : "";
 
         const div = document.createElement("div");
 
@@ -143,8 +171,11 @@ console.log("User:", userId);
         div.innerHTML = `
             <img class="cart-item-image" src="${itemImagePath}">
             <div class="cart-info">
-                <h4>${item.quantity}x ${item.name}</h4>
-                <span class="cart-price">
+    <h4>${item.quantity}x ${item.name}</h4>
+
+    ${addonHTML}
+
+    <span class="cart-price">
                     $${item.unitPrice.toFixed(2)}
                 </span>
                 <div class="remove">Remove</div>

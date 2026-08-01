@@ -223,3 +223,13 @@ body {
   font-weight: 600;
 }
 
+.cart-addons {
+    margin: 6px 0;
+    padding-left: 5px;
+    font-size: 13px;
+    color: #666;
+}
+
+.cart-addons div {
+    margin: 2px 0;
+}
