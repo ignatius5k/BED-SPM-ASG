@@ -236,3 +236,45 @@ https://randomqr.com/
 reference and learning for js: https://www.w3schools.com/
 learning of chart.js: https://youtu.be/6q5d3Z1-5kQ?si=-i-BgxI52wsV1IaG
 chart js canva import: https://cdn.jsdelivr.net/npm/chart.js
+
+Back-End Technologies
+
+Node.js (https://nodejs.org/) JavaScript runtime used for the back-end application
+
+Express (https://expressjs.com/) Web framework used to build the RESTful API
+
+Microsoft SQL Server (https://www.microsoft.com/sql-server/) Relational database used to store users, stalls, menu items, orders, feedback, complaints, inspections and rental agreements
+
+mssql (https://www.npmjs.com/package/mssql) Node.js driver used to connect to and query SQL Server
+
+Joi (https://joi.dev/) Schema validation library used to check request data before it reaches the controllers
+
+bcryptjs (https://www.npmjs.com/package/bcryptjs) Password hashing library used so raw passwords are never stored
+
+jsonwebtoken (https://www.npmjs.com/package/jsonwebtoken) Used to issue and verify the signed tokens that authorise requests
+
+dotenv (https://www.npmjs.com/package/dotenv) Loads database credentials and API keys from environment variables instead of hard-coding them
+
+CORS (https://www.npmjs.com/package/cors) Allows the front-end to call the back-end during local development
+
+Third-Party APIs
+
+Brevo (https://www.brevo.com/) Transactional email API called from the back-end to send account verification emails during registration
+
+Cloud Firestore (https://firebase.google.com/docs/firestore) Used for the customer-facing stall and product catalogue
+
+API Documentation
+
+Swagger UI Express (https://www.npmjs.com/package/swagger-ui-express) swagger-jsdoc (https://www.npmjs.com/package/swagger-jsdoc) Used to generate the interactive API documentation served at /api-docs
+
+OpenAPI Specification (https://swagger.io/specification/) Format followed when documenting the endpoints
+
+Development Tools
+
+Postman (https://www.postman.com/) Used to test API endpoints and capture testing evidence
+
+SQL Server Management Studio (https://learn.microsoft.com/sql/ssms/) Used to create the database schema and inspect data
+
+Generative AI Use
+
+Generative AI tools were used to help produce the sample data in the SQL seed script (users, stalls, menu items, orders, feedback, complaints, inspections and rental agreements). The generated records were reviewed and adapted by the team to match the database schema, foreign key constraints and the assignment theme. All application code, database design and testing remain the team's own work.
