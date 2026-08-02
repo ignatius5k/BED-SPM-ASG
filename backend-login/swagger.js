@@ -103,7 +103,7 @@ const options = {
   },
   // Absolute paths so it works no matter which folder you run node from.
   apis: [
-    path.join(__dirname, "docs", "*.js"),
+    path.join(__dirname, "docs", "*.js").replace(/\\/g, "/"),
     path.join(__dirname, "app.js")
   ]
 };

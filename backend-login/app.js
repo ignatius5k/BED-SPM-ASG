@@ -1,6 +1,8 @@
 const express = require("express");
 const sql = require("mssql");
 const cors = require("cors");
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./swagger");
 
 const userController = require("./controllers/userController");
 const orderController = require("./controllers/orderController");
@@ -36,6 +38,10 @@ const port = 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Interactive API documentation generated from backend-login/docs/*.js.
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.get("/api-docs.json", (req, res) => res.json(swaggerSpec));
 
 
 // --- User / Auth routes ---
