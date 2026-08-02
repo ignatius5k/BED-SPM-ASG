@@ -15,6 +15,13 @@ async function loadOrderHistory(vendorId) {
 
         const data = await response.json();
 
+        const pendingOrders = data.orders.filter(
+            order => order.Status === "paid"
+        );
+
+        document.getElementById("pending-count").textContent =
+            pendingOrders.length;
+
         if (!response.ok) {
             throw new Error(data.error);
         }

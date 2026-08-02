@@ -164,6 +164,45 @@ body {
     height:calc(100vh - 120px);
 }
 
+.orders-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+
+.pending-counter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    background: #fff7ed;
+    border: 1px solid #fdba74;
+    color: #ea580c;
+
+    padding: 8px 15px;
+    border-radius: 20px;
+
+    font-weight: 600;
+}
+
+
+.pending-counter strong {
+    background: #ea580c;
+    color: white;
+
+    width: 28px;
+    height: 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    font-size: 14px;
+}
 
 /* scrolling areas */
 
