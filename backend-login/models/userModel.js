@@ -167,6 +167,21 @@ async function deleteUser(id) {
   let connection;
   try {
     connection = await sql.connect(dbConfig);
+
+    // Child rows must go first - the database refuses to delete a user
+    // while another table still references them.
+    const clearVerifications = connection.request();
+    clearVerifications.input("id", id);
+    await clearVerifications.query(
+      "DELETE FROM EmailVerifications WHERE UserID = @id"
+    );
+
+    const clearInspector = connection.request();
+    clearInspector.input("id", id);
+    await clearInspector.query(
+      "DELETE FROM InspectorProfiles WHERE UserID = @id"
+    );
+
     const req = connection.request();
     req.input("id", id);
     const result = await req.query(
