@@ -20,6 +20,7 @@ const vendorSatisfactionRoutes = require("./vendorSatisfactionRoutes");
 const vendorRentalAgreementRoutes = require("./vendorRentalAgreementRoutes");
 const vendorInspectionHistoryRoutes = require("./vendorInspectionHistoryRoutes");
 const feedbackRoutes = require("./feedbackRoutes");
+const complaintRoutes = require("./complaintRoutes");
 const promotionRoutes = require("./promotionRoutes")
 
 // --- Declan routes ---
@@ -63,6 +64,7 @@ app.use("/vendor-satisfaction", vendorSatisfactionRoutes);
 app.use("/vendor-rental-agreements", vendorRentalAgreementRoutes);
 app.use("/vendor-inspection-history", vendorInspectionHistoryRoutes);
 app.use("/feedback", feedbackRoutes);
+app.use("/complaint", complaintRoutes);
 app.use("/promotion", promotionRoutes);
 
 // --- Order History routes ---

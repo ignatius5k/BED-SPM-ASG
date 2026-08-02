@@ -5,10 +5,6 @@ import {
 
 const API_BASE = "http://localhost:3000";
 
-// The complaint flow is still handled by its existing endpoint below.
-const CURRENT_CUSTOMER_ID = 1;
-const STALL_ID = 1;
-
 const params = new URLSearchParams(window.location.search);
 const hawkerCenterId = params.get("centerId");
 const foodStallId = params.get("stallId");
@@ -327,13 +323,27 @@ reviewOverlay.addEventListener("submit", async (event) => {
   }
 });
 
-// Open the existing complaint form.
-document.getElementById("write-issue").addEventListener("click", function () {
+const issueForm = document.getElementById("issue-overlay");
+const submitIssueButton = document.getElementById("submit-issue");
+
+// Only a signed-in customer with a selected stall can report an issue.
+document.getElementById("write-issue").addEventListener("click", async function () {
+  if (!hawkerCenterId || !foodStallId) {
+    alert("Please select a stall before reporting an issue.");
+    return;
+  }
+
+  const currentUser = await getReviewUser();
+
+  if (!currentUser || currentUser.role !== "customer" || !getToken()) {
+    alert("Please log in with a customer account before reporting an issue.");
+    return;
+  }
+
   document.getElementById("issue-overlay").style.display = "flex";
 });
 
-// Existing complaint submission is kept separate from this review change.
-document.getElementById("issue-overlay").addEventListener("submit", async function (e) {
+issueForm.addEventListener("submit", async function (e) {
   e.preventDefault();
 
   const form = e.currentTarget;
@@ -351,23 +361,45 @@ document.getElementById("issue-overlay").addEventListener("submit", async functi
     return;
   }
 
+  const currentUser = await getReviewUser();
+  const token = getToken();
+
+  if (!currentUser || currentUser.role !== "customer" || !token) {
+    alert("Please log in with a customer account before reporting an issue.");
+    return;
+  }
+
+  submitIssueButton.disabled = true;
+
   try {
     const res = await fetch(API_BASE + "/complaint", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({
-        customer_id: String(CURRENT_CUSTOMER_ID),
-        stall_id: String(STALL_ID),
-        complaint_type: typeInput.value,
+        centreId: hawkerCenterId,
+        customerStallId: foodStallId,
+        category: typeInput.value,
         description: description,
       }),
     });
 
     if (!res.ok) {
-      const errText = await res.text();
-      console.log("complaint rejected:", res.status, errText);
-      alert("Sorry, your issue could not be submitted.");
-      return;
+      const responseText = await res.text();
+      let errorMessage = "Sorry, your issue could not be submitted.";
+
+      if (responseText) {
+        try {
+          const errorData = JSON.parse(responseText);
+          errorMessage = errorData.error || errorMessage;
+        } catch {
+          console.log("complaint rejected:", res.status, responseText);
+        }
+      }
+
+      throw new Error(errorMessage);
     }
 
     form.reset();
@@ -375,7 +407,9 @@ document.getElementById("issue-overlay").addEventListener("submit", async functi
     alert("Your issue has been submitted and will be reviewed by an admin.");
   } catch (err) {
     console.error(err);
-    alert("Sorry, your issue could not be submitted.");
+    alert(err.message || "Sorry, your issue could not be submitted.");
+  } finally {
+    submitIssueButton.disabled = false;
   }
 });
 
