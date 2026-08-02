@@ -53,16 +53,25 @@ async function createNotification(data){
     const request = connection.request();
 
     request.input("NotificationID", notificationID);
-    request.input("VendorID", data.VendorID);
+    request.input("HawkerCentreID", data.CenterId);
+    request.input("CustomerStallID", data.StallId);
     request.input("Message", data.Message);
     request.input("IsRead", data.IsRead);
     request.input("OrderID", data.OrderID);
+    const vendorID = await request.query(`
+        SELECT s.OwnerID
+        FROM PublicStoreLinks p
+        INNER JOIN Stalls s
+            ON p.StallID = s.StallID
+        WHERE p.HawkerCentreID = '069184'
+        AND p.CustomerStallID = '01-05'
+        AND p.isActive = 1;
+    `)
 
     const result = await request.query(`
         INSERT INTO Notifications
         (NotificationID, VendorID, Message, IsRead, OrderID)
-        VALUES
-        (@NotificationID, @VendorID, @Message, @IsRead, @OrderID)
+        VALUES (@NotificationID, '${vendorID.recordset[0].OwnerID}', @Message, @IsRead, @OrderID)
     `);
 
     return result;

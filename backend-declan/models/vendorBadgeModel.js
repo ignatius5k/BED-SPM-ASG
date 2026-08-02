@@ -13,7 +13,7 @@ exports.getCounts = async (vendorId) => {
       SELECT COUNT(*) AS count
       FROM Notifications
       WHERE VendorID = @vendorId
-        AND IsRead = 'False'
+        AND CAST(IsRead AS VARCHAR(MAX)) = 'False'
     `);
 
     const complaintRequest = connection.request();

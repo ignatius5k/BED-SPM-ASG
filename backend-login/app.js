@@ -1,14 +1,11 @@
 const express = require("express");
 const sql = require("mssql");
 const cors = require("cors");
-const swaggerUi = require("swagger-ui-express");
-const swaggerSpec = require("./swagger");
 
 const userController = require("./controllers/userController");
 const orderController = require("./controllers/orderController");
-const { validateRegister, validateLogin, validateChangePassword } = require("./middleware/userValidation");
-const { requireAuth, requireRole } = require("./middleware/authMiddleware");
-const { validateCreateOrder, validateOrderId } = require("./middleware/orderValidation");
+const { validateRegister, validateLogin } = require("./middleware/userValidation");
+const { requireAuth } = require("./middleware/authMiddleware");
 
 // Routes
 const inspectionRoutes = require("./inspectionRoutes");
@@ -20,10 +17,9 @@ const salesAnalyticsRoutes = require("./salesAnalyticsRoutes");
 const menuItemRoutes = require("./menuItemRoutes");
 const vendorSatisfactionRoutes = require("./vendorSatisfactionRoutes");
 const vendorRentalAgreementRoutes = require("./vendorRentalAgreementRoutes");
-const inspectorRentalAgreementRoutes = require("./inspectorRentalAgreementRoutes");
 const vendorInspectionHistoryRoutes = require("./vendorInspectionHistoryRoutes");
 const feedbackRoutes = require("./feedbackRoutes");
-const promotionRoutes = require("./promotionRoutes");
+const promotionRoutes = require("./promotionRoutes")
 
 // --- Notifications ---
 const notificationRoutes = require("../backend-declan/routes/notificationRoutes");
@@ -33,28 +29,19 @@ const vendorComplaintRoutes = require("../backend-declan/routes/vendorComplaintR
 const vendorBadgeRoutes = require("../backend-declan/routes/vendorBadgeRoutes");
 
 const app = express();
-const port = Number(process.env.PORT) || 3000;
+const port = 3000;
 
 app.use(cors());
 app.use(express.json());
-// --- API documentation ---
-// Interactive docs at http://localhost:3000/api-docs
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-// Raw OpenAPI spec, useful for importing into Postman
-app.get("/api-docs.json", (req, res) => res.json(swaggerSpec));
-
 app.use(express.urlencoded({ extended: true }));
 
 
 // --- User / Auth routes ---
 app.post("/users/register", validateRegister, userController.register);
 app.post("/users/login", validateLogin, userController.login);
-app.put("/users/change-password", requireAuth, validateChangePassword, userController.changePassword);
+app.put("/users/change-password", requireAuth, userController.changePassword);
 app.get("/users/me", requireAuth, userController.getCurrentUser);
 app.get("/users", userController.getAllUsers);
-app.get("/users/verify-email", userController.verifyEmail);
-app.post("/users/resend-verification", userController.resendVerification);
 app.get("/users/:id", requireAuth, userController.getUserById);
 app.put("/users/:id", requireAuth, userController.updateUser);
 app.delete("/users/:id", requireAuth, userController.deleteUser);
@@ -69,16 +56,14 @@ app.use("/sales-analytics", salesAnalyticsRoutes);
 app.use("/menu-items", menuItemRoutes);
 app.use("/vendor-satisfaction", vendorSatisfactionRoutes);
 app.use("/vendor-rental-agreements", vendorRentalAgreementRoutes);
-app.use("/inspection-rental-agreements", inspectorRentalAgreementRoutes);
 app.use("/vendor-inspection-history", vendorInspectionHistoryRoutes);
 app.use("/feedback", feedbackRoutes);
 app.use("/promotion", promotionRoutes);
 
 // --- Order History routes ---
-app.post("/orders", requireAuth, requireRole("customer"), validateCreateOrder, orderController.createOrder);
+app.post("/orders", requireAuth, orderController.createOrder);
 app.get("/orders", requireAuth, orderController.getMyOrders);
-app.get("/orders/search", requireAuth, orderController.searchOrders);
-app.get("/orders/:id", requireAuth, validateOrderId, orderController.getOrderById);
+app.get("/orders/:id", requireAuth, orderController.getOrderById);
 
 // --- Notifications routes ---
 app.use("/notifications", notificationRoutes);

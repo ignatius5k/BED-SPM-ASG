@@ -97,17 +97,17 @@ fetch('./vendor_nav.html')
 
         if (notifications.length > 0) {
 
-            document.getElementById("notificationBadge").textContent =
+            document.getElementById("notification-badge").textContent =
                 notifications.length;
 
-            document.getElementById("notificationBadge")
+            document.getElementById("notification-badge")
                 .classList.add("show");
 
 
-            document.getElementById("mobileNotificationBadge").textContent =
+            document.getElementById("mobile-notification-badge").textContent =
                 notifications.length;
 
-            document.getElementById("mobileNotificationBadge")
+            document.getElementById("mobile-notification-badge")
                 .classList.add("show");
         }
 
@@ -117,17 +117,17 @@ fetch('./vendor_nav.html')
 
         if (complaints.length > 0) {
 
-            document.getElementById("complaintBadge").textContent =
+            document.getElementById("complaint-badge").textContent =
                 complaints.length;
 
-            document.getElementById("complaintBadge")
+            document.getElementById("complaint-badge")
                 .classList.add("show");
 
 
-            document.getElementById("mobileComplaintBadge").textContent =
+            document.getElementById("mobile-complaint-badge").textContent =
                 complaints.length;
 
-            document.getElementById("mobileComplaintBadge")
+            document.getElementById("mobile-complaint-badge")
                 .classList.add("show");
         }
 

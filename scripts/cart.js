@@ -46,6 +46,7 @@ const payNowBtn = document.getElementById("pay-now");
 const paymentButtons = document.querySelectorAll(".payments button");
 let selectedPaymentMethod = null;
 let orderCounter = Number(localStorage.getItem("orderCounter")) || 1008;
+let item = null;
 
 const userId = localStorage.getItem("userId");
 const guest = isGuest();
@@ -79,7 +80,7 @@ if (!guest) {
 
         hasItems = true;
 
-        const item = docSnap.data();
+        item = docSnap.data();
 
         const addonHTML =
     item.addons && item.addons.length > 0
@@ -92,6 +93,7 @@ if (!guest) {
         `
         : "";
 console.log(item);
+console.log(item["stallId"])
         subtotal += (item.unitPrice ?? item.price ?? 0) * item.quantity;
 
         const div = document.createElement("div");
@@ -398,6 +400,8 @@ async function createVendorNotification() {
       },
       body: JSON.stringify({
         VendorID: "VEND002",
+        StallID: item["stallId"],
+        CenterID: item["centerId"],
         Message: message,
         IsRead: "False",
         OrderID: "ORD" + orderCounter
@@ -471,7 +475,7 @@ if (selectedPaymentMethod === "paynow") {
 }
 
 // 🟢 Card or Cash → go straight to payment page
-window.location.href = "payment.html";
+// window.location.href = "payment.html";
 });
 
 /* =========================

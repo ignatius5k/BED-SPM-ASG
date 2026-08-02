@@ -70,6 +70,7 @@
     "side-channel-map": "^1.0.1",
     "side-channel-weakmap": "^1.0.2",
     "statuses": "^2.0.2",
+    "swagger": "^0.0.1",
     "swagger-jsdoc": "^6.3.0",
     "swagger-ui-express": "^5.0.1",
     "toidentifier": "^1.0.1",
