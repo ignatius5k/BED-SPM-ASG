@@ -22,10 +22,9 @@ const vendorInspectionHistoryRoutes = require("./vendorInspectionHistoryRoutes")
 const feedbackRoutes = require("./feedbackRoutes");
 const promotionRoutes = require("./promotionRoutes")
 
-// --- Notifications ---
+// --- Declan routes ---
 const notificationRoutes = require("../backend-declan/routes/notificationRoutes");
-
-// --- Vendor Complaint Display ---
+const orderHistoryRoutes = require("../backend-declan/routes/orderHistoryRoutes");
 const vendorComplaintRoutes = require("../backend-declan/routes/vendorComplaintRoutes");
 const vendorBadgeRoutes = require("../backend-declan/routes/vendorBadgeRoutes");
 
@@ -72,10 +71,9 @@ app.get("/orders", requireAuth, orderController.getMyOrders);
 app.get("/orders/search", requireAuth, orderController.searchOrders);
 app.get("/orders/:id", requireAuth, validateOrderId, orderController.getOrderById);
 
-// --- Notifications routes ---
+// --- Declan routes ---
 app.use("/notifications", notificationRoutes);
-
-// --- Vendor Complaint Display routes ---
+app.use("/orderHistory", orderHistoryRoutes); // this is for vendor side order history
 app.use("/vendorComplaints", vendorComplaintRoutes);
 app.use("/vendorBadges", vendorBadgeRoutes);
 

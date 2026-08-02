@@ -1,14 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
-const controller =
-require("../controllers/vendorBadgeController");
+const vendorBadgeController = require("../controllers/vendorBadgeController");
 
-
-router.get(
-"/:vendorId",
-controller.getBadgeCounts
-);
+router.get("/:vendorId", vendorBadgeController.getBadgeCounts);
 
 
 module.exports = router;

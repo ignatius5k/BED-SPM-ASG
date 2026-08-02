@@ -16,21 +16,42 @@
 
   <div id="nav-container"></div>
 
-  <div class="notifications-container">
-    <div class="header">
-      <h2>Notifications</h2>
-      <p>View and manage your latest notifications.</p>
-    </div>
+  <div class="dashboard-container">
 
-    <div id="notifications"></div>
+    <!-- Left -->
+    <section class="notifications-container">
+      <div class="header">
+        <h2>Notifications</h2>
+        <p>View and manage your latest notifications.</p>
+      </div>
 
-    <div id="empty-message" style="display:none;">
-      <p>No notifications.</p>
-    </div>
+      <div class="notification-list" id="notifications"></div>
+
+
+      <div id="empty-message" style="display:none;">
+        <p>No notifications.</p>
+      </div>
+    </section>
+
+    <!-- Right -->
+    <section class="orders-container">
+      <div class="header">
+        <h2>Orders</h2>
+        <p>Manage orders for your stall.</p>
+      </div>
+
+      <div class="orders-list" id="orders-list"></div>
+
+
+      <div id="empty-orders" style="display:none;">
+        <p>No orders found.</p>
+      </div>
+    </section>
+
   </div>
 
 <script src="scripts/vendor/vendor_nav.js"></script>
   <script type="module" src="scripts/vendor_js/vendor_notifications.js"></script>
-
+  <script type="module" src="scripts/vendor_js/vendor_orderlist.js"></script>
 </body>
 </html>

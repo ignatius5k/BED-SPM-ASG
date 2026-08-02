@@ -21,7 +21,7 @@ async function loadNotifications() {
         throw new Error("Unable to load notifications.");
     }
 
-    console.log("API response:", notifications);
+    // console.log("API response:", notifications);
 
     container.innerHTML = "";
     emptyMessage.style.display = notifications.length === 0 ? "block" : "none";
@@ -74,6 +74,19 @@ async function deleteNotification(id) {
     loadNotifications();
 }
 
+function createOrderCard(order) {
+  const card = document.createElement("article");
+  card.className = "order-card";
+
+  card.innerHTML = `
+    <h3>Order #${order.orderId}</h3>
+    <p><strong>Store:</strong> ${order.customerStallId}</p>
+    <p><strong>Status:</strong> ${order.status}</p>
+  `;
+
+  return card;
+}
+
 document.addEventListener("click", (e) => {
 
     if (e.target.classList.contains("read-btn")) {
@@ -93,5 +106,6 @@ loadNotifications().catch((error) => {
 if (vendorId) {
     setInterval(() => {
         loadNotifications().catch((error) => console.warn(error.message));
-    }, 15000);
+    }, 2000);
+    console.log("Auto-refresh enabled for vendor:", vendorId);
 }

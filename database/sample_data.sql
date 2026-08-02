@@ -99,10 +99,12 @@ VALUES
 ('N002', 'VEND002', 'ORD1002', '[NEW ORDER] OrderID: O1002', 'False', GETDATE()),
 ('N003', 'VEND003', 'ORD1003', '[NEW ORDER] OrderID: O1003', 'False', GETDATE()),
 ('N004', 'VEND001', 'ORD1004', '[NEW ORDER] OrderID: O1004', 'False', GETDATE()),
-('N005', 'VEND004', 'ORD1005', '[NEW ORDER] OrderID: O1005', 'False', GETDATE()),
-('N007', 'VEND002', 'ORD1006', '[NEW ORDER] OrderID: O1006', 'False', GETDATE()),
-('N009', 'VEND001', 'ORD1007', '[NEW ORDER] OrderID: O1007', 'False', GETDATE()),
-('N010', 'VEND004', 'ORD1008', '[NEW ORDER] OrderID: O1008', 'False', GETDATE());
+('N005', 'VEND001', 'ORD1005', '[NEW ORDER] OrderID: O1005', 'False', GETDATE()),
+('N006', 'VEND002', 'ORD1006', '[NEW ORDER] OrderID: O1006', 'False', GETDATE()),
+('N007', 'VEND001', 'ORD1007', '[NEW ORDER] OrderID: O1007', 'False', GETDATE()),
+('N008', 'VEND003', 'ORD1008', '[NEW ORDER] OrderID: O1008', 'False', GETDATE()),
+('N009', 'VEND001', 'ORD1009', '[NEW ORDER] OrderID: O1009', 'False', GETDATE()),
+('N010', 'VEND004', 'ORD1010', '[NEW ORDER] OrderID: O1010', 'False', GETDATE());
 
 
 -- Keep Ben's legacy SQL location. The public catalogue mapping links STALL001
