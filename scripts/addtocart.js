@@ -158,7 +158,7 @@ function calculateTotal() {
 
     selectedAddons.push({
       group: input.name,
-      label: input.parentElement.textContent.trim(),
+      name: input.parentElement.textContent.trim(),
       price
     });
   });
