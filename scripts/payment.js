@@ -12,10 +12,7 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-import {
-  getAuth,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+
 
 /* =========================
    Firebase config
@@ -32,16 +29,18 @@ const firebaseConfig = {
 // 🔹 Init Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = getAuth(app);
+
+async function processOrder(){
 
 // 🔹 Run once user is confirmed
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    console.warn("User not logged in");
-    return;
-  }
+const userId = localStorage.getItem("userId");
+const guest = isGuest();
 
-  const userId = user.uid;
+if (!userId && !guest) {
+    console.warn("User not logged in");
+    window.location.href = "login.html";
+    return;
+}
 
   // 🔹 Read cart
   const cartRef = collection(db, "carts", userId, "items");
@@ -75,7 +74,7 @@ onAuthStateChanged(auth, async (user) => {
 
 // 🔹 Get final total from cart page (source of truth)
 const fulfillmentType = sessionStorage.getItem("fulfillmentType") ?? "takeout";
-const total = Number(sessionStorage.getItem("total")) || 0;
+const total = Number(sessionStorage.getItem("total")) || subtotal;
 
 // Promo info (read from appliedCodes instead of meta/appliedPromo)
 let promoCode = null;
@@ -122,10 +121,10 @@ if (fulfillmentType === "takeout") {
   // 🔹 Create order
   await addDoc(collection(db, "orders"), {
     user: {
-      userId: user.uid,
-      name: user.displayName ?? "Unknown User",
-      email: user.email ?? "No email"
-    },
+  userId: userId,
+  name: localStorage.getItem("username") ?? "Unknown User",
+  email: localStorage.getItem("email") ?? "No email"
+},
 
     status: "paid",
 
@@ -178,4 +177,12 @@ if (fulfillmentType === "takeout") {
   }
 
   console.log("Order placed successfully");
-});
+
+alert("Order created successfully!");
+
+window.location.href = "history.html";
+
+} // END FUNCTION
+
+
+processOrder(); // RUN FUNCTION

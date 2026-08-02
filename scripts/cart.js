@@ -146,7 +146,9 @@ console.log("User:", userId);
 
         hasItems = true;
 
-        subtotal += item.unitPrice * item.quantity;
+        const price = item.unitPrice ?? item.price ?? 0;
+
+subtotal += price * (item.quantity ?? 1);
 
         const addonHTML =
     item.addons && item.addons.length > 0
@@ -154,7 +156,7 @@ console.log("User:", userId);
             <div class="cart-addons">
                 ${item.addons?.map(addon => `
     <div class="addon">
-        + ${addon.label} ($${Number(addon.price).toFixed(2)})
+        + ${addon.name} ($${Number(addon.price).toFixed(2)})
     </div>
 `).join("") ?? ""}
             </div>
@@ -178,7 +180,7 @@ console.log("User:", userId);
     ${addonHTML}
 
     <span class="cart-price">
-                    $${item.unitPrice.toFixed(2)}
+                    $${Number(item.unitPrice ?? item.price ?? 0).toFixed(2)}
                 </span>
                 <div class="remove">Remove</div>
             </div>

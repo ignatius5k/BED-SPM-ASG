@@ -71,6 +71,7 @@ export async function loginUser(email, password) {
   localStorage.setItem("userId", data.id);
   localStorage.setItem("role", data.role);
   localStorage.setItem("username", data.username);
+  localStorage.setItem("email", data.email);
   localStorage.removeItem("guest"); // a real login cancels guest mode
 
   return data;
