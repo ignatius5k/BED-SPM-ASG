@@ -1,3 +1,4 @@
+import { setupPasswordToggles, resetPasswordToggles } from "./passwordToggle.js";
 import {
   isLoggedIn,
   isGuest,
@@ -114,6 +115,8 @@ async function init() {
   els.editPasswordBtn?.addEventListener("click", togglePasswordEditor);
   els.savePasswordBtn?.addEventListener("click", savePassword);
   els.cancelPasswordBtn?.addEventListener("click", closeAllEditors);
+
+  setupPasswordToggles();
 
   // Live checklist updates as the user types either password field
   els.newPassword?.addEventListener("input", updatePasswordChecklist);
@@ -247,6 +250,7 @@ function togglePasswordEditor() {
   els.currentPassword.value = "";
   els.newPassword.value = "";
   els.confirmPassword.value = "";
+  resetPasswordToggles();
   updatePasswordChecklist(); // reset the ticks back to neutral
   els.passwordEdit.style.display = "block";
   els.currentPassword.focus();

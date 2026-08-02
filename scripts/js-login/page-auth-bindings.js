@@ -1,3 +1,4 @@
+import { setupPasswordToggles } from "./passwordToggle.js";
 import {
   registerUser,
   loginUser,
@@ -357,6 +358,7 @@ function handleGuest() {
    INIT
 ========================= */
 bindLiveErrorClearing();
+setupPasswordToggles();  // eye icon to show/hide password
 
 if (isSignupPage()) {
   setupPasswordChecklist();
@@ -368,3 +370,4 @@ if (isSignupPage()) {
 }
 
 document.getElementById("btnGuest")?.addEventListener("click", handleGuest);
+

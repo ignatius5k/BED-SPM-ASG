@@ -688,3 +688,52 @@ label{
 }
 .btn-danger:hover{ background:#8f2f36; }
 .btn-danger:disabled{ opacity:.55; cursor:not-allowed; }
+
+/* ---------- Show / hide password toggle ---------- */
+.password-field{
+  position:relative;
+  display:block;
+}
+
+/* Leave room so typed text never runs under the eye icon */
+.password-field .input{
+  padding-right:38px;
+}
+
+.toggle-password{
+  position:absolute;
+  top:50%;
+  right:8px;
+  transform:translateY(-50%);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  width:26px;
+  height:26px;
+  padding:0;
+
+  background:none;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  color:var(--muted);
+}
+
+.toggle-password:hover{ color:var(--ink); }
+
+.toggle-password:focus-visible{
+  outline:2px solid var(--brand);
+  outline-offset:1px;
+}
+
+.toggle-password svg{
+  width:18px;
+  height:18px;
+  stroke:currentColor;
+  fill:none;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}

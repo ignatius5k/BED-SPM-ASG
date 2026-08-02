@@ -38,7 +38,14 @@
           <input id="email" class="input" type="email" placeholder="Enter your email address" autocomplete="email" required>
 
           <label for="password">Password</label>
-          <input id="password" class="input" type="password" placeholder="Enter your password" autocomplete="current-password" required>
+          <!-- The eye button reveals what was typed, so a mistyped password
+               can be spotted before submitting. -->
+          <div class="password-field">
+            <input id="password" class="input" type="password" placeholder="Enter your password" autocomplete="current-password" required>
+            <button class="toggle-password" type="button"
+                    data-target="password"
+                    aria-label="Show password" aria-pressed="false"></button>
+          </div>
 
           <button id="btnPrimary" class="btn" type="button">Sign In</button>
 

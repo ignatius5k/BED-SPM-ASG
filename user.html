@@ -104,13 +104,28 @@
   <!-- PASSWORD EDITOR -->
   <div id="passwordEdit" class="edit-panel" style="display:none;">
     <label for="currentPassword">Current password</label>
-    <input id="currentPassword" class="input" type="password" autocomplete="current-password">
+    <div class="password-field">
+      <input id="currentPassword" class="input" type="password" autocomplete="current-password">
+      <button class="toggle-password" type="button"
+              data-target="currentPassword"
+              aria-label="Show password" aria-pressed="false"></button>
+    </div>
 
     <label for="newPassword">New password</label>
-    <input id="newPassword" class="input" type="password" autocomplete="new-password">
+    <div class="password-field">
+      <input id="newPassword" class="input" type="password" autocomplete="new-password">
+      <button class="toggle-password" type="button"
+              data-target="newPassword"
+              aria-label="Show password" aria-pressed="false"></button>
+    </div>
 
     <label for="confirmPassword">Confirm new password</label>
-    <input id="confirmPassword" class="input" type="password" autocomplete="new-password">
+    <div class="password-field">
+      <input id="confirmPassword" class="input" type="password" autocomplete="new-password">
+      <button class="toggle-password" type="button"
+              data-target="confirmPassword"
+              aria-label="Show password" aria-pressed="false"></button>
+    </div>
 
     <ul class="password-checklist" id="passwordChecklist">
       <li id="checkLength" data-label="At least 8 characters">At least 8 characters</li>
@@ -125,8 +140,6 @@
       <button id="cancelPasswordBtn" class="btn btn-outline" type="button">Cancel</button>
     </div>
   </div>
-
-  <button id="logoutBtn" class="primary-btn" type="button">Logout</button>
 
   <!-- DANGER ZONE -->
   <div class="danger-zone">

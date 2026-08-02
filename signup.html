@@ -54,7 +54,12 @@
           </div>
 
           <label for="password">Password</label>
-          <input id="password" class="input" type="password" placeholder="Enter your password" autocomplete="new-password" required>
+          <div class="password-field">
+            <input id="password" class="input" type="password" placeholder="Enter your password" autocomplete="new-password" required>
+            <button class="toggle-password" type="button"
+                    data-target="password"
+                    aria-label="Show password" aria-pressed="false"></button>
+          </div>
           <ul class="password-checklist" id="passwordChecklist">
             <li id="checkLength" data-label="At least 8 characters">At least 8 characters</li>
             <li id="checkUpper" data-label="One uppercase letter">One uppercase letter</li>
