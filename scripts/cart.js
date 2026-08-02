@@ -475,7 +475,7 @@ if (selectedPaymentMethod === "paynow") {
 }
 
 // 🟢 Card or Cash → go straight to payment page
-// window.location.href = "payment.html";
+window.location.href = "payment.html";
 });
 
 /* =========================
