@@ -69,8 +69,9 @@ fetch('./vendor_nav.html')
       });
     });
 
+    const vendorId = localStorage.getItem('userId');
+    
     async function loadNavBadges() {
-      const vendorId = localStorage.getItem('userId');
       if (!vendorId) return;
 
       try {
@@ -115,5 +116,12 @@ fetch('./vendor_nav.html')
     }
 
     loadNavBadges();
+    console.log("Vendor ID:", vendorId);
+    if (vendorId) {
+      setInterval(() => {
+          loadNavBadges().catch((error) => console.warn(error.message));
+      }, 2000);
+      console.log("Auto-refresh enabled for vendor:", vendorId);
+    }
   })
   .catch(err => console.error('Failed to load nav:', err));

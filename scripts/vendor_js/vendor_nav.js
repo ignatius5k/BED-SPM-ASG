@@ -1,3 +1,5 @@
+console.log("vendor_nav.js loaded");
+
 fetch('./vendor_nav.html')
   .then(response => response.text())
   .then(html => {
@@ -69,10 +71,12 @@ fetch('./vendor_nav.html')
       });
     });
 
-    async function loadNavBadges() {
-
     const vendorId = localStorage.getItem("userId");
 
+    async function loadNavBadges() {
+
+    console.log("Checking badges...");
+    
     if (!vendorId) return;
 
 
@@ -90,7 +94,9 @@ fetch('./vendor_nav.html')
         );
 
         const complaints = await complaintRes.json();
-
+        
+        console.log("Notifications:", notifications);
+        console.log("Complaints:", complaints);
 
 
         // Notifications badge
@@ -159,5 +165,12 @@ fetch('./vendor_nav.html')
     }
 
     loadNavBadges();
+    console.log("Vendor ID:", vendorId);
+    if (vendorId) {
+    setInterval(() => {
+        loadNavBadges().catch((error) => console.warn(error.message));
+    }, 2000);
+    console.log("Auto-refresh enabled for vendor:", vendorId);
+    }
   })
   .catch(err => console.error('Failed to load nav:', err));
