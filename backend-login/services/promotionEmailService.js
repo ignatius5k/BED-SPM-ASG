@@ -33,7 +33,7 @@ function readBrevoConfiguration() {
   loadLegacyBrevoEnvironment();
 
   const configuration = {
-    apiKey: String(process.env.BREVO_API_KEY || "").trim(),
+    apiKey: String(process.env.PROMOTION_BREVO_API_KEY || "").trim(),
     senderEmail: String(process.env.BREVO_SENDER_EMAIL || "").trim(),
     recipientEmail: String(process.env.PROMO_RECIPIENT_EMAIL || "").trim(),
   };
@@ -60,6 +60,12 @@ function escapeHtml(value) {
 async function sendPromotionEmail(promotion) {
   const configuration = readBrevoConfiguration();
 
+  console.log("=== Brevo Configuration ===");
+  console.log("API Key exists:", !!configuration.apiKey);
+  console.log("Sender Email:", configuration.senderEmail);
+  console.log("Recipient Email:", configuration.recipientEmail);
+  console.log("Configured:", configuration.configured);
+
   if (!configuration.configured) {
     console.warn("Promotion saved, but Brevo email is not configured.");
     return { sent: false, reason: "not_configured" };
@@ -71,6 +77,7 @@ async function sendPromotionEmail(promotion) {
       headers: {
         "api-key": configuration.apiKey,
         "Content-Type": "application/json",
+        Accept: "application/json",
       },
       body: JSON.stringify({
         sender: {
@@ -90,17 +97,21 @@ async function sendPromotionEmail(promotion) {
     const responseBody = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      console.error("Brevo rejected the promotion email request.");
+      console.error("=== Brevo Error ===");
+      console.error("Status:", response.status);
+      console.error("Response:", responseBody);
       return { sent: false, reason: "provider_error" };
     }
 
     console.log("Promotion email sent:", responseBody.messageId || "accepted");
+
     return {
       sent: true,
       messageId: responseBody.messageId || null,
     };
   } catch (error) {
-    console.error("Promotion email request failed:", error.message);
+    console.error("=== Request Failed ===");
+    console.error(error);
     return { sent: false, reason: "request_failed" };
   }
 }
