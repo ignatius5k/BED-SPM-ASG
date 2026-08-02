@@ -1,5 +1,6 @@
 const path = require("path");
 const swaggerJsdoc = require("swagger-jsdoc");
+const teamSwaggerDefinition = require("./docs/swaggerDef");
 
 /**
  * Swagger / OpenAPI configuration.
@@ -32,6 +33,7 @@ const options = {
       // Describes the "Authorization: Bearer <token>" header so the
       // Authorize button appears in the Swagger UI.
       securitySchemes: {
+        ...teamSwaggerDefinition.components.securitySchemes,
         bearerAuth: {
           type: "http",
           scheme: "bearer",
@@ -40,6 +42,7 @@ const options = {
         }
       },
       schemas: {
+        ...teamSwaggerDefinition.components.schemas,
         User: {
           type: "object",
           properties: {
@@ -103,7 +106,11 @@ const options = {
   },
   // Absolute paths so it works no matter which folder you run node from.
   apis: [
-    path.join(__dirname, "docs", "*.js").replace(/\\/g, "/"),
+    // menuItemRoutes.swagger.js duplicates the same paths documented with
+    // Jira-aligned response shapes in menuRoutes.swagger.js.
+    path
+      .join(__dirname, "docs", "!(menuItemRoutes.swagger).js")
+      .replace(/\\/g, "/"),
     path.join(__dirname, "app.js")
   ]
 };
