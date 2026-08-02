@@ -4,8 +4,9 @@ const cors = require("cors");
 
 const userController = require("./controllers/userController");
 const orderController = require("./controllers/orderController");
-const { validateRegister, validateLogin } = require("./middleware/userValidation");
-const { requireAuth } = require("./middleware/authMiddleware");
+const { validateRegister, validateLogin, validateChangePassword } = require("./middleware/userValidation");
+const { requireAuth, requireRole } = require("./middleware/authMiddleware");
+const { validateCreateOrder, validateOrderId } = require("./middleware/orderValidation");
 
 // Routes
 const inspectionRoutes = require("./inspectionRoutes");
@@ -39,7 +40,12 @@ app.use(express.urlencoded({ extended: true }));
 // --- User / Auth routes ---
 app.post("/users/register", validateRegister, userController.register);
 app.post("/users/login", validateLogin, userController.login);
-app.put("/users/change-password", requireAuth, userController.changePassword);
+
+// Email verification (third-party email API)
+app.get("/users/verify-email", userController.verifyEmail);
+app.post("/users/resend-verification", userController.resendVerification);
+
+app.put("/users/change-password", requireAuth, validateChangePassword, userController.changePassword);
 app.get("/users/me", requireAuth, userController.getCurrentUser);
 app.get("/users", userController.getAllUsers);
 app.get("/users/:id", requireAuth, userController.getUserById);
@@ -61,9 +67,10 @@ app.use("/feedback", feedbackRoutes);
 app.use("/promotion", promotionRoutes);
 
 // --- Order History routes ---
-app.post("/orders", requireAuth, orderController.createOrder);
+app.post("/orders", requireAuth, requireRole("customer"), validateCreateOrder, orderController.createOrder);
 app.get("/orders", requireAuth, orderController.getMyOrders);
-app.get("/orders/:id", requireAuth, orderController.getOrderById);
+app.get("/orders/search", requireAuth, orderController.searchOrders);
+app.get("/orders/:id", requireAuth, validateOrderId, orderController.getOrderById);
 
 // --- Notifications routes ---
 app.use("/notifications", notificationRoutes);
@@ -72,7 +79,6 @@ app.use("/notifications", notificationRoutes);
 app.use("/vendorComplaints", vendorComplaintRoutes);
 app.use("/vendorBadges", vendorBadgeRoutes);
 
-// Start only when this file is run directly. Tests can import the app safely.
 if (require.main === module) {
   app.listen(port, () => {
     console.log(`Server running on port ${port}`);
